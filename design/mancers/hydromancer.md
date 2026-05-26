@@ -43,6 +43,7 @@ The Hydromancer's HP and armor make it the most durable of the support-oriented 
 **Base Damage:** 10
 **Element:** Water
 **Effects Applied:** `WET` (2 turns) on hit unit; `WET` (1 turn) on target tile
+**Temperature Effects:** **−10 temperature** to the hit unit. A neutral unit (0) drops to −10 COLD, which makes subsequent ice spells from a Cryomancer deal +10% damage against it. Two consecutive Aqua Lances in one activation (2 AP + 2 AP = 4 AP) bring a neutral unit to −20 COLD — deep in the ice damage bonus range.
 
 **Description:** A piercing bolt of pressurized water fired at a single enemy. Low damage by itself, but Aqua Lance is the Hydromancer's primary combo primer — reliable, repeatable, and fast. The short cooldown means a Hydromancer can apply Wet to multiple targets across consecutive turns without spending heavy AP, keeping Electromancer chain opportunities stacked across the board.
 
@@ -60,6 +61,7 @@ The Hydromancer's HP and armor make it the most durable of the support-oriented 
 **Base Damage:** 8
 **Element:** Water
 **Effects Applied:** `WET` (1 turn) on all units hit; displacement — each unit in the line is pushed 2 tiles away from caster along the line direction
+**Temperature Effects:** **−15 temperature** to all units hit. The rush of cold water is deeply cooling. A neutral unit hits −15 COLD; a unit already COLD (−10 from prior Aqua Lance) reaches −25, approaching the SUPERCOOLED threshold (−31). Tidal Surge into a pre-cooled cluster is a strong Cryomancer setup move.
 
 **Description:** A surging wave of water that blasts outward in a straight line from the Hydromancer. Tidal Surge is the Hydromancer's primary crowd control spell — it breaks enemy formations, separates grouped threats, pushes units into hazardous terrain, and applies Wet to every unit it hits as a secondary consequence. Tactically, Tidal Surge rewards map reading: pushing an enemy into a pit deals fall damage; pushing them through an ON_FIRE tile applies BURNING; pushing them into a wall stops displacement at the wall and the unit takes collision damage equal to the remaining push distance.
 
@@ -80,6 +82,7 @@ The Hydromancer's HP and armor make it the most durable of the support-oriented 
 **Wet Tile Bonus:** +10 HP (heals 32 total if target is standing on a WET or FLOODED tile)
 **Element:** Water
 **Effects Applied:** Removes `BURNING` from target; removes all `POISONED` stacks from target (consistent with `Hydromancer Cleanse` noted in status-effects.md)
+**Temperature Effects:** **−5 temperature** to the healed target. The gentle healing waters provide minor cooling — not enough to meaningfully shift temperature thresholds on its own, but it can nudge an OVERHEATED ally (+63) back below the threshold (+58, removing the BURNING DoT) if combined with natural decay. Primarily relevant for extinguishing OVERHEATED states on allies damaged by fire terrain.
 
 **Description:** The only base heal in the Mancer roster. Mending Current channels a stabilizing flow of water energy toward an injured ally, knitting wounds and flushing toxins. The flat heal of 22 HP is meaningful against a 100 HP baseline — roughly 22% of a Mancer's total HP in a single cast — but not so large that a Hydromancer can undo sustained focus-fire indefinitely. The Wet tile bonus rewards proactive terrain setup: a Hydromancer that has already flooded the area around its injured ally receives an enhanced heal, incentivizing terrain-first play even in support scenarios.
 
@@ -97,6 +100,7 @@ The Hydromancer's HP and armor make it the most durable of the support-oriented 
 **Base Damage:** 6 (on initial cast — the rushing water deals minor impact damage to all units in zone)
 **Element:** Water
 **Effects Applied:** All tiles in radius become `FLOODED` (persists — expands 1 tile every 2 turns if not frozen or dried); all units in zone on cast receive `WET` (3 turns); units in zone have movement cost +1 (from FLOODED terrain state)
+**Temperature Effects:** No direct temperature change on cast. However, all WET terrain created by Flood Zone applies the terrain passive: **−5 temperature per turn** to any unit standing on a WET or FLOODED tile at end of turn. This is ongoing and cumulative — a unit standing in the Flood Zone for 3 consecutive turns loses 15 temperature (−15 total from terrain passive alone), entering COLD range and priming them for Cryomancer ice damage bonuses. Flood Zone is the Hydromancer's primary sustained temperature-suppression tool.
 
 **Description:** Flood Zone is the Hydromancer's defining battlefield transformation spell. It converts a large area of terrain into a persistent conductive water surface — every tile in the zone becomes a chain-arc conductor for Electromancer Lightning, every unit within it becomes a potential chain target. The FLOODED state expands slowly over subsequent turns, meaning a well-placed Flood Zone does not just reward the turn it is cast but continues to shape the engagement for the rest of the fight.
 
@@ -107,6 +111,27 @@ Flood Zone costs the Hydromancer nearly its full turn (5 AP leaves only 1 AP, wh
 **Special Interaction — Flood Zone + Cryomancer:** Cryomancer mass freeze spells hitting a FLOODED zone convert all FLOODED tiles to `ICE_TILE` simultaneously, and every unit on those tiles is FROZEN. This is a Tier 2 combo that hard-locks an entire zone's worth of units.
 
 **Special Interaction — Flood Zone + Pyromancer (adverse):** If a Pyromancer spell hits a FLOODED zone, the water + fire interaction creates `STEAM_CLOUD` across the entire zone, blinding all units (including allies) inside. The Hydromancer player must account for this risk when allies include a Pyromancer.
+
+---
+
+## 3b. Temperature Interaction Notes
+
+The Hydromancer is the roster's primary COOLING Mancer — not as extreme as the Cryomancer, but broader and more flexible. Where the Cryomancer applies deep cold to individual targets for freeze-shatter setups, the Hydromancer's cooling is area-wide and sustained, making it the ideal pipeline partner for the Cryomancer.
+
+**Temperature values summary:**
+- Aqua Lance: −10 temperature per hit (spammable; 0 cooldown)
+- Tidal Surge: −15 temperature to all units in the line (crowd cooling)
+- Mending Current: −5 temperature to healed target (minor; used to cleanse OVERHEATED allies)
+- Flood Zone: −5 temperature/turn passive to all units on WET/FLOODED terrain (sustained area cooling)
+
+**Hydromancer + Cryomancer pipeline:**
+The Hydromancer's role in the temperature chain is to bring enemies to COLD (−1 to −30) so that the Cryomancer's ice spells receive their +10% damage bonus and the enemy is closer to the SUPERCOOLED (−31) and FROZEN SOLID (−61) thresholds. The optimal pipeline: Aqua Lance twice (−20 total) or Tidal Surge (−15 to a group) on the Hydromancer's activation, then Cryomancer follows with Frost Bolt (−20) → the target is now at −35 to −40, deep into SUPERCOOLED (SLOWED + BRITTLE modifier). One more ice hit freezes solid. Without the Hydromancer's pre-cooling, the Cryomancer needs an extra cast to reach those thresholds. Flood Zone as persistent zone setup is even stronger: a 3-turn-soaked zone drives every unit inside to −15+ before the Cryomancer even enters range, and the Cryomancer can mass-freeze the FLOODED zone with Blizzard Field while every unit in it is already at −15 to −30 COLD.
+
+**Hydromancer as fire-counter:**
+When an enemy is OVERHEATED (temperature ≥ +61), the Hydromancer can quickly cool them below the threshold and remove the BURNING DoT. Example: enemy at +70 (OVERHEATED, BURNING DoT ticking). Aqua Lance (−10) → +60; Tidal Surge (−15) → +45. The enemy is now HOT (SLOWED) but no longer OVERHEATED — the BURNING DoT is removed. This is the primary way the Hydromancer defends against Pyromancer-heavy opponents: denying the sustained BURNING damage while still leaving the enemy SLOWED. Note that keeping the target at HOT rather than extinguishing it entirely is tactically useful — the enemy remains SLOWED and cannot reposition freely.
+
+**Flood Zone as sustained cooling field:**
+A Flood Zone placed over an enemy cluster functions as a persistent Cryomancer setup engine. Units in the zone lose −5 temperature per turn from the WET/FLOODED terrain passive. Over 3 turns, every unit in the zone drops −15 without the Hydromancer spending additional AP. The Cryomancer can then enter range and hit COLD units (−15) with Glacial Spike (−30 temperature, reaches −45 SUPERCOOLED in one heavy cast) or use Blizzard Field to mass-freeze the entire FLOODED zone for immediate FROZEN. The Hydromancer player should cast Flood Zone two to three turns before the Cryomancer activation is planned — the temperature decay does the setup work passively while both Mancers conserve AP for their combo turn.
 
 ---
 
