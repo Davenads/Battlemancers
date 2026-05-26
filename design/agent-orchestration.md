@@ -539,15 +539,15 @@ These rules are mandatory for all agents:
 
 | Agent | Wave | Status | Branch | Notes |
 |---|---|---|---|---|
-| win-conditions | 1 | PENDING | agent/win-conditions | |
-| pyromancer-design | 1 | PENDING | agent/pyromancer-design | |
-| hydromancer-design | 1 | PENDING | agent/hydromancer-design | |
-| grid-system | 1 | PENDING | agent/grid-system | |
-| sim-core | 1 | PENDING | agent/sim-core | |
-| data-schemas | 1 | PENDING | agent/data-schemas | |
-| mancers-group-a | 2 | BLOCKED | agent/mancers-group-a | Needs Wave 1 merged |
-| mancers-group-b | 2 | BLOCKED | agent/mancers-group-b | Needs Wave 1 merged |
-| element-resolver | 2 | BLOCKED | agent/element-resolver | Needs grid-system + sim-core |
-| status-system | 2 | BLOCKED | agent/status-system | Needs sim-core |
-| pathfinding | 2 | BLOCKED | agent/pathfinding | Needs grid-system |
-| test-framework | 2 | BLOCKED | agent/test-framework | Needs all Wave 1 code |
+| win-conditions | 1 | COMPLETE | agent/win-conditions | Merged to master |
+| pyromancer-design | 1 | COMPLETE | agent/pyromancer-design | Merged to master |
+| hydromancer-design | 1 | COMPLETE | agent/hydromancer-design | Merged to master |
+| grid-system | 1 | COMPLETE | agent/grid-system | Merged to master |
+| sim-core | 1 | COMPLETE | agent/sim-core | Merged to master; AP fix applied (2→6) |
+| data-schemas | 1 | COMPLETE | agent/data-schemas | Merged to master |
+| mancers-group-a | 2 | RUNNING | agent/mancers-group-a | cryo, geo, aero, electromancer |
+| mancers-group-b | 2 | RUNNING | agent/mancers-group-b | necro, chrono, photo, psychomancer |
+| element-resolver | 2 | RUNNING | agent/element-resolver | ElementResolver.cs + interaction JSON |
+| status-system | 2 | RUNNING | agent/status-system | StatusEffect, StatusManager, StatusTick |
+| pathfinding | 2 | RUNNING | agent/pathfinding | MovementRange, LineOfSight, utils |
+| test-framework | 2 | RUNNING | agent/test-framework | NUnit suites for all simulation code |
