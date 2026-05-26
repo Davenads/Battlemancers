@@ -1,5 +1,15 @@
 # Battlemancers — CLAUDE.md
 
+## Agent Orchestration
+
+This project uses **multi-agent parallel development** with git worktrees. Before starting any development work, read:
+
+> **`design/agent-orchestration.md`** — full agent roster, worktree setup, task specification format, file ownership map, and orchestrator runbook
+
+12 subagents operate across 2 waves. Each agent owns exclusive file paths (no overlap) and pushes to its own branch. The orchestrator merges waves and spawns the next. **Do not modify files outside your assigned ownership domain.**
+
+---
+
 ## Project Overview
 
 **Battlemancers** is a skill-based, turn-based tactical strategy game built around teams of elemental mages called Mancers. Players build squads from a roster of 19 Mancer archetypes and battle on destructible isometric battlefields where spells reshape terrain, create persistent elemental states, and chain into devastating cross-element combos.
@@ -143,7 +153,8 @@ Battlemancers/
 │   │   └── map-design.md            # Map design principles, biome tile sets
 │   ├── game-modes.md                # Campaign, skirmish, draft, multiplayer
 │   ├── warbands.md                  # List building, factions, points, activation economy
-│   └── tech-stack.md                # Full engine/library/architecture recommendation
+│   ├── tech-stack.md                # Full engine/library/architecture recommendation
+│   └── agent-orchestration.md      # Multi-agent dev model, worktrees, agent roster, runbook
 ├── src/
 │   ├── core/                        # Grid, simulation loop, turn manager
 │   ├── mancers/                     # Mancer base class, per-mancer spell data
