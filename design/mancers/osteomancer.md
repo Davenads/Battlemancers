@@ -115,6 +115,8 @@ When a unit is simultaneously BRITTLE and FROZEN:
 | **Effects Applied** | Deals 14 physical damage. Tile beneath target becomes `OSSIFIED_GROUND` (4-turn duration; movement cost 1.5; +1 adjacent armor to nearby units). If the target is BRITTLE: deals 21 damage (14 × 1.5) and BRITTLE absorbs one hit (1 of 2 BRITTLE charges consumed). If the target is FROZEN: deals 35 damage (14 × 2.5 SHATTER multiplier; FROZEN removed; SHATTER triggers). If the target is both BRITTLE and FROZEN: deals 52 damage (14 × 3.75 SHATTER) and both BRITTLE and FROZEN are removed. |
 | **Terrain Interaction** | Hitting BONE_SPIRE: bone-on-bone resonance — the Spire takes 7 damage (50% of Bone Shard's base; physical hitting bone construct). Hitting OSSIFIED_GROUND tile (target on existing Ossified): extra bone fragments erupt — unit takes +4 bonus damage. Hitting FROZEN unit: SHATTER triggers as above. Hitting WET terrain: Ossified Ground formed on WET tile — bone on wet ground; Ossified Ground has reduced duration (2 turns instead of 4). |
 
+**Temperature Effects:** **0 temperature change.** Bone Shard is a physical projectile — no heat or cold component.
+
 **Design note:** Bone Shard is the Osteomancer's workhorse damage spell — repeatable, no cooldown, and capable of dealing 52 damage in the BRITTLE + FROZEN SHATTER scenario. Against un-BRITTLE targets it is a steady 14-damage poke, comparable to other 2-AP Quick spells. Its primary value is threefold: generating Ossified Ground terrain for the armor bonus, consuming BRITTLE charges to deal amplified damage, and serving as the SHATTER delivery vehicle when Cryomancer has established FROZEN. Two Bone Shards per activation (2 + 2 = 4 AP) plus 2 AP movement is a standard activation pattern.
 
 ---
@@ -133,6 +135,8 @@ When a unit is simultaneously BRITTLE and FROZEN:
 | **Element** | Physical/Bone |
 | **Effects Applied** | **If targeting an ally (including self):** Applies `BONE_ARMOR` — a shield absorbing 15 flat physical damage (shield depletes before HP loss; refreshes to 15 if re-cast while still active). Duration: until depleted or 4 turns maximum. **If targeting an enemy:** Applies `BRITTLE` — incoming physical damage +50% for the next 2 physical hits. Also applies `CALCIFIED` status (per status-effects.md: movement –2, physical armor +15% as a double-edged effect; 2-turn duration). Duration: 2 turns or until 2 BRITTLE triggers resolve, whichever comes first. |
 | **Terrain Interaction** | Casting on self while standing on OSSIFIED_GROUND: BONE_ARMOR shield value increases to 20 (the bone fragments reinforce the armor). Casting BRITTLE on an enemy standing on ICE_TILE: BRITTLE + FROZEN prerequisite — if a Cryomancer freezes this BRITTLE unit next, SHATTER triggers. Casting on an ally standing in NECROTIC_ASH: the BONE_ARMOR shield has no interaction with necrotic terrain — the ally still takes necrotic DoT but their physical damage is absorbed. |
+
+**Temperature Effects:** **0 temperature change.** Calcify manipulates bone structure — structural, not thermal. BRITTLE is a physical debuff; BONE_ARMOR is a physical buff. Neither has a temperature component.
 
 **Design note:** Calcify is the Osteomancer's multi-function utility spell. Its dual targeting nature — ally armor buff or enemy brittle debuff — makes every cast a decision: does the team need damage reduction right now (protect a low-HP ally) or does the next turn's damage spike need amplification (brittle a key enemy). At 2 AP with 1-turn cooldown, it can be used every other activation. The CALCIFIED status applied alongside BRITTLE is double-edged deliberately: CALCIFIED enemies are slower (easier to catch and re-apply stacks to) but also tankier (the +15% physical armor partially offsets the BRITTLE +50% physical vulnerability). Net effect: BRITTLE still wins by a wide margin (+50% vs. +15% mitigation = net +35% physical damage).
 
@@ -153,6 +157,8 @@ When a unit is simultaneously BRITTLE and FROZEN:
 | **Effects Applied** | Deals 8 physical damage. Applies `BRITTLE` immediately (no CALCIFIED; this is a pure brittle application). BRITTLE from Brittle Touch lasts for 2 physical hits OR 3 turns (slightly longer duration than Calcify's BRITTLE — the direct skeletal injection makes it more persistent). |
 | **Terrain Interaction** | If used on a unit standing on OSSIFIED_GROUND: the bone fragments on the ground channel additional bone energy into the Brittle Touch — applies BRITTLE for 3 physical hits instead of 2 (3-hit BRITTLE). If used on a FROZEN unit: Brittle Touch is a physical hit — SHATTER triggers immediately on the touch (8 × 2.5 = 20 damage from SHATTER; FROZEN removed), then BRITTLE is also applied to the now-unfrozen unit. |
 
+**Temperature Effects:** **0 temperature change.** The BRITTLE debuff is structural — bone degradation, not thermal. However, note the critical synergy: BRITTLE + SUPERCOOLED is the highest physical damage multiplier combination available before FROZEN SOLID. BRITTLE (×1.5 physical) stacks multiplicatively with SUPERCOOLED BRITTLE modifier (×1.5 physical) = ×2.25 total. BRITTLE + FROZEN SOLID (SHATTER ×2.5) = ×3.75 — the maximum single-hit physical damage multiplier in the game.
+
 **Design note:** Brittle Touch is the cheapest BRITTLE application — 1 AP for guaranteed BRITTLE at melee range. Its low cost means it can be used in the same activation as Calcify (2 AP Calcify on an ally + 1 AP Brittle Touch on an adjacent enemy + 1 AP movement + 2 AP Bone Shard = 6 AP: full-turn efficient). The melee requirement limits it to scenarios where the Osteomancer is already adjacent to an enemy — which, given the Osteomancer's slow 3-tile move range, usually means the enemy has advanced to melee range (not ideal) or the Osteomancer has closed deliberately for a high-value BRITTLE application (the target is worth the risk).
 
 ---
@@ -171,6 +177,8 @@ When a unit is simultaneously BRITTLE and FROZEN:
 | **Element** | Physical/Bone |
 | **Effects Applied** | Places a `BONE_SPIRE` construct on the target tile (see Bone Constructs section for full properties). If a unit is on the target tile at placement, they take 6 damage and are displaced 1 tile away from the Spire (the bone eruption pushes them back). Units adjacent to the placed Spire gain +1 physical armor immediately (cover bonus activates on placement). Cannot place on OBSIDIAN, FLOODED, or existing construct tiles. |
 | **Terrain Interaction** | Placing on WET terrain: the Spire roots in wet ground but has reduced HP (30 instead of 40) — moisture weakens the bone fusion. Placing on TOXIC_TERRAIN: the Spire is infused with toxin — bone is tainted; units adjacent to the TOXIC Bone Spire take 1 POISONED stack per turn from proximity (the toxin seeps through the bone into the air). Placing on ON_FIRE: the Spire chars — it has full HP but also emits heat; units moving adjacent to BURNING Bone Spire take 3 fire damage per tile entered adjacent. Placing on MUD: the Spire sinks slightly — reduced LOS block (1-tile height instead of 2) but gains additional HP (50 instead of 40) from reinforced ground anchoring. Placing on ELEVATED tile: full 2-tile height becomes 3-tile effective (the elevated terrain adds to the Spire height), extending its LOS block and granting +2 physical armor to adjacent units. |
+
+**Temperature Effects:** **0 temperature change** from placement itself. Bone constructs are thermally inert — they neither absorb nor radiate heat under normal conditions. See Temperature Interaction Notes for how extreme temperature environments interact with bone constructs visually and mechanically.
 
 **Design note:** Bone Spire is the Osteomancer's primary terrain investment. At 4 AP and a 2-turn cooldown, it is not spammable but is deployable every 2-3 activations while still casting other spells. Two Bone Spires side by side create a 2-tile impassable bone wall with full LOS block — effectively a narrow chokepoint the opponent must route around or destroy. Positioning Bone Spires to channel enemy movement toward the Osteomancer's allied Mancers (or toward TOXIC_TERRAIN, CHARGED tiles, or other hazards) is the core spatial skill of Osteomancer play.
 
@@ -392,3 +400,56 @@ This is the game's highest single-hit physical damage combo and the explicit des
 **Silenced Osteomancer:** BONE_ARMOR cannot be applied to allies and BRITTLE cannot be applied to enemies if the Osteomancer is Silenced. Bone Spire Placement is also disabled. A Silenced Osteomancer can only move — its entire kit is spell-delivery. Sonimancer Silence (ironic: the primary construct-counter also has the best Silence) is the most devastating status against the Osteomancer. Unlike the Floramancer (which at least maintains existing terrain while silenced), the Osteomancer's existing constructs remain but no new constructs can be placed and no BRITTLE can be applied during silence.
 
 **HEAVY enemies (Gravimancer):** HEAVY status increases fall damage ×2 and prevents displacement — it also reduces the push effect from Bone Fortress and other knockback interactions. HEAVY enemies cannot be repositioned by Bone Fortress's push, meaning the construct-placement + push combo does not clear the area around the fortress if the opponent has HEAVY units in proximity. This is a moderate rather than hard counter — HEAVY makes the push less effective, not the constructs themselves.
+
+---
+
+## 9. Temperature Interaction Notes
+
+Bone is thermally inert — neither a conductor nor an insulator in meaningful gameplay terms. Osteomancer spells apply 0 temperature change. However, bone constructs and the BRITTLE/BONE_ARMOR mechanics interact with temperature in several important ways.
+
+### BRITTLE + Temperature Synergy (Core Interaction)
+
+The Osteomancer's BRITTLE debuff stacks multiplicatively with temperature-triggered damage modifiers. This is the primary cross-system interaction for the Osteomancer and the foundation of the Osteomancer + Cryomancer combo's theoretical ceiling.
+
+**Multiplier table:**
+
+| Condition | Physical Damage Multiplier |
+|---|---|
+| BRITTLE only (neutral temperature) | ×1.5 |
+| SUPERCOOLED only (-31 to -60) | ×1.5 (BRITTLE modifier from cold) |
+| BRITTLE + SUPERCOOLED | ×1.5 × ×1.5 = **×2.25** |
+| FROZEN SOLID (SHATTER) only | ×2.5 |
+| BRITTLE + FROZEN SOLID (SHATTER) | ×1.5 × ×2.5 = **×3.75** |
+
+**×3.75 is the highest single-hit physical damage multiplier achievable in the game.** The Osteomancer is the exclusive source of BRITTLE; Cryomancer is the primary source of FROZEN SOLID.
+
+**Optimal combo sequence for ×3.75:**
+1. Cryomancer casts Glacial Spike: -30 temperature to target
+2. Cryomancer casts Frost Bolt: -20 temperature to target → total -50, approaching FROZEN SOLID threshold (need -61)
+3. Cryomancer casts one more Frost Bolt or Ice Lance: crosses -61 → FROZEN SOLID applied
+4. Osteomancer casts Brittle Touch (1 AP, melee): BRITTLE applied to FROZEN SOLID target
+5. Osteomancer casts Bone Shard (2 AP): SHATTER triggers (×2.5 from FROZEN) × BRITTLE (×1.5) = ×3.75 × base 14 = 52.5 → 53 damage from a single 2-AP spell
+
+Against a 100-HP Mancer, 53 damage in one cast (following setup) is near-lethal after any prior damage. With Shatter Expertise passive: (14 × 3.75) + 10 = 63 damage.
+
+### Bone Constructs in Extreme Temperatures
+
+Bone Spires and Bone Walls are structural terrain objects — they do not take fire DoT, do not freeze, and are not affected by temperature in mechanical terms. However, extreme ambient temperatures alter their appearance, providing VFX hints to players about the board's thermal state:
+
+- **OVERHEATED terrain (≥ +61):** Bone constructs adjacent to or within OVERHEATED zones become "Scorched Bone" — blackened, cracked surfaces with heat shimmer. Mechanics identical to standard Bone Spire/Wall. VFX hint: the board is dangerously hot in this zone.
+- **FROZEN terrain (FROZEN SOLID zones, PERMAFROST):** Bone constructs in cold zones become "Frosted Bone" — white rime coating, ice crystal formations in the gaps. Mechanics identical to standard Bone Spire/Wall. VFX hint: this is a Cryomancer-controlled zone.
+
+These are cosmetic states only — no mechanical changes to HP, LOS block, or cover bonus. They serve as clear visual signals to both players about which Mancers have been active in which areas of the board.
+
+### Ossified Ground + Temperature Interactions
+
+Ossified Ground (terrain state left by Bone Shard impacts and destroyed Bone Spires) provides +1 armor to adjacent units. In temperature-active zones, this armor interacts with temperature damage:
+
+- **Ossified Ground near BURNING zones:** A unit in or adjacent to ON_FIRE terrain takes 5 HP/turn BURNING DoT. The +1 armor from Ossified Ground adjacency reduces physical damage but does **not** reduce BURNING DoT (BURNING is elemental fire damage, not physical). However, if an OVERHEATED enemy attempts to close to melee through Ossified Ground, their physical attacks are reduced by the cover armor while the DoT continues — the Osteomancer can maintain a defensive Ossified Ground zone near a fire front to help allies withstand enemy physical pressure while BURNING terrain handles the attrition damage.
+- **Effective DoT offset example:** An ally adjacent to Ossified Ground standing near ON_FIRE terrain takes 5 fire DoT/turn. An enemy in the same position also takes 5 fire DoT but takes -1 from the armor on physical hits. In a prolonged engagement where both sides absorb DoT, the Osteomancer's allies have better physical survivability in the zone while fire damage is equalized.
+
+### BONE_ARMOR + HOT Status
+
+Units that are HOT (+31 to +60 temperature) are SLOWED — their activation efficiency is reduced. A HOT unit with BONE_ARMOR active is partially insulated against the physical consequences of their reduced mobility: they cannot move as far (SLOWED), but the BONE_ARMOR absorbs physical hits while they reposition. BONE_ARMOR does not reduce the SLOWED movement penalty, but it does mean that a HOT SLOWED unit taking physical hits while they work through the SLOWED state does not also suffer unmitigated physical damage.
+
+**Strategic use:** Osteomancer as support for Pyromancer. The Pyromancer creates fire zones that drive enemy temperature toward OVERHEATED — but the Osteomancer's allies crossing those same zones also accumulate temperature. Applying BONE_ARMOR (via Calcify) to Pyromancer-allied units advancing through HOT terrain gives them physical damage protection while the HOT status wears off via temperature decay. The allies can push through the HOT zone with armor intact, absorbing the inevitable physical hits from enemies while the environment handles the DoT side of the engagement.

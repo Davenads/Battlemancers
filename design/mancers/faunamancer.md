@@ -60,6 +60,8 @@ Beast companions are a separate unit category unique to the Faunamancer. They ar
 | **Primary Ability** | Track — reveals all enemy units within 4 tiles of the Scout Wolf's position (removes Fog of War and STEALTH within range); passive, always active |
 | **Secondary Ability** | Sprint (1 AP command) — Scout Wolf moves up to 7 tiles this action instead of 5 (one-use sprint; recharges each Faunamancer activation) |
 
+**Temperature Profile:** Scout Wolf starts at **+5 temperature** (warm-blooded, active hunter with elevated body heat). Wolf bite attacks: **0 temperature change** to targets — biting does not thermally affect the bitten unit.
+
 **Role:** The Scout Wolf is the Faunamancer's primary harassment and information unit. Fast, fragile, and useful even when not attacking — simply positioning the Scout Wolf near enemy formations reveals their composition and movement to the Faunamancer player. The Track ability removes the opponent's ability to use cover or concealment near the Wolf, making it a mobile vision ward that the opponent must spend AP to remove. Its low armor means it dies quickly to focused fire; it is expendable but high-value while alive.
 
 **Pack Tactics interaction:** A Scout Wolf attacking the same unit as the Faunamancer on the same turn both deal +25% damage. Scout Wolf's 10-damage bite becomes 12.5 (13 rounded). The Faunamancer's spell damage also increases +25% against that target. Because the Scout Wolf can reach targets 5 tiles away and sprint 7, it can coordinate attacks with the Faunamancer across a significant distance.
@@ -77,6 +79,8 @@ Beast companions are a separate unit category unique to the Faunamancer. They ar
 | **Primary Ability** | Boar Wall — Siege Boar occupies its tile and adjacent tiles as blocking terrain. Units cannot move through the Siege Boar's tile; units pushed by displacement spells (Tidal Surge, Gravimancer) are stopped by the Boar if they would pass through its tile |
 | **Secondary Ability** | Charge (2 AP command) — Siege Boar moves up to 5 tiles in a straight line; the first unit in its path takes 20 damage and is knocked back 2 tiles. If the knocked-back unit collides with a wall or another unit, both take 8 collision damage |
 
+**Temperature Profile:** Siege Boar starts at **+10 temperature** (warm-blooded; heavy muscle mass generates significant body heat). Gore attacks: **0 temperature change**. Charge attack: **+5 temperature** to the struck unit — the kinetic impact of a full charge generates heat from friction and physical trauma.
+
 **Role:** The Siege Boar is the Faunamancer's tank and disruption unit. High HP and armor make it resistant to focused small-arms fire, and Boar Wall makes it a physical obstacle — enemies routing around the Siege Boar lose movement efficiency, and a Siege Boar positioned in a chokepoint is a 65-HP obstacle that costs the opponent AP to destroy before advancing. The Charge ability delivers the highest single-hit damage from any Faunamancer companion and produces knockback displacement — knocking a unit into a wall or secondary unit for collision damage. Charge requires 2 AP to command, which is the highest cost action the Faunamancer can spend on any companion.
 
 **Pack Tactics interaction:** Siege Boar's 16-damage Gore becomes 20 when Pack Tactics fires. When the Siege Boar Charges (2 AP, 20 damage) with Pack Tactics active, the charge hits for 25 damage — plus collision damage if applicable. A Faunamancer spell + Siege Boar Charge on the same target in one activation deals (Faunamancer spell at +25%) + 25 damage from Charge — one of the highest combined single-activation damage outputs available to the Faunamancer.
@@ -93,6 +97,8 @@ Beast companions are a separate unit category unique to the Faunamancer. They ar
 | **Attack** | Venom Bite — melee, 12 damage + applies 1 stack of `POISONED` (3 HP/turn; 3-turn duration) |
 | **Primary Ability** | Serpentine — Verdant Serpent ignores movement cost penalties from VINES, OVERGROWTH, and MUD terrain (it slithers through undergrowth naturally) |
 | **Secondary Ability** | Venom Spit (1 AP command, 3-tile range) — ranged attack; 8 damage + 2 stacks of `POISONED`; single target; cooldown: 1 Faunamancer activation |
+
+**Temperature Profile:** Verdant Serpent starts at **-5 temperature** (cold-blooded reptile; ambient heat absorption rather than internal generation). Venom Bite attacks: **0 temperature change** — venom is chemically active but thermally neutral. Venom Spit: **0 temperature change**.
 
 **Role:** The Verdant Serpent is the Faunamancer's sustained DPS and poison delivery companion. Its Venom Bite and Venom Spit both apply POISONED stacks, making it an effective Toximancer-adjacent damage escalator. A Verdant Serpent cycling Venom Spit every activation and following up with Venom Bite can apply 3 POISONED stacks to a single target over two turns — 9 HP/turn DoT — without the Faunamancer spending any spell AP directly on poison. Against already-POISONED targets from Toximancer or Floramancer, additional Serpent stacks accelerate toward the DEBILITATED threshold. Serpentine means the Verdant Serpent can advance through Floramancer VINES zones without movement penalty — a significant mobility advantage when the Floramancer has seeded the approach corridor.
 
@@ -133,6 +139,8 @@ The Faunamancer's four base spells cover distinct combat functions:
 | **Effects Applied** | Applies `BESTIAL_MARK` status to target. While BESTIAL_MARK is active: all beast companion attacks against the marked target deal +4 bonus damage (flat, added after Pack Tactics calculation). Duration: 3 turns. Bestial Mark can be refreshed (recasting resets duration). Multiple Bestial Marks do not stack — a second cast simply refreshes. |
 | **Terrain Interaction** | None; purely a unit-status application. Applying Bestial Mark to a unit on VINES terrain: no terrain interaction, but the ROOTED unit cannot flee the approaching beasts. Applying to a unit on TOXIC_TERRAIN: the marked unit is taking POISONED stack accumulation passively — combined with Serpent's Venom Bite, the target reaches DEBILITATED faster. |
 
+**Temperature Effects:** **0 temperature change.** Bestial Mark is a nature-bond effect with no thermal component.
+
 **Design note:** Bestial Mark is the Faunamancer's cheapest AP spend and the ideal activation opener — 1 AP marks the highest-priority target, then the remaining 5 AP is spent on movement, beast commands, and one additional spell. At +4 damage per beast attack, a Siege Boar Gore against a marked target deals 16 + 4 = 20 base (before Pack Tactics), and a Pack Tactics Siege Boar Gore against a marked target deals 16 × 1.25 + 4 = 24 damage. The flat +4 stacks additively with Pack Tactics' multiplicative bonus.
 
 ---
@@ -151,6 +159,8 @@ The Faunamancer's four base spells cover distinct combat functions:
 | **Element** | Nature/Beast |
 | **Effects Applied** | All active beast companions gain `PACK_HOWL` buff: +3 damage to all attacks; +1 Move Range; duration 2 turns. The Faunamancer herself also gains PACK_BONUS as listed in status-effects.md: +2 attack per adjacent companion (inherent status, always present; Pack Howl does not amplify this further). |
 | **Terrain Interaction** | None; buff applies globally. PACK_HOWL-buffed companions on NATURAL tiles (if Verdant Pact faction): also gain the +1 movement from Terrain Bond (total +2 movement on natural tiles for those 2 turns — the Terrain Bond movement stacks with Pack Howl's movement bonus). |
+
+**Temperature Effects:** **0 temperature change.** Pack Howl is a morale and instinct enhancement with no thermal component.
 
 **Design note:** Pack Howl converts a moderate activation into a multiplier for everything the beasts do in the following 2 turns. The 2-AP cost and 2-turn cooldown mean it cannot be used every activation — it should be timed for when the beasts are in position to make multiple attacks, maximizing the turns where the damage and movement bonus applies. Pack Howl + Bestial Mark + Pack Tactics on the same target is the Faunamancer's highest single-target damage output: (damage × 1.25 + 4 flat + 3 flat) from each beast, simultaneously.
 
@@ -171,6 +181,8 @@ The Faunamancer's four base spells cover distinct combat functions:
 | **Effects Applied** | The targeted unit (Faunamancer or companion) gains Predator's Sense for 2 turns: gains enhanced vision (reveals all STEALTHED, HIDDEN, and CONCEALED enemy units within 5 tiles of the target); all incoming ranged attacks against the target have a 20% miss chance added (instinctive evasion); the target ignores terrain-based concealment (can target units in OVERGROWTH, STEAM_CLOUD, or behind cover as if they were in the open) within 5 tiles. |
 | **Terrain Interaction** | Predator's Sense allows the target to effectively ignore BLINDED status from STEAM_CLOUD for the duration — their beast instincts override sensory blindness. If the target is a Scout Wolf, the Scout Wolf's existing Track ability plus Predator's Sense creates a dual-layer detection: all enemies within 4 tiles are visible (Track) AND STEALTHED/CONCEALED units within 5 tiles are also visible, and ranged attacks have 20% miss chance. |
 
+**Temperature Effects:** **0 temperature change.** Predator's Sense is a perception enhancement with no thermal component.
+
 **Design note:** Predator's Sense is a 1-AP utility spell that serves multiple functions — it can protect the Scout Wolf from ranged units that would otherwise target it safely from concealment, or it can be cast on the Faunamancer herself to allow attacking into STEAM_CLOUD zones that would otherwise blind her. The miss-chance component is reactive and defensive: it does not prevent damage but meaningfully reduces consistent chip-fire from enemy ranged units against a key asset. At 1 AP, it is cheap enough to slot into any activation without sacrificing significant spell or command budget.
 
 ---
@@ -189,6 +201,8 @@ The Faunamancer's four base spells cover distinct combat functions:
 | **Element** | Nature/Beast |
 | **Effects Applied** | Summons a beast companion of the player's choice (Scout Wolf, Siege Boar, or Verdant Serpent) on the target tile. The summoned beast is active from the next Faunamancer activation. If the companion limit (2 at base; 3 with upgrade) is already reached, Call of the Wild cannot be cast — the companion slot must be open. Replacing a dead companion: if a beast has been killed, Call of the Wild can refill that slot (the cooldown begins immediately after the previous beast dies, effectively penalizing repeated beast loss). |
 | **Terrain Interaction** | Cannot summon onto OBSIDIAN, FLOODED, or ON_FIRE terrain (the beast refuses to appear in impassable or actively harmful terrain). Summoning onto VINES terrain: the summoned beast appears ROOTED (1 turn) — the vines catch the newly materialized beast briefly. Summoning onto NATURAL tiles (Verdant Pact): the beast appears with Terrain Bond movement bonus active immediately. |
+
+**Temperature Effects:** **0 temperature change.** Summoning a beast companion has no thermal effect on the environment.
 
 **Design note:** Call of the Wild is the Faunamancer's mid-match recovery spell. At 3 AP and a 3-turn cooldown, it is not fast enough to replace beasts instantly — losing a beast meaningfully sets the Faunamancer back, because she will spend 3 AP and 3 turns of cooldown before the replacement contributes. This deliberate cost discourages reckless beast usage. Choosing which beast to summon is a meaningful decision: Scout Wolf for vision in uncertain mid-games, Siege Boar for a chokepoint that needs holding, Verdant Serpent for ongoing poison stacking against high-HP targets.
 
@@ -370,3 +384,56 @@ Grave Husks as a meat shield screen for the Faunamancer works as a concept — H
 **Silenced Faunamancer:** A Silenced Faunamancer cannot command beasts (commanding is a spell action). Without AP-spend commands, beasts hold position. An opponent who Silences the Faunamancer effectively disables the entire beast pack for that turn — no commands, no attacks, no repositioning. This is the single most effective status effect against the Faunamancer.
 
 **Ranged focus on Scout Wolf:** The Scout Wolf's 35 HP with 0 armor is trivially eliminated by 2-3 Crossbow Corps shots or a single moderate spell. An opponent who prioritizes the Scout Wolf first loses the track information advantage and removes the Faunamancer's primary scouting tool before she establishes board presence. Scout Wolf replacement takes 3 turns — the information blackout is meaningful.
+
+---
+
+## 10. Temperature Interaction Notes
+
+Faunamancer spells are thermally neutral (0 temperature change). However, beast companions have inherent thermal properties tied to their biology, and those properties create meaningful interactions with temperature-active boards.
+
+### Beast Temperature Profiles Summary
+
+| Beast | Starting Temperature | Notes |
+|---|---|---|
+| Scout Wolf | +5 (warm-blooded) | Active metabolism; bite attacks: 0 temp change |
+| Siege Boar | +10 (warm-blooded, high mass) | Heavy muscle generates heat; Gore: 0 temp; Charge: +5 temp to target |
+| Verdant Serpent | -5 (cold-blooded) | Reptile; ambient temperature matching; Venom attacks: 0 temp change |
+
+### Cold-Blooded Serpent Advantage
+
+The Verdant Serpent is the Faunamancer's cold-weather specialist. In environments where FROZEN terrain or cold-Mancer activity is spreading temperature downward (PERMAFROST tiles apply -10/turn to living units on them; Cryomancer spells regularly reduce board temperatures), the cold-blooded Serpent is largely unaffected.
+
+A Serpent starting at -5 is already in the COLD band (-1 to -30). It is close to the -31 SUPERCOOLED threshold but benefits from being cold-blooded — the SUPERCOOLED SLOWED debuff and BRITTLE modifier apply to warm-blooded creatures because their systems fight against the cold. For the Serpent, being at -31 to -60 is its natural cold-blooded operating range: **the SUPERCOOLED debuffs (SLOWED and BRITTLE) do not apply to cold-blooded beasts.** Serpents do not suffer SLOWED or BRITTLE from SUPERCOOLED temperature because their physiology is adapted to cold.
+
+When other beasts (Scout Wolf, Siege Boar) are struggling with SLOWED movement from cold terrain, the Serpent continues operating at full effectiveness.
+
+### OVERHEATED Siege Boar
+
+If the Siege Boar reaches OVERHEATED (temperature ≥ +61) — from standing on BURNING terrain, absorbing fire spells, or the Thermomancer/Pyromancer driving the board's temperature — its Charge attack upgrades:
+
+- Standard Charge at normal temperature: **+5 temperature** to struck unit
+- Charge while OVERHEATED: **+15 temperature** to struck unit (the Boar is essentially a flaming battering ram, transferring significant heat on impact)
+
+**Faunamancer + Pyromancer combo:** Pyromancer converts a zone to ON_FIRE, raising the Siege Boar's temperature via terrain contact toward +61. The Boar stands in or advances through the fire zone (its 65 HP and 2 Armor make it more survivable in fire than other beasts). Once OVERHEATED, command the Charge into an enemy cluster — the strike deals 20 base damage + Pack Tactics if the Faunamancer also attacks + +15 temperature to the primary target + the ON_FIRE spreading from the Boar's momentum through burning terrain. The primary Charge target can reach WARM or HOT temperature from a single OVERHEATED Boar charge, further enabling Pyromancer follow-up.
+
+Note: the OVERHEATED Boar itself takes the standard BURNING DoT (5 HP/turn) from being at OVERHEATED. The Faunamancer should command the Charge and then reposition the Boar off burning terrain the same activation to manage the DoT.
+
+### Pack Tactics + SUPERCOOLED Targets
+
+Pack Tactics (+25% damage when Faunamancer and a beast both target the same unit) now interacts with the SUPERCOOLED temperature status:
+
+When a Pack Tactics coordinated strike hits a SUPERCOOLED target (-31 to -60), the attack benefits from both modifiers:
+- Pack Tactics: ×1.25 damage
+- SUPERCOOLED BRITTLE modifier: ×1.5 physical damage
+
+Combined, Pack Tactics on a SUPERCOOLED target with physical attacks: ×1.25 × ×1.5 = **×1.875 effective damage multiplier**. This is the highest Pack Tactics output outside of a full OVERHEATED Boar Charge scenario, and potentially the highest-damage coordinated strike available to the Faunamancer outside of Pyromancer/Thermomancer combo support.
+
+The Faunamancer + Cryomancer is therefore a high-value cross-Mancer pair: Cryomancer drives enemies to SUPERCOOLED while the Faunamancer coordinates Pack Tactics strikes for maximum physical amplification.
+
+### Beast Placement and Temperature Awareness
+
+Beasts are organic creatures and are fully subject to temperature effects from terrain. Key risks:
+
+- **Scout Wolf (+5 starting temp) on BURNING terrain:** The Wolf starts warm and BURNING terrain applies +5 temperature per turn of contact. Starting at +5, the Wolf needs 56 temperature points to reach OVERHEATED. Three turns standing on a BURNING tile chain (3 × ~17 temp/turn) can push the Wolf into the OVERHEATED band — at which point it takes BURNING DoT (5 HP/turn) in addition to any fire terrain damage. A Scout Wolf in fire for 3 turns without being commanded off the tile is near-dead via DoT. Always command beasts off BURNING terrain immediately.
+- **Siege Boar (+10 starting temp):** Similar risk but higher HP makes it more survivable. The Boar can tolerate 2-3 turns on BURNING terrain before OVERHEATED DoT becomes critical, giving the Faunamancer a narrow window to use fire-zone positioning strategically.
+- **Verdant Serpent (-5 starting temp):** The cold-blooded Serpent is at -5 and absorbs heat from BURNING terrain like any unit, but it takes longer to reach OVERHEATED (starting 66 points away). The Serpent is the most fire-safe beast for brief incursions into burning zones.

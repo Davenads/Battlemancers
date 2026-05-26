@@ -84,6 +84,8 @@ A Remnant token is a supercharged corpse resource that the Necromancer can consu
 | **Terrain Interaction** | Hitting a tile with an existing corpse causes the corpse to pulse with necrotic energy: all units adjacent to the corpse tile take 4 Necrotic damage. The corpse quality is not degraded by this interaction. |
 | **Special Interactions** | See terrain interaction table in Section 4. |
 
+**Temperature Effects:** **-5 temperature** to the hit unit. Necrotic energy carries a minor death chill — the bolt leeches warmth from the target. This cooling is subtle but cumulative across multiple casts.
+
 **Design note:** Necrotic Bolt is the Necromancer's workhorse and its primary DEATH_MARK applicator. At 2 AP with no cooldown, it can be used twice per activation, applying DEATH_MARK to two separate targets or refreshing an existing mark and dealing bonus damage on the second cast. The corpse upgrade on Death Mark kill is a meaningful mid-match economic incentive: the Necromancer wants to ensure that its Death Mark targets die while marked, so it will typically mark a high-threat unit (one the rest of the warband is targeting anyway), guaranteeing the Veteran Corpse bonus when that unit falls.
 
 ---
@@ -103,6 +105,8 @@ A Remnant token is a supercharged corpse resource that the Necromancer can consu
 | **Effects Applied** | Consumes 1 corpse at target tile; summons a reanimated unit based on corpse quality (see Corpse Economy table). Risen Shambler (from Standard Corpse): 30 HP, 3 Move, melee attack 8 damage. Risen Veteran (from Veteran Corpse): 50 HP, 4 Move, melee attack 12 damage. Abyssal Horror (from Remnant Token, costs 4 AP instead): 65 HP, 4 Move, necrotic cleave 15 damage to all adjacent. Cinder Wraith (from Charred Remains): 20 HP, 5 Move, melee 6 damage + applies BURNING on hit. Summon activates on the Necromancer's next turn. |
 | **Terrain Interaction** | Raising a summon on a TOXIC_TERRAIN tile grants the summon 1 POISONED stack immunity — it takes no poison tick damage on that tile for 2 turns (necrotic affinity resists toxins briefly). Raising on an ON_FIRE tile costs the Necromancer 5 HP (casting through fire) but does not degrade the corpse quality. |
 | **Special Interactions** | See terrain interaction table in Section 4. |
+
+**Temperature Effects:** **0 temperature change** to living units. Raising a corpse does not directly affect other units' temperature. However, the summoned undead unit itself starts at **-10 temperature** (undead run cold — their necrotic biology does not generate body heat).
 
 **Design note:** Raise Shambler is the Necromancer's defining spell and the reason corpse management matters. The 1-turn cooldown means the Necromancer can reanimate at most every other activation, creating a deliberate pacing that rewards sequencing: turn 1, combat begins, Necrotic Bolts applied; turn 2-3, first deaths, first Raise; turn 4+, corpse pipeline sustaining 2-3 active summons. The Abyssal Horror variant at 4 AP is the Necromancer's most powerful summon but requires a Remnant Token — Ashen Covenant exclusive fuel that fundamentally changes the Necromancer's power ceiling.
 
@@ -124,6 +128,8 @@ A Remnant token is a supercharged corpse resource that the Necromancer can consu
 | **Terrain Interaction** | When a DEATH_MARK explosion triggers on a TOXIC_TERRAIN tile: explosion damage increases by 25% (necrotic and poison energies combine). When triggered on an ON_FIRE tile: a 1-tile NECROTIC_ASH patch is created at the death location — units on NECROTIC_ASH take 3 Necrotic damage per turn and cannot regenerate HP for 2 turns. |
 | **Special Interactions** | Death Mark stacks with Necrotic Bolt's mark — if the same unit has been hit by Necrotic Bolt (which also applies DEATH_MARK), the mark's explosion AoE radius increases from 2 to 3 tiles. The Necromancer should use Death Mark (1 AP) for the base application and Necrotic Bolt (2 AP) for the upgrade when a high-value kill is anticipated. |
 
+**Temperature Effects:** **-10 temperature** to the marked unit. The mark of death lowers the target's life force, causing a chilling sensation — death pulls heat from the living. A unit marked by Death Mark immediately feels the cold.
+
 **Design note:** Death Mark is the cheapest AP spend in the Necromancer's kit and the most psychologically impactful. A 1 AP investment on a 100-HP target creates a 40-damage threat radius on that unit's death. This forces the opponent to either protect the marked unit (burning AP on defense) or accept that killing it hands the Necromancer a free 40-damage AoE. At 1 AP, the Necromancer can apply Death Mark and still have 5 AP for movement and other spells — it is almost always worth casting at the start of an activation before spending heavier AP.
 
 ---
@@ -143,6 +149,8 @@ A Remnant token is a supercharged corpse resource that the Necromancer can consu
 | **Effects Applied** | Deals 20 Necrotic base damage to all living units in the 3-tile radius. Each corpse within the radius is consumed (regardless of quality): +15 bonus damage distributed to all living units in range per corpse consumed. Soul Vessel corpses (Mancer corpses): +40 bonus damage each instead of +15. Surviving units in the blast zone receive `CHILLED` (necrotic cold; 2 turns) as cold death energy lingers. Tiles in the radius become `NECROTIC_ASH` terrain (3-turn duration; 3 Necrotic dmg/turn to living units standing on the tile; undead summons ignore this damage). |
 | **Terrain Interaction** | Against WET tiles in the AoE: the necrotic energy corrupts the water — NECROTIC_ASH layered under the WET state; the WET state remains but units are exposed to both conductive AND necrotic terrain simultaneously. Against ON_FIRE tiles: fire extinguished, NECROTIC_ASH replaces ON_FIRE. Against TOXIC_TERRAIN: amplified — TOXIC_TERRAIN + Necrotic Eruption creates TOXIC_NECROTIC ground, dealing 3 Necrotic + 1 POISONED stack per turn to living units. |
 | **Special Interactions** | See terrain interaction table in Section 4. If the Necromancer's own summons are in the AoE, they are not damaged (undead ignore Necrotic damage from this spell), but they are also not boosted by the corpse consumption — they simply survive the eruption. |
+
+**Temperature Effects:** **-15 temperature to all living units hit** by the AoE. The massive wave of necrotic energy strips warmth from the entire affected area — death cold radiates outward from the eruption point. Combined with the existing CHILLED status applied by the spell, the temperature reduction further primes affected units for Cryomancer follow-up.
 
 **Design note:** Necrotic Eruption is the Necromancer's "cash out" spell — it converts accumulated corpse wealth into immediate burst damage. On a clean board with no corpses, it deals 20 damage flat to a 3-tile radius: underwhelming for 5 AP. With 3 Standard Corpses in range, that becomes 20 + 45 = 65 damage to all units in range: one of the highest raw AoE damage outputs in the game. The 3-turn cooldown ensures this cannot be spammed, and the corpse consumption means using it aggressively early destroys the Necromancer's future Raise Shambler fuel. Timing the Eruption for maximum corpse density — typically after a melee clash — is the high-skill expression of the Necromancer.
 
@@ -393,5 +401,48 @@ Gilded Throne provides Conscript Spearmen and Iron Vanguard — both generate st
 | **Gilded Throne dense ranged screen** | High-damage Crossbow Corps or Siege Arbalests can pick off Risen Shamblers before they reach melee engagement — the Necromancer's summons have low HP and are easy to clear at range. If the Necromancer cannot protect its summons long enough for them to reach contact, the entire reanimate AP investment is wasted. |
 
 ---
+
+---
+
+## 9. Temperature Interaction Notes
+
+Death is cold. All Necromancer spells carry a chill component, and the undead it raises are permanently cold-blooded creatures.
+
+### Undead Temperature Profile
+
+Summoned undead (Risen Shamblers, Risen Veterans, Abyssal Horrors, and Cinder Wraiths with the exception noted below) are permanently cold-blooded — they start at **-20 temperature** and do **not** decay toward 0. The standard natural decay mechanic (10 points/turn toward neutral) does not apply to undead. Undead temperature is fixed unless actively altered by a spell.
+
+**Consequences of undead cold-bloodedness:**
+- Cold spells (Cryomancer ice magic, terrain cooling effects) do **not** further affect undead — they are already cold and cannot be made more COLD or SUPERCOOLED through normal means. Cryomancer FROZEN spells still apply FROZEN status if they hit undead, but the temperature component has no additional effect.
+- Fire spells deal **+10% damage to undead** (burning cold flesh is less resistant). Pyromancer is the natural counter to a Necromancer army.
+- Undead in FROZEN or PERMAFROST terrain receive no temperature penalty from the tiles — they are indifferent to cold environmental effects.
+
+### Death Mark + Cryomancer Primer
+
+Death Mark applies **-10 temperature** to the marked unit. A living unit hit by Death Mark is immediately at -10 — already COLD (-1 to -30 threshold). While in the COLD band, ice spells deal +10% bonus damage to that unit. The gap from -10 to FROZEN SOLID (≤ -61) is now -51 instead of -61 — the Cryomancer needs fewer cooling applications to freeze a Death-Marked target.
+
+**Combo sequence:** Necromancer applies Death Mark (1 AP, -10 temperature, +DEATH_MARK status). Cryomancer casts Glacial Spike (-30 temperature) on the Death-Marked target. Target is now at -40 (SUPERCOOLED). Cryomancer casts Frost Bolt (-20 temperature). Target reaches -60 — just inside FROZEN SOLID threshold. Entire freeze achieved in 2 Cryomancer spells instead of the standard 3, because Death Mark pre-cooled the target.
+
+### Necromancer in Cold Terrain
+
+Necromancer operates best in cold terrain (FROZEN tiles, PERMAFROST). The passive -10 temperature per turn that cold terrain applies to living units sitting on it helps the Necromancer's undead (who ignore it) while steadily weakening warm-blooded enemies. A Necromancer who drives the engagement into a PERMAFROST zone — either by allied Cryomancer establishing it or Necrotic Eruption on ICE_TILE creating PERMAFROST — benefits asymmetrically: enemies cool toward SUPERCOOLED while undead are unaffected.
+
+### Cinder Wraith Temperature Exception
+
+Cinder Wraiths are raised from Charred Remains — units that died in ON_FIRE terrain. They are undead, but they carry residual heat from their fiery death. Cinder Wraiths start at **+30 temperature** (HOT threshold: +31 to +60) rather than the standard undead -20. Their attacks apply **+5 temperature per hit** to targets (flaming strikes pass heat).
+
+**Cinder Wraith interactions:**
+- A Cinder Wraith starting at +30 is only 31 temperature points from OVERHEATED. If it stands on ON_FIRE terrain or is struck by fire spells, it can cross into OVERHEATED (+61) itself — at which point its attacks deal the BURNING DoT in addition to fire spread.
+- The Pyromancer + Necromancer combo (Ashen Revival) now has a temperature dimension: Pyromancer overheats the engagement zone, Necromancer raises Cinder Wraiths from the dead, Cinder Wraiths begin at +30 and push toward OVERHEATED through continued fire exposure — becoming self-sustaining heat sources that also spread temperature to their targets.
+- Natural temperature decay (10/turn) applies to Cinder Wraiths (unlike standard undead). They gradually cool toward neutral if kept out of fire. The Pyromancer must maintain fire pressure to keep Cinder Wraiths hot.
+
+### Temperature Summary Table
+
+| Spell | Temperature Effect |
+|---|---|
+| Necrotic Bolt | -5 to hit unit |
+| Raise Shambler | 0 to living units; summoned undead starts at -20 (or +30 for Cinder Wraith) |
+| Death Mark | -10 to marked unit |
+| Necrotic Eruption | -15 to all living units in AoE |
 
 *End of Necromancer design document.*
