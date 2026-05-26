@@ -1,0 +1,218 @@
+{
+  "MancerId": "faunamancer",
+  "DisplayName": "Faunamancer",
+  "MaxHP": 90,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Arcane",
+  "SecondaryElement": "Poison",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Distributed threat commander. Controls up to 2 beast companions (Scout Wolf, Siege Boar, Verdant Serpent) that act when the Faunamancer spends AP to command them. Pack Tactics passive grants +25% damage to both handler and beast when they target the same unit in the same activation. Beasts persist between turns and are unaffected by Silence. Strength comes from simultaneous multi-location pressure, not burst damage.",
+  "StrongSynergyMancerIds": ["floramancer", "toximancer", "electromancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "bestial_mark",
+      "DisplayName": "Bestial Mark",
+      "Description": "Marks a single target with primal hunting energy. While BESTIAL_MARK is active, all beast companion attacks against the marked unit deal +4 bonus flat damage (applied after Pack Tactics calculation). Duration 3 turns; refreshed on recast. Stacks additively with Pack Tactics' multiplicative bonus for maximum single-target pressure.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "BestialMark",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_debuff",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "pack_howl",
+      "DisplayName": "Pack Howl",
+      "Description": "A commanding howl that invigorates all active beast companions regardless of board position. All beasts gain PACK_HOWL: +3 damage to all attacks and +1 Move Range for 2 turns. Verdant Pact beasts on natural tiles stack +1 movement from Terrain Bond on top of Pack Howl's bonus for a total of +2 movement.",
+      "ApCost": 2,
+      "CooldownTurns": 2,
+      "Tier": "Quick",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "PackHowl",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_buff",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "predators_sense",
+      "DisplayName": "Predator's Sense",
+      "Description": "Heightens the instincts of the Faunamancer or one beast companion within 4 tiles. For 2 turns the target reveals all STEALTHED, HIDDEN, and CONCEALED enemies within 5 tiles; all incoming ranged attacks against the target have 20% miss chance; and terrain-based concealment (OVERGROWTH, STEAM_CLOUD) is ignored for targeting within 5 tiles. Also suppresses the BLINDED penalty from sensory obstructions.",
+      "ApCost": 1,
+      "CooldownTurns": 2,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "PredatorsSense",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_buff",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "call_of_the_wild",
+      "DisplayName": "Call of the Wild",
+      "Description": "Summons a beast companion (Scout Wolf, Siege Boar, or Verdant Serpent) on a target tile within 3 tiles. The summoned beast becomes active from the next Faunamancer activation. Cannot summon onto OBSIDIAN, FLOODED, or ON_FIRE terrain. Cannot be cast if companion limit (2 base) is already reached. The Faunamancer begins each match with 1 companion already active.",
+      "ApCost": 3,
+      "CooldownTurns": 3,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "beast_companion",
+      "MaxSummonCount": 2,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_summon",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "savage_strike",
+      "DisplayName": "Savage Strike",
+      "Description": "The Faunamancer channels primal force into a direct melee-range strike, dealing 22 damage and applying WEAKENED (all outgoing damage reduced 20% for 2 turns). Primarily used when beasts are in melee range for coordinated Pack Tactics burst — both Savage Strike and a beast attack on the same target trigger Pack Tactics, dealing 22 × 1.25 = 28 damage plus the beast's boosted attack simultaneously.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 1,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 22,
+      "ConditionalBonuses": [
+        {
+          "Condition": "PackTacticsActive",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.25
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Weakened",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_melee",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.4
+    }
+  ]
+}

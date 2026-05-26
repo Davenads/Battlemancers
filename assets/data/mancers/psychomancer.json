@@ -1,0 +1,247 @@
+{
+  "MancerId": "psychomancer",
+  "DisplayName": "Psychomancer",
+  "MaxHP": 85,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Psychic",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Mind control and morale-disruption specialist. Charms enemy units to act against their own side, confuses targets to randomize their attacks, and drives formations into panic. Most effective against Verdant Pact and Ashen Covenant; Gilded Throne Iron Discipline blocks Panic and Charm on non-Mancer units. Confusion and Silence remain effective against all factions.",
+  "StrongSynergyMancerIds": ["photomancer", "chronomancer", "pyromancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "mind_spike",
+      "DisplayName": "Mind Spike",
+      "Description": "A piercing psychic projection that bypasses line-of-sight and terrain obstructions. Deals 14 Psychic damage and applies 10 MORALE_DAMAGE toward the PANICKED threshold. No LOS required — can be cast through walls, STEAM_CLOUD, and OVERGROWTH. Ignores Iron Discipline for direct damage; MORALE_DAMAGE reduced duration on Gilded Throne units.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Psychic",
+      "BaseDamage": 14,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetOnIlluminatedGround",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.0,
+          "BonusMoraleDamageFlat": 5
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "MoraleDamage",
+          "Duration": 1,
+          "StacksApplied": 10,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "psychic_projectile",
+      "SfxCastTag": "spell/psychic/cast",
+      "SfxImpactTag": "spell/psychic/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "confusion",
+      "DisplayName": "Confusion",
+      "Description": "Scrambles the target's mind, randomizing their targeting for 2 turns. The CONFUSED target still acts and spends AP normally but cannot choose their target — it is selected randomly within their range. Not a morale effect; Iron Discipline does not protect against Confusion. Most valuable against high-damage enemy units that can devastate their own formation.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Psychic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Confused",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "psychic_debuff",
+      "SfxCastTag": "spell/psychic/cast",
+      "SfxImpactTag": "spell/psychic/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "phantom_dread",
+      "DisplayName": "Phantom Dread",
+      "Description": "Releases a wave of psychic terror in a 2-tile radius. Deals 6 Psychic damage and applies 15 MORALE_DAMAGE to all units hit. Units reduced to 0 morale become PANICKED for 2 turns, moving and attacking randomly. PANICKED is blocked by Iron Discipline on Gilded Throne non-Mancer units; MORALE_DAMAGE still applies at reduced duration.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "AoeCircle",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Psychic",
+      "BaseDamage": 6,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetOnIlluminatedGround",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.0,
+          "BonusMoraleDamageFlat": 5
+        },
+        {
+          "Condition": "TargetOnNecroticAsh",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.0,
+          "BonusMoraleDamageFlat": 5
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "MoraleDamage",
+          "Duration": 1,
+          "StacksApplied": 15,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "Panicked",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -5,
+      "VfxTag": "psychic_aoe",
+      "SfxCastTag": "spell/psychic/cast",
+      "SfxImpactTag": "spell/psychic/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "charm",
+      "DisplayName": "Charm",
+      "Description": "Seizes complete control of a single enemy unit for 1 turn. The Psychomancer's player may use any of the CHARMED unit's abilities and movement as if it were their own. Cannot be applied to Gilded Throne Chaff or Ranged units (Iron Discipline immunity). Can always target enemy Mancers regardless of faction. SILENCED units under CHARM can only be moved, not cast.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Psychic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Charmed",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "psychic_debuff",
+      "SfxCastTag": "spell/psychic/cast",
+      "SfxImpactTag": "spell/psychic/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "psychic_silence",
+      "DisplayName": "Psychic Silence",
+      "Description": "Suppresses a target's ability to cast spells for 2 turns. The SILENCED unit can still move and perform basic attacks but cannot use any spell abilities. Not a morale effect — Iron Discipline does not protect against Silence. Bypasses CHARMED priority: a SILENCED CHARMED unit can only be moved during its controlled turn.",
+      "ApCost": 3,
+      "CooldownTurns": 3,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Psychic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Silenced",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "psychic_debuff",
+      "SfxCastTag": "spell/psychic/cast",
+      "SfxImpactTag": "spell/psychic/impact",
+      "CameraShakeIntensity": 0.0
+    }
+  ]
+}
