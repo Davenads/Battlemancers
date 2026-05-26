@@ -551,8 +551,8 @@ These rules are mandatory for all agents:
 | status-system | 2 | COMPLETE | agent/status-system | Merged to master |
 | pathfinding | 2 | COMPLETE | agent/pathfinding | Merged to master; Dijkstra flood fill |
 | test-framework | 2 | COMPLETE | agent/test-framework | Merged to master; 42 test cases |
-| mancers-group-c | 3 | RUNNING | agent/mancers-group-c | Floramancer, Faunamancer, Toximancer, Osteomancer |
-| mancers-group-d | 3 | RUNNING | agent/mancers-group-d | Gravimancer, Sonimancer, Crystalomancer, Echomancer, Thermomancer |
-| spell-resolver | 3 | RUNNING | agent/spell-resolver | SpellResolver.cs — spell execution pipeline |
-| warband-validator | 3 | RUNNING | agent/warband-validator | WarbandValidator.cs — composition rules |
-| map-system | 3 | RUNNING | agent/map-system | MapData SO + preset map configs |
+| mancers-group-c | 3 | COMPLETE | agent/mancers-group-c | Merged to master |
+| mancers-group-d | 3 | COMPLETE | agent/mancers-group-d | Merged to master; completes 19-Mancer roster |
+| spell-resolver | 3 | COMPLETE | agent/spell-resolver | Merged to master |
+| warband-validator | 3 | COMPLETE | agent/warband-validator | Merged to master |
+| map-system | 3 | COMPLETE | agent/map-system | Merged to master; 4 preset maps |
