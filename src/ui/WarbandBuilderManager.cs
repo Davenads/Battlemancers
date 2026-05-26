@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,59 +10,93 @@ using Battlemancers.Unity;
 namespace Battlemancers.UI
 {
     /// <summary>
-    /// Main orchestrator for the warband builder screen.
+    /// Main orchestrator for the warband list-builder interface.
     ///
-    /// Owns the in-memory <see cref="WarbandDraft"/> and coordinates all sub-components:
-    /// roster browser, warband slot list, point budget display, and bottom-bar controls.
+    /// Manages an in-memory <see cref="WarbandSave"/> working copy, drives all sub-views
+    /// (<see cref="MancerCardSelectable"/>, <see cref="WarbandSlotView"/>,
+    /// <see cref="PointBudgetDisplay"/>), validates the warband on every change, and
+    /// delegates persistence to <see cref="WarbandRepository"/>.
     ///
-    /// All UI refreshes are driven by user actions — no Update() polling.
+    /// Call <see cref="StartNew"/> or <see cref="LoadForEdit"/> from the scene that opens
+    /// the builder. On success, <see cref="OnWarbandSaved"/> fires with the saved warband.
+    ///
+    /// Architecture rules:
+    /// - No Update() polling — all state changes are mutation-driven.
+    /// - Single <see cref="RefreshAll"/> call after every mutation; no partial refreshes.
+    /// - Cards destroyed/recreated only in <see cref="RebuildCardGrid"/>, not on every refresh.
+    /// - No FindObjectOfType — all dependencies wired via [SerializeField].
+    ///
     /// Unity only — do not reference from pure-C# simulation code.
     /// </summary>
     public class WarbandBuilderManager : MonoBehaviour
     {
         // ---------------------------------------------------------------------------
-        // Constants
+        // Point cost constants — single source of truth
         // ---------------------------------------------------------------------------
 
-        private const int MaxMancers  = 3;
-        private const int PointBudget = 1000;
+        private const int MancerBaseCost = 100;
+        private const int ChaffT1Cost    = 10;
+        private const int ChaffT2Cost    = 20;
+        private const int RangedT1Cost   = 25;
+        private const int RangedT2Cost   = 50;
+        private const int MaxMancerSlots = 3;
+        private const int MaxBudget      = 1000;
+
+        // Unit ID suffixes matching the convention "{factionId}_{role}_{tier}".
+        private const string ChaffT1Suffix  = "_chaff_t1";
+        private const string ChaffT2Suffix  = "_chaff_t2";
+        private const string RangedT1Suffix = "_ranged_t1";
+        private const string RangedT2Suffix = "_ranged_t2";
+
+        private const string DefaultFactionId   = "gilded_throne";
+        private const string DefaultWarbandName = "New Warband";
 
         // ---------------------------------------------------------------------------
         // Inspector references
         // ---------------------------------------------------------------------------
 
+        [Header("Simulation / Data")]
         [SerializeField] private DataRegistry _dataRegistry;
 
-        // WarbandRepository is a plain C# class (not a MonoBehaviour) — injected in Awake.
+        [Header("Budget")]
+        [SerializeField] private PointBudgetDisplay _budgetDisplay;
+
+        [Header("Mancer Slots")]
+        [SerializeField] private WarbandSlotView[] _mancerSlots; // length 3; assign in Inspector
+
+        [Header("Roster Grid")]
+        [SerializeField] private Transform  _mancerCardContainer;
+        [SerializeField] private GameObject _mancerCardPrefab; // must have MancerCardSelectable component
+
+        [Header("Support Unit Steppers")]
+        [SerializeField] private TMP_Text _chaffT1CountLabel;
+        [SerializeField] private TMP_Text _chaffT2CountLabel;
+        [SerializeField] private TMP_Text _rangedT1CountLabel;
+        [SerializeField] private TMP_Text _rangedT2CountLabel;
+
+        [Header("Controls")]
+        [SerializeField] private TMP_InputField _warbandNameField;
+        [SerializeField] private Button         _saveButton;
+        [SerializeField] private TMP_Text       _validationMessageLabel;
+
+        // ---------------------------------------------------------------------------
+        // Public events
+        // ---------------------------------------------------------------------------
+
+        /// <summary>Fired after a successful save. Passes the saved <see cref="WarbandSave"/>.</summary>
+        public event Action<WarbandSave> OnWarbandSaved;
+
+        /// <summary>Fired when the player cancels out of the builder without saving.</summary>
+        public event Action OnCancelled;
+
+        // ---------------------------------------------------------------------------
+        // Private state
+        // ---------------------------------------------------------------------------
+
+        private WarbandSave       _workingCopy;
         private WarbandRepository _repository;
 
-        [Header("Sub-components")]
-        [SerializeField] private PointBudgetDisplay _budgetDisplay;
-        [SerializeField] private Transform          _mancerRosterContainer; // parent for MancerCardView prefabs
-        [SerializeField] private Transform          _warbandSlotsContainer; // parent for WarbandSlotView prefabs
-        [SerializeField] private GameObject         _mancerCardPrefab;      // must have MancerCardView component
-        [SerializeField] private GameObject         _warbandSlotPrefab;     // must have WarbandSlotView component
-
-        [Header("Bottom Bar")]
-        [SerializeField] private TMP_InputField _warbandNameField;
-        [SerializeField] private Button         _btnSave;
-        [SerializeField] private Button         _btnNew;
-        [SerializeField] private Button         _btnLoad;
-        [SerializeField] private Button         _btnBack;
-        [SerializeField] private TMP_Text       _validationMessage;
-
-        // ---------------------------------------------------------------------------
-        // State
-        // ---------------------------------------------------------------------------
-
-        private WarbandDraft _draft;
-
-        // Cached card views for roster browser so SetSelected/SetAvailable can be applied
-        // without re-instantiating cards on every draft change.
-        private readonly List<MancerCardView> _rosterCards = new List<MancerCardView>();
-
-        // Cached slot views for the active warband panel.
-        private readonly List<WarbandSlotView> _slotViews = new List<WarbandSlotView>();
+        private readonly List<MancerCardSelectable> _mancerCards = new List<MancerCardSelectable>();
 
         // ---------------------------------------------------------------------------
         // Unity lifecycle
@@ -69,360 +104,437 @@ namespace Battlemancers.UI
 
         private void Awake()
         {
-            _repository = new WarbandRepository(
-                System.IO.Path.Combine(Application.persistentDataPath, "warbands"));
+            // Wire Mancer slot events. Slots must be pre-assigned in the Inspector.
+            if (_mancerSlots != null)
+            {
+                for (int i = 0; i < _mancerSlots.Length; i++)
+                {
+                    if (_mancerSlots[i] == null) continue;
+                    _mancerSlots[i].Initialize(i);
+                    _mancerSlots[i].OnRemoveClicked       += OnSlotRemoveClicked;
+                    _mancerSlots[i].OnEditUpgradesClicked += OnSlotEditUpgradesClicked;
+                }
+            }
 
-            _btnSave.onClick.AddListener(SaveWarband);
-            _btnNew.onClick.AddListener(NewWarband);
-            _btnLoad.onClick.AddListener(OpenLoadOverlay);
-            _btnBack.onClick.AddListener(GoBack);
-            _warbandNameField.onEndEdit.AddListener(OnNameChanged);
+            if (_saveButton != null)
+                _saveButton.onClick.AddListener(OnSaveClicked);
         }
 
-        private void Start()
+        private void OnDestroy()
         {
-            NewWarband();
-            PopulateRosterBrowser();
+            if (_mancerSlots != null)
+            {
+                foreach (var slot in _mancerSlots)
+                {
+                    if (slot == null) continue;
+                    slot.OnRemoveClicked       -= OnSlotRemoveClicked;
+                    slot.OnEditUpgradesClicked -= OnSlotEditUpgradesClicked;
+                }
+            }
+
+            foreach (var card in _mancerCards)
+            {
+                if (card != null)
+                    card.OnCardClicked -= OnMancerCardClicked;
+            }
         }
 
         // ---------------------------------------------------------------------------
-        // Draft lifecycle
-        // ---------------------------------------------------------------------------
-
-        private void NewWarband()
-        {
-            _draft = new WarbandDraft();
-            if (_warbandNameField != null)
-                _warbandNameField.text = _draft.Name;
-            RefreshAllUI();
-        }
-
-        // ---------------------------------------------------------------------------
-        // Roster browser
+        // Public entry points
         // ---------------------------------------------------------------------------
 
         /// <summary>
-        /// Clears the roster container and instantiates one <see cref="MancerCardView"/>
-        /// per entry in <see cref="DataRegistry.AllMancers"/>. Safe to call once at startup.
+        /// Begins building a brand-new warband from scratch.
         /// </summary>
-        private void PopulateRosterBrowser()
+        /// <param name="savePath">
+        /// Absolute path to the directory in which warband JSON files are stored.
+        /// Typically <c>Application.persistentDataPath + "/warbands"</c>.
+        /// </param>
+        public void StartNew(string savePath)
         {
-            if (_mancerRosterContainer == null || _mancerCardPrefab == null) return;
+            _repository  = new WarbandRepository(savePath);
+            _workingCopy = WarbandSave.CreateNew(DefaultFactionId, DefaultWarbandName);
 
-            // Destroy any existing cards (e.g. if called again after a data reload).
-            foreach (var card in _rosterCards)
+            if (_warbandNameField != null)
+                _warbandNameField.text = _workingCopy.displayName;
+
+            RebuildCardGrid();
+            RefreshAll();
+        }
+
+        /// <summary>
+        /// Opens an existing warband for editing.
+        /// </summary>
+        /// <param name="existing">
+        /// The save to edit in-place. The caller should keep their own copy if rollback is required.
+        /// </param>
+        /// <param name="savePath">Absolute path to the warband save directory.</param>
+        public void LoadForEdit(WarbandSave existing, string savePath)
+        {
+            _repository  = new WarbandRepository(savePath);
+            _workingCopy = existing;
+
+            if (_warbandNameField != null)
+                _warbandNameField.text = _workingCopy.displayName;
+
+            RebuildCardGrid();
+            RefreshAll();
+        }
+
+        // ---------------------------------------------------------------------------
+        // Card grid — rebuilt once on entry, not on every refresh
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Destroys all existing roster cards and instantiates one
+        /// <see cref="MancerCardSelectable"/> per entry in <see cref="DataRegistry.AllMancers"/>.
+        /// </summary>
+        private void RebuildCardGrid()
+        {
+            foreach (var card in _mancerCards)
             {
-                if (card != null) Destroy(card.gameObject);
+                if (card != null)
+                {
+                    card.OnCardClicked -= OnMancerCardClicked;
+                    Destroy(card.gameObject);
+                }
             }
-            _rosterCards.Clear();
+            _mancerCards.Clear();
+
+            if (_dataRegistry == null || _mancerCardPrefab == null || _mancerCardContainer == null)
+            {
+                Debug.LogWarning("[WarbandBuilderManager] Cannot build card grid — missing DataRegistry, prefab, or container.");
+                return;
+            }
 
             foreach (var kvp in _dataRegistry.AllMancers)
             {
                 MancerRuntimeData data = kvp.Value;
-                GameObject go = Instantiate(_mancerCardPrefab, _mancerRosterContainer);
-                var cardView = go.GetComponent<MancerCardView>();
-                if (cardView == null)
+                GameObject go = Instantiate(_mancerCardPrefab, _mancerCardContainer);
+                var card = go.GetComponent<MancerCardSelectable>();
+                if (card == null)
                 {
-                    Debug.LogError($"[WarbandBuilderManager] MancerCardPrefab is missing a MancerCardView component on '{go.name}'.");
+                    Debug.LogWarning($"[WarbandBuilderManager] MancerCardPrefab is missing a MancerCardSelectable component. Skipping '{data.MancerId}'.");
                     Destroy(go);
                     continue;
                 }
-                cardView.Setup(data, AddMancer);
-                _rosterCards.Add(cardView);
+
+                card.Setup(data);
+                card.OnCardClicked += OnMancerCardClicked;
+                _mancerCards.Add(card);
             }
         }
 
         // ---------------------------------------------------------------------------
-        // Public draft mutation API (called by card/slot views)
+        // Mancer slot interaction
         // ---------------------------------------------------------------------------
 
-        /// <summary>Adds a Mancer to the draft. No-op if the draft already contains it or is full.</summary>
-        public void AddMancer(string mancerId)
+        private void OnMancerCardClicked(string mancerId)
         {
-            if (_draft.Mancers.Count >= MaxMancers) return;
-            if (_draft.Mancers.Exists(m => m.MancerId == mancerId)) return;
-            _draft.Mancers.Add(new WarbandMancerDraft { MancerId = mancerId });
-            RefreshAllUI();
-        }
+            if (_workingCopy == null) return;
 
-        /// <summary>Removes the Mancer with <paramref name="mancerId"/> from the draft. No-op if not present.</summary>
-        public void RemoveMancer(string mancerId)
-        {
-            _draft.Mancers.RemoveAll(m => m.MancerId == mancerId);
-            RefreshAllUI();
-        }
+            // If already in a slot, remove it (toggle off).
+            int existingIndex = _workingCopy.mancers.FindIndex(
+                m => string.Equals(m.mancerArchetypeId, mancerId, StringComparison.OrdinalIgnoreCase));
 
-        /// <summary>
-        /// Sets the count for a support unit type. Creates a new entry if none exists.
-        /// A count of 0 removes the entry.
-        /// </summary>
-        /// <param name="unitTypeId">The unit type ID (e.g., "gilded_throne_chaff_t1").</param>
-        /// <param name="tier">Tier of the unit (1 or 2).</param>
-        /// <param name="count">Number of units; must be >= 0.</param>
-        public void SetSupportCount(string unitTypeId, int tier, int count)
-        {
-            if (count < 0) count = 0;
-
-            var existing = _draft.SupportUnits.Find(s => s.UnitTypeId == unitTypeId && s.Tier == tier);
-
-            if (existing != null)
+            if (existingIndex >= 0)
             {
-                if (count == 0)
-                    _draft.SupportUnits.Remove(existing);
-                else
-                    existing.Count = count;
+                _workingCopy.mancers.RemoveAt(existingIndex);
             }
-            else if (count > 0)
+            else if (_workingCopy.mancers.Count < MaxMancerSlots)
             {
-                _draft.SupportUnits.Add(new WarbandSupportDraft
+                // Assign to the next available slot.
+                _workingCopy.mancers.Add(new MancerLoadout
                 {
-                    UnitTypeId   = unitTypeId,
-                    Tier         = tier,
-                    Count        = count,
-                    CostPerUnit  = ResolveSupportUnitCost(unitTypeId, tier)
+                    mancerArchetypeId = mancerId,
+                    upgradeIds        = new List<UpgradeRef>()
                 });
             }
+            // If all slots are filled and card is unselected, do nothing —
+            // the card is dimmed and non-interactable via RefreshCardAvailability.
 
-            RefreshAllUI();
-        }
-
-        // ---------------------------------------------------------------------------
-        // UI refresh
-        // ---------------------------------------------------------------------------
-
-        private void RefreshAllUI()
-        {
-            int  total = ComputeTotalPoints();
-            bool valid = Validate(out string reason);
-
-            if (_budgetDisplay != null)
-                _budgetDisplay.SetCost(total);
-
-            if (_btnSave != null)
-                _btnSave.interactable = valid;
-
-            if (_validationMessage != null)
-            {
-                _validationMessage.text = valid ? "" : reason;
-                _validationMessage.gameObject.SetActive(!valid);
-            }
-
-            RefreshRosterCardStates();
-            RefreshWarbandSlots();
-        }
-
-        /// <summary>
-        /// Updates each roster card's in-warband badge and add-button state.
-        /// Unselected cards in a full warband remain clickable in the view but AddMancer
-        /// guards against over-filling via its early-exit check — no double-disabling needed.
-        /// One SetInWarband call per card per refresh.
-        /// </summary>
-        private void RefreshRosterCardStates()
-        {
-            foreach (var card in _rosterCards)
-            {
-                if (card == null) continue;
-                bool inDraft = _draft.Mancers.Exists(m => m.MancerId == card.MancerId);
-                card.SetInWarband(inDraft);
-            }
-        }
-
-        /// <summary>
-        /// Destroys and re-creates the warband slot views to match the current draft.
-        /// Slot views are lightweight and infrequently rebuilt, so full reconstruction is acceptable.
-        /// WarbandSlotView uses an event-based API: Initialize(slotIndex) then SetMancer/SetEmpty,
-        /// with OnRemoveClicked/OnEditUpgradesClicked events subscribed here.
-        /// </summary>
-        private void RefreshWarbandSlots()
-        {
-            if (_warbandSlotsContainer == null || _warbandSlotPrefab == null) return;
-
-            foreach (var slotView in _slotViews)
-            {
-                if (slotView != null) Destroy(slotView.gameObject);
-            }
-            _slotViews.Clear();
-
-            for (int i = 0; i < MaxMancers; i++)
-            {
-                GameObject go = Instantiate(_warbandSlotPrefab, _warbandSlotsContainer);
-                var slotView = go.GetComponent<WarbandSlotView>();
-                if (slotView == null)
-                {
-                    Debug.LogError($"[WarbandBuilderManager] WarbandSlotPrefab is missing a WarbandSlotView component on '{go.name}'.");
-                    Destroy(go);
-                    continue;
-                }
-
-                slotView.Initialize(i);
-
-                slotView.OnRemoveClicked       += slotIndex => OnSlotRemoveClicked(slotIndex);
-                slotView.OnEditUpgradesClicked  += slotIndex => OnSlotEditUpgradesClicked(slotIndex);
-
-                if (i < _draft.Mancers.Count)
-                {
-                    WarbandMancerDraft mancerDraft = _draft.Mancers[i];
-                    MancerRuntimeData  data        = _dataRegistry.GetMancer(mancerDraft.MancerId);
-                    if (data == null)
-                    {
-                        Debug.LogWarning($"[WarbandBuilderManager] No MancerRuntimeData found for id '{mancerDraft.MancerId}'. Showing empty slot.");
-                        slotView.SetEmpty();
-                    }
-                    else
-                    {
-                        int upgradeCost = 0;
-                        // TODO: sum upgrade costs from mancerDraft.SelectedUpgradeIds when upgrade system is wired
-                        slotView.SetMancer(data, mancerDraft.SelectedUpgradeIds, 100 + upgradeCost);
-                    }
-                }
-                else
-                {
-                    slotView.SetEmpty();
-                }
-
-                _slotViews.Add(slotView);
-            }
+            RefreshAll();
         }
 
         private void OnSlotRemoveClicked(int slotIndex)
         {
-            if (slotIndex < 0 || slotIndex >= _draft.Mancers.Count) return;
-            string mancerId = _draft.Mancers[slotIndex].MancerId;
-            RemoveMancer(mancerId);
+            if (_workingCopy == null) return;
+            if (slotIndex < 0 || slotIndex >= _workingCopy.mancers.Count) return;
+
+            _workingCopy.mancers.RemoveAt(slotIndex);
+            RefreshAll();
         }
 
         private void OnSlotEditUpgradesClicked(int slotIndex)
         {
-            // TODO: Open upgrade panel overlay for the Mancer in this slot when upgrade system is wired.
-            Debug.Log($"[WarbandBuilderManager] EditUpgrades requested for slot {slotIndex} — not yet wired.");
+            // Upgrade editing is handled by a separate panel outside this class's scope.
+            // A future UpgradeEditorManager will listen for this log or a paired event.
+            Debug.Log($"[WarbandBuilderManager] Edit upgrades requested for slot {slotIndex}.");
         }
 
         // ---------------------------------------------------------------------------
-        // Point calculation
+        // Refresh pipeline — called after every mutation
         // ---------------------------------------------------------------------------
 
-        private int ComputeTotalPoints()
+        private void RefreshAll()
+        {
+            RefreshSlots();
+            RefreshCardAvailability();
+            RefreshBudget();
+            RefreshSupportUnitLabels();
+            RefreshValidation();
+        }
+
+        private void RefreshSlots()
+        {
+            if (_mancerSlots == null) return;
+
+            for (int i = 0; i < MaxMancerSlots; i++)
+            {
+                if (i >= _mancerSlots.Length || _mancerSlots[i] == null) continue;
+
+                if (i < _workingCopy.mancers.Count)
+                {
+                    MancerLoadout loadout = _workingCopy.mancers[i];
+                    MancerRuntimeData data = _dataRegistry != null
+                        ? _dataRegistry.GetMancer(loadout.mancerArchetypeId)
+                        : null;
+
+                    if (data != null)
+                    {
+                        List<string> upgradeIds = BuildUpgradeIdList(loadout);
+                        _mancerSlots[i].SetMancer(data, upgradeIds, loadout.TotalCost);
+                    }
+                    else
+                    {
+                        // Data not found (JSON missing) — show empty to avoid a broken display.
+                        _mancerSlots[i].SetEmpty();
+                    }
+                }
+                else
+                {
+                    _mancerSlots[i].SetEmpty();
+                }
+            }
+        }
+
+        private void RefreshCardAvailability()
+        {
+            bool slotsAvailable = _workingCopy.mancers.Count < MaxMancerSlots;
+
+            foreach (var card in _mancerCards)
+            {
+                if (card == null) continue;
+
+                int slotIndex = _workingCopy.mancers.FindIndex(
+                    m => string.Equals(m.mancerArchetypeId, card.MancerId, StringComparison.OrdinalIgnoreCase));
+
+                bool isSelected = slotIndex >= 0;
+                card.SetSelected(isSelected, slotIndex);
+                card.SetAvailable(isSelected || slotsAvailable);
+            }
+        }
+
+        private void RefreshBudget()
+        {
+            if (_budgetDisplay != null)
+                _budgetDisplay.SetCost(ComputeTotalCost());
+        }
+
+        private void RefreshSupportUnitLabels()
+        {
+            if (_chaffT1CountLabel  != null) _chaffT1CountLabel.text  = GetSupportUnitCount(ChaffT1Suffix).ToString();
+            if (_chaffT2CountLabel  != null) _chaffT2CountLabel.text  = GetSupportUnitCount(ChaffT2Suffix).ToString();
+            if (_rangedT1CountLabel != null) _rangedT1CountLabel.text = GetSupportUnitCount(RangedT1Suffix).ToString();
+            if (_rangedT2CountLabel != null) _rangedT2CountLabel.text = GetSupportUnitCount(RangedT2Suffix).ToString();
+        }
+
+        private void RefreshValidation()
+        {
+            List<string> errors = ValidateWarband();
+            bool isValid = errors.Count == 0;
+
+            if (_saveButton != null)
+                _saveButton.interactable = isValid;
+
+            if (_validationMessageLabel != null)
+            {
+                _validationMessageLabel.text = isValid ? string.Empty : string.Join("\n", errors);
+                _validationMessageLabel.gameObject.SetActive(!isValid);
+            }
+        }
+
+        // ---------------------------------------------------------------------------
+        // Cost calculation
+        // ---------------------------------------------------------------------------
+
+        private int ComputeTotalCost()
         {
             int total = 0;
-            foreach (var m in _draft.Mancers)
-            {
-                total += 100; // Base Mancer cost is always 100 pts
-                // TODO: add upgrade costs when upgrade system is wired (sum m.SelectedUpgradeIds costs)
-            }
-            foreach (var s in _draft.SupportUnits)
-                total += s.CostPerUnit * s.Count;
-            return total;
-        }
 
-        /// <summary>Returns the per-unit point cost for a given support unit type and tier.</summary>
-        private static int ResolveSupportUnitCost(string unitTypeId, int tier)
-        {
-            // Tier costs per the warband design spec:
-            //   T1 Chaff = 10 pts, T2 Chaff = 20 pts
-            //   T1 Ranged = 25 pts, T2 Ranged = 50 pts
-            bool isRanged = unitTypeId.Contains("ranged");
-            if (isRanged)
-                return tier == 2 ? 50 : 25;
-            return tier == 2 ? 20 : 10; // Chaff / default
+            foreach (var loadout in _workingCopy.mancers)
+                total += loadout.TotalCost; // MancerBaseCost (100) + sum of upgrade additionalCosts
+
+            total += GetSupportUnitCount(ChaffT1Suffix)  * ChaffT1Cost;
+            total += GetSupportUnitCount(ChaffT2Suffix)  * ChaffT2Cost;
+            total += GetSupportUnitCount(RangedT1Suffix) * RangedT1Cost;
+            total += GetSupportUnitCount(RangedT2Suffix) * RangedT2Cost;
+
+            return total;
         }
 
         // ---------------------------------------------------------------------------
         // Validation
         // ---------------------------------------------------------------------------
 
-        private bool Validate(out string reason)
+        private List<string> ValidateWarband()
         {
-            if (_draft.Mancers.Count == 0)
-            {
-                reason = "At least 1 Mancer required.";
-                return false;
-            }
-            int total = ComputeTotalPoints();
-            if (total > PointBudget)
-            {
-                reason = $"Over budget by {total - PointBudget} pts.";
-                return false;
-            }
-            reason = "";
-            return true;
+            var errors = new List<string>();
+
+            if (string.IsNullOrWhiteSpace(_workingCopy.displayName))
+                errors.Add("Warband must have a name.");
+
+            if (_workingCopy.mancers == null || _workingCopy.mancers.Count == 0)
+                errors.Add("At least one Mancer is required.");
+
+            if (ComputeTotalCost() > MaxBudget)
+                errors.Add($"Total cost exceeds {MaxBudget} pts.");
+
+            return errors;
         }
 
         // ---------------------------------------------------------------------------
-        // Bottom-bar actions
+        // Save / Cancel
         // ---------------------------------------------------------------------------
 
-        private void SaveWarband()
+        /// <summary>
+        /// Validates and persists the working warband. Fires <see cref="OnWarbandSaved"/> on success.
+        /// Bound to the save button in <see cref="Awake"/>.
+        /// </summary>
+        public void OnSaveClicked()
         {
-            var save = WarbandSave.CreateNew(_draft.FactionId, _draft.Name);
+            if (_workingCopy == null || _repository == null) return;
+            if (ValidateWarband().Count > 0) return;
 
-            foreach (var m in _draft.Mancers)
+            // Sync the name field into the working copy before saving.
+            if (_warbandNameField != null)
             {
-                var loadout = new MancerLoadout { mancerArchetypeId = m.MancerId };
-                // TODO: populate loadout.upgradeIds from m.SelectedUpgradeIds when upgrade system is wired
-                save.mancers.Add(loadout);
+                string trimmed = _warbandNameField.text.Trim();
+                if (!string.IsNullOrEmpty(trimmed))
+                    _workingCopy.displayName = trimmed;
             }
 
-            foreach (var s in _draft.SupportUnits)
+            _repository.Save(_workingCopy);
+            OnWarbandSaved?.Invoke(_workingCopy);
+        }
+
+        /// <summary>Fires <see cref="OnCancelled"/> without saving.</summary>
+        public void OnCancelClicked()
+        {
+            OnCancelled?.Invoke();
+        }
+
+        // ---------------------------------------------------------------------------
+        // Stepper button handlers — one increment / decrement per support unit type
+        // ---------------------------------------------------------------------------
+
+        /// <summary>Adds one T1 Chaff unit to the warband.</summary>
+        public void OnChaffT1Increment() { AdjustSupportUnitCount(ChaffT1Suffix,  ChaffT1Cost,  +1); RefreshAll(); }
+
+        /// <summary>Removes one T1 Chaff unit from the warband (minimum 0).</summary>
+        public void OnChaffT1Decrement() { AdjustSupportUnitCount(ChaffT1Suffix,  ChaffT1Cost,  -1); RefreshAll(); }
+
+        /// <summary>Adds one T2 Chaff unit to the warband.</summary>
+        public void OnChaffT2Increment() { AdjustSupportUnitCount(ChaffT2Suffix,  ChaffT2Cost,  +1); RefreshAll(); }
+
+        /// <summary>Removes one T2 Chaff unit from the warband (minimum 0).</summary>
+        public void OnChaffT2Decrement() { AdjustSupportUnitCount(ChaffT2Suffix,  ChaffT2Cost,  -1); RefreshAll(); }
+
+        /// <summary>Adds one T1 Ranged unit to the warband.</summary>
+        public void OnRangedT1Increment() { AdjustSupportUnitCount(RangedT1Suffix, RangedT1Cost, +1); RefreshAll(); }
+
+        /// <summary>Removes one T1 Ranged unit from the warband (minimum 0).</summary>
+        public void OnRangedT1Decrement() { AdjustSupportUnitCount(RangedT1Suffix, RangedT1Cost, -1); RefreshAll(); }
+
+        /// <summary>Adds one T2 Ranged unit to the warband.</summary>
+        public void OnRangedT2Increment() { AdjustSupportUnitCount(RangedT2Suffix, RangedT2Cost, +1); RefreshAll(); }
+
+        /// <summary>Removes one T2 Ranged unit from the warband (minimum 0).</summary>
+        public void OnRangedT2Decrement() { AdjustSupportUnitCount(RangedT2Suffix, RangedT2Cost, -1); RefreshAll(); }
+
+        // ---------------------------------------------------------------------------
+        // Support unit helpers
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Adjusts the count of the support unit type identified by <paramref name="unitIdSuffix"/>
+        /// by <paramref name="delta"/>. Clamps to a minimum of 0.
+        /// Creates a new <see cref="SupportUnitCount"/> entry if none exists for that unit type.
+        /// Removes the entry cleanly when the count reaches 0.
+        /// </summary>
+        private void AdjustSupportUnitCount(string unitIdSuffix, int unitPointCost, int delta)
+        {
+            string unitId = BuildUnitId(unitIdSuffix);
+
+            int index = _workingCopy.supportUnits.FindIndex(
+                u => string.Equals(u.unitId, unitId, StringComparison.OrdinalIgnoreCase));
+
+            if (index >= 0)
             {
-                save.supportUnits.Add(new SupportUnitCount
+                SupportUnitCount entry = _workingCopy.supportUnits[index];
+                int newCount = Mathf.Max(0, entry.count + delta);
+                if (newCount == 0)
                 {
-                    unitId       = s.UnitTypeId,
-                    unitPointCost = s.CostPerUnit,
-                    count        = s.Count
+                    _workingCopy.supportUnits.RemoveAt(index);
+                }
+                else
+                {
+                    entry.count = newCount;
+                    _workingCopy.supportUnits[index] = entry;
+                }
+            }
+            else if (delta > 0)
+            {
+                _workingCopy.supportUnits.Add(new SupportUnitCount
+                {
+                    unitId        = unitId,
+                    unitPointCost = unitPointCost,
+                    count         = delta
                 });
             }
-
-            _repository.Save(save);
+            // delta <= 0 with no existing entry: nothing to do.
         }
 
-        private void OpenLoadOverlay()
+        /// <summary>Returns the current count for the support unit type matching the given ID suffix, or 0.</summary>
+        private int GetSupportUnitCount(string unitIdSuffix)
         {
-            // TODO: Show saved warband list overlay when WarbandRepository is wired.
-            Debug.Log("[WarbandBuilderManager] OpenLoadOverlay — WarbandRepository not yet wired.");
+            string unitId = BuildUnitId(unitIdSuffix);
+            int index = _workingCopy.supportUnits.FindIndex(
+                u => string.Equals(u.unitId, unitId, StringComparison.OrdinalIgnoreCase));
+            return index >= 0 ? _workingCopy.supportUnits[index].count : 0;
         }
 
-        private void GoBack()
+        /// <summary>
+        /// Builds the full unit ID from the working copy's faction ID and the given suffix.
+        /// Example: faction "gilded_throne" + suffix "_chaff_t1" → "gilded_throne_chaff_t1".
+        /// </summary>
+        private string BuildUnitId(string suffix) =>
+            (_workingCopy?.factionId ?? DefaultFactionId) + suffix;
+
+        /// <summary>
+        /// Extracts a flat list of upgrade ID strings from a <see cref="MancerLoadout"/>.
+        /// Used when populating <see cref="WarbandSlotView.SetMancer"/>.
+        /// </summary>
+        private static List<string> BuildUpgradeIdList(MancerLoadout loadout)
         {
-            // TODO: Navigate back via GameModeManager if wired; fall back to SceneManager.
-            // UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
-            Debug.Log("[WarbandBuilderManager] GoBack — scene navigation not yet wired.");
+            var ids = new List<string>();
+            if (loadout.upgradeIds == null) return ids;
+            foreach (var upgrade in loadout.upgradeIds)
+            {
+                if (!string.IsNullOrEmpty(upgrade.upgradeId))
+                    ids.Add(upgrade.upgradeId);
+            }
+            return ids;
         }
-
-        private void OnNameChanged(string name)
-        {
-            _draft.Name = name;
-        }
-    }
-
-    // ================================================================================
-    // Internal draft types — mutable working state, separate from serialised WarbandSave
-    // ================================================================================
-
-    /// <summary>
-    /// Mutable in-memory editing model for a warband being built or edited.
-    /// Converted to <c>WarbandSave</c> only on Save. Not a MonoBehaviour.
-    /// </summary>
-    public class WarbandDraft
-    {
-        public string Name      { get; set; } = "New Warband";
-        public string FactionId { get; set; } = "gilded_throne";
-        public List<WarbandMancerDraft>  Mancers      { get; set; } = new List<WarbandMancerDraft>();
-        public List<WarbandSupportDraft> SupportUnits { get; set; } = new List<WarbandSupportDraft>();
-    }
-
-    /// <summary>One Mancer slot in the draft, including any selected upgrade IDs.</summary>
-    public class WarbandMancerDraft
-    {
-        public string       MancerId           { get; set; }
-        public List<string> SelectedUpgradeIds { get; set; } = new List<string>();
-    }
-
-    /// <summary>One support unit entry in the draft.</summary>
-    public class WarbandSupportDraft
-    {
-        public string UnitTypeId  { get; set; }
-        public int    Tier        { get; set; }
-        public int    Count       { get; set; }
-        public int    CostPerUnit { get; set; }
     }
 }
