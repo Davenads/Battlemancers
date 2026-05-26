@@ -33,6 +33,7 @@ namespace Battlemancers.Core.Simulation
         private const int TurnLimit = 50;
 
         private readonly SimulationState _state;
+        private readonly TemperatureManager _temperatureManager;
 
         // Maps playerId → the commands that player submitted this turn.
         // Cleared at the end of ResolveTurn so the next turn starts clean.
@@ -42,10 +43,15 @@ namespace Battlemancers.Core.Simulation
         /// Creates a new TurnManager bound to the given simulation state.
         /// </summary>
         /// <param name="state">The simulation state this manager will drive.</param>
-        /// <exception cref="ArgumentNullException">Thrown if state is null.</exception>
-        public TurnManager(SimulationState state)
+        /// <param name="temperatureManager">
+        /// The temperature manager used for per-turn decay and terrain thermal effects.
+        /// Must not be null.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown if state or temperatureManager is null.</exception>
+        public TurnManager(SimulationState state, TemperatureManager temperatureManager)
         {
             _state = state ?? throw new ArgumentNullException(nameof(state));
+            _temperatureManager = temperatureManager ?? throw new ArgumentNullException(nameof(temperatureManager));
             _pendingPlans = new Dictionary<string, Command[]>();
         }
 
@@ -163,6 +169,9 @@ namespace Battlemancers.Core.Simulation
 
             var allEvents = new List<SimulationEvent>();
 
+            // Temperature decay — runs at start of resolution, before any commands execute.
+            _temperatureManager.DecayAllTemperatures(_state);
+
             // Step 1: Collect all commands from all plans.
             var allCommands = new List<Command>();
             foreach (Command[] plan in _pendingPlans.Values)
@@ -221,6 +230,10 @@ namespace Battlemancers.Core.Simulation
             {
                 unit.TickCooldowns();
             }
+
+            // Apply terrain-based temperature passives and tick Heatstroke penalties.
+            // (ApplyTerrainTemperatureEffects internally calls TickHeatstrokePenalties.)
+            _temperatureManager.ApplyTerrainTemperatureEffects(_state);
 
             // Step 5: Check win condition before advancing turn counter.
             bool matchEnded = CheckWinCondition(out string winnerId);

@@ -56,6 +56,7 @@ namespace Battlemancers.Simulation
 
         private readonly ElementResolver _elementResolver;
         private readonly StatusManager _statusManager;
+        private readonly TemperatureManager _temperatureManager;
 
         // -----------------------------------------------------------------------------------------
         // Constructor
@@ -71,15 +72,20 @@ namespace Battlemancers.Simulation
         /// The status manager that owns all active status effects for this match.
         /// Must not be null.
         /// </param>
+        /// <param name="temperatureManager">
+        /// The temperature manager used to apply thermal effects on hit. Must not be null.
+        /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if either argument is null.
+        /// Thrown if any argument is null.
         /// </exception>
-        public SpellResolver(ElementResolver elementResolver, StatusManager statusManager)
+        public SpellResolver(ElementResolver elementResolver, StatusManager statusManager, TemperatureManager temperatureManager)
         {
             _elementResolver = elementResolver
                 ?? throw new ArgumentNullException(nameof(elementResolver));
             _statusManager = statusManager
                 ?? throw new ArgumentNullException(nameof(statusManager));
+            _temperatureManager = temperatureManager
+                ?? throw new ArgumentNullException(nameof(temperatureManager));
         }
 
         // -----------------------------------------------------------------------------------------
@@ -190,6 +196,11 @@ namespace Battlemancers.Simulation
                         damage,
                         spell.spellId,
                         target.CurrentHP));
+                }
+
+                if (spell.temperatureDelta != 0)
+                {
+                    _temperatureManager.ApplyTemperatureChange(target.Id, spell.temperatureDelta, target, state);
                 }
 
                 if (!target.IsAlive)

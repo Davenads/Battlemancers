@@ -140,6 +140,16 @@ namespace Battlemancers.Data
         public TerrainChangeApplication[] terrainChanges;
 
         /// <summary>
+        /// Temperature change applied to units hit by this spell.
+        /// Positive values heat the target; negative values cool the target.
+        /// 0 means this spell has no thermal effect.
+        /// Applied via TemperatureManager.ApplyTemperatureChange after damage resolution.
+        /// Typical ranges: Quick spells ±10-15, Standard ±15-20, Heavy/Ultimate ±25-35.
+        /// </summary>
+        [Tooltip("Temperature change on hit. Positive = heat, negative = cool. 0 = no effect.")]
+        [Range(-40, 40)] public int temperatureDelta = 0;
+
+        /// <summary>
         /// Push or pull displacement applied to units hit. Positive = pushed away from caster.
         /// Displacement can chain into fall damage if pushed off elevated tiles.
         /// </summary>
