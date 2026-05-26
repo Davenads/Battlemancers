@@ -1,0 +1,216 @@
+{
+  "mapId": "verdant-ruins",
+  "width": 24,
+  "height": 24,
+  "defaults": { "tileState": "Normal", "elevation": 0, "isPassable": true, "spawnZone": null },
+  "tiles": [
+    // ---- Spawn zones ----
+    // Player 1: top-left diagonal corner (y 20-23, x 0-1), 8 tiles
+    { "x": 0, "y": 20, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 1, "y": 20, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 0, "y": 21, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 1, "y": 21, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 0, "y": 22, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 1, "y": 22, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 0, "y": 23, "tileState": "Natural", "spawnZone": "player1" },
+    { "x": 1, "y": 23, "tileState": "Natural", "spawnZone": "player1" },
+
+    // Player 2: bottom-right diagonal corner (y 0-3, x 22-23), 8 tiles
+    { "x": 22, "y": 0,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 23, "y": 0,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 22, "y": 1,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 23, "y": 1,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 22, "y": 2,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 23, "y": 2,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 22, "y": 3,  "tileState": "Natural", "spawnZone": "player2" },
+    { "x": 23, "y": 3,  "tileState": "Natural", "spawnZone": "player2" },
+
+    // ---- Natural terrain scatter (~40% of non-special tiles) ----
+    // Row y=1
+    { "x": 2,  "y": 1,  "tileState": "Natural" },
+    { "x": 4,  "y": 1,  "tileState": "Natural" },
+    { "x": 7,  "y": 1,  "tileState": "Natural" },
+    { "x": 10, "y": 1,  "tileState": "Natural" },
+    { "x": 13, "y": 1,  "tileState": "Natural" },
+    { "x": 16, "y": 1,  "tileState": "Natural" },
+    { "x": 19, "y": 1,  "tileState": "Natural" },
+    // Row y=2
+    { "x": 1,  "y": 2,  "tileState": "Natural" },
+    { "x": 5,  "y": 2,  "tileState": "Natural" },
+    { "x": 8,  "y": 2,  "tileState": "Natural" },
+    { "x": 11, "y": 2,  "tileState": "Natural" },
+    { "x": 14, "y": 2,  "tileState": "Natural" },
+    { "x": 17, "y": 2,  "tileState": "Natural" },
+    { "x": 20, "y": 2,  "tileState": "Natural" },
+    // Row y=4
+    { "x": 0,  "y": 4,  "tileState": "Natural" },
+    { "x": 3,  "y": 4,  "tileState": "Natural" },
+    { "x": 6,  "y": 4,  "tileState": "Natural" },
+    { "x": 9,  "y": 4,  "tileState": "Natural" },
+    { "x": 12, "y": 4,  "tileState": "Natural" },
+    { "x": 15, "y": 4,  "tileState": "Natural" },
+    { "x": 18, "y": 4,  "tileState": "Natural" },
+    { "x": 21, "y": 4,  "tileState": "Natural" },
+    // Row y=6
+    { "x": 2,  "y": 6,  "tileState": "Natural" },
+    { "x": 5,  "y": 6,  "tileState": "Natural" },
+    { "x": 8,  "y": 6,  "tileState": "Natural" },
+    { "x": 11, "y": 6,  "tileState": "Natural" },
+    { "x": 14, "y": 6,  "tileState": "Natural" },
+    { "x": 17, "y": 6,  "tileState": "Natural" },
+    { "x": 20, "y": 6,  "tileState": "Natural" },
+    // Row y=8
+    { "x": 1,  "y": 8,  "tileState": "Natural" },
+    { "x": 4,  "y": 8,  "tileState": "Natural" },
+    { "x": 7,  "y": 8,  "tileState": "Natural" },
+    { "x": 10, "y": 8,  "tileState": "Natural" },
+    { "x": 13, "y": 8,  "tileState": "Natural" },
+    { "x": 16, "y": 8,  "tileState": "Natural" },
+    { "x": 19, "y": 8,  "tileState": "Natural" },
+    { "x": 22, "y": 8,  "tileState": "Natural" },
+    // Row y=10
+    { "x": 3,  "y": 10, "tileState": "Natural" },
+    { "x": 6,  "y": 10, "tileState": "Natural" },
+    { "x": 9,  "y": 10, "tileState": "Natural" },
+    { "x": 12, "y": 10, "tileState": "Natural" },
+    { "x": 15, "y": 10, "tileState": "Natural" },
+    { "x": 18, "y": 10, "tileState": "Natural" },
+    { "x": 21, "y": 10, "tileState": "Natural" },
+    // Row y=12
+    { "x": 0,  "y": 12, "tileState": "Natural" },
+    { "x": 2,  "y": 12, "tileState": "Natural" },
+    { "x": 5,  "y": 12, "tileState": "Natural" },
+    { "x": 8,  "y": 12, "tileState": "Natural" },
+    { "x": 11, "y": 12, "tileState": "Natural" },
+    { "x": 14, "y": 12, "tileState": "Natural" },
+    { "x": 17, "y": 12, "tileState": "Natural" },
+    { "x": 20, "y": 12, "tileState": "Natural" },
+    { "x": 23, "y": 12, "tileState": "Natural" },
+    // Row y=14
+    { "x": 1,  "y": 14, "tileState": "Natural" },
+    { "x": 4,  "y": 14, "tileState": "Natural" },
+    { "x": 7,  "y": 14, "tileState": "Natural" },
+    { "x": 10, "y": 14, "tileState": "Natural" },
+    { "x": 13, "y": 14, "tileState": "Natural" },
+    { "x": 16, "y": 14, "tileState": "Natural" },
+    { "x": 19, "y": 14, "tileState": "Natural" },
+    { "x": 22, "y": 14, "tileState": "Natural" },
+    // Row y=16
+    { "x": 3,  "y": 16, "tileState": "Natural" },
+    { "x": 6,  "y": 16, "tileState": "Natural" },
+    { "x": 9,  "y": 16, "tileState": "Natural" },
+    { "x": 12, "y": 16, "tileState": "Natural" },
+    { "x": 15, "y": 16, "tileState": "Natural" },
+    { "x": 18, "y": 16, "tileState": "Natural" },
+    { "x": 21, "y": 16, "tileState": "Natural" },
+    // Row y=18
+    { "x": 2,  "y": 18, "tileState": "Natural" },
+    { "x": 5,  "y": 18, "tileState": "Natural" },
+    { "x": 8,  "y": 18, "tileState": "Natural" },
+    { "x": 11, "y": 18, "tileState": "Natural" },
+    { "x": 14, "y": 18, "tileState": "Natural" },
+    { "x": 17, "y": 18, "tileState": "Natural" },
+    { "x": 20, "y": 18, "tileState": "Natural" },
+    { "x": 23, "y": 18, "tileState": "Natural" },
+    // Row y=20
+    { "x": 4,  "y": 20, "tileState": "Natural" },
+    { "x": 7,  "y": 20, "tileState": "Natural" },
+    { "x": 10, "y": 20, "tileState": "Natural" },
+    { "x": 13, "y": 20, "tileState": "Natural" },
+    { "x": 16, "y": 20, "tileState": "Natural" },
+    { "x": 19, "y": 20, "tileState": "Natural" },
+    // Row y=22
+    { "x": 3,  "y": 22, "tileState": "Natural" },
+    { "x": 6,  "y": 22, "tileState": "Natural" },
+    { "x": 9,  "y": 22, "tileState": "Natural" },
+    { "x": 12, "y": 22, "tileState": "Natural" },
+    { "x": 15, "y": 22, "tileState": "Natural" },
+    { "x": 18, "y": 22, "tileState": "Natural" },
+    { "x": 21, "y": 22, "tileState": "Natural" },
+
+    // ---- Vine cluster A: 6 tiles at (5, 5) area ----
+    { "x": 5,  "y": 5,  "tileState": "Vines" },
+    { "x": 6,  "y": 5,  "tileState": "Vines" },
+    { "x": 5,  "y": 6,  "tileState": "Vines" },
+    { "x": 6,  "y": 6,  "tileState": "Vines" },
+    { "x": 5,  "y": 7,  "tileState": "Vines" },
+    { "x": 6,  "y": 7,  "tileState": "Vines" },
+
+    // ---- Vine cluster B: 5 tiles at (16, 11) area ----
+    { "x": 16, "y": 11, "tileState": "Vines" },
+    { "x": 17, "y": 11, "tileState": "Vines" },
+    { "x": 16, "y": 12, "tileState": "Vines" },
+    { "x": 17, "y": 12, "tileState": "Vines" },
+    { "x": 16, "y": 13, "tileState": "Vines" },
+
+    // ---- Vine cluster C: 4 tiles at (10, 18) area ----
+    { "x": 10, "y": 18, "tileState": "Vines" },
+    { "x": 11, "y": 18, "tileState": "Vines" },
+    { "x": 10, "y": 19, "tileState": "Vines" },
+    { "x": 11, "y": 19, "tileState": "Vines" },
+
+    // ---- Stone wall ruins (impassable, isPassable:false) ----
+    // Wall A: horizontal 4-tile run at y=9, x 2-5
+    { "x": 2,  "y": 9,  "isPassable": false },
+    { "x": 3,  "y": 9,  "isPassable": false },
+    { "x": 4,  "y": 9,  "isPassable": false },
+    { "x": 5,  "y": 9,  "isPassable": false },
+
+    // Wall B: vertical 3-tile run at x=13, y 3-5
+    { "x": 13, "y": 3,  "isPassable": false },
+    { "x": 13, "y": 4,  "isPassable": false },
+    { "x": 13, "y": 5,  "isPassable": false },
+
+    // Wall C: horizontal 3-tile run at y=15, x 18-20
+    { "x": 18, "y": 15, "isPassable": false },
+    { "x": 19, "y": 15, "isPassable": false },
+    { "x": 20, "y": 15, "isPassable": false },
+
+    // Wall D: horizontal 4-tile run at y=20, x 7-10
+    { "x": 7,  "y": 20, "isPassable": false },
+    { "x": 8,  "y": 20, "isPassable": false },
+    { "x": 9,  "y": 20, "isPassable": false },
+    { "x": 10, "y": 20, "isPassable": false },
+
+    // Wall E: vertical 3-tile run at x=20, y 8-10
+    { "x": 20, "y": 8,  "isPassable": false },
+    { "x": 20, "y": 9,  "isPassable": false },
+    { "x": 20, "y": 10, "isPassable": false },
+
+    // Wall F: horizontal 4-tile run at y=4, x 0-3 (near spawn)
+    { "x": 7,  "y": 4,  "isPassable": false },
+    { "x": 8,  "y": 4,  "isPassable": false },
+    { "x": 9,  "y": 4,  "isPassable": false },
+    { "x": 10, "y": 4,  "isPassable": false },
+
+    // ---- Crumbled towers: elevation 1 at 3 locations ----
+    // Tower A: 2x2 at (2, 17)
+    { "x": 2,  "y": 17, "elevation": 1 },
+    { "x": 3,  "y": 17, "elevation": 1 },
+    { "x": 2,  "y": 18, "elevation": 1 },
+    { "x": 3,  "y": 18, "elevation": 1 },
+
+    // Tower B: 2x2 at (17, 6)
+    { "x": 17, "y": 6,  "elevation": 1 },
+    { "x": 18, "y": 6,  "elevation": 1 },
+    { "x": 17, "y": 7,  "elevation": 1 },
+    { "x": 18, "y": 7,  "elevation": 1 },
+
+    // Tower C: 2x2 at (11, 11)
+    { "x": 11, "y": 11, "elevation": 1 },
+    { "x": 12, "y": 11, "elevation": 1 },
+    { "x": 11, "y": 12, "elevation": 1 },
+    { "x": 12, "y": 12, "elevation": 1 },
+
+    // ---- Spore clusters near vine zones ----
+    // Spore cluster A: near vine cluster A
+    { "x": 7,  "y": 5,  "tileState": "Spores" },
+    { "x": 8,  "y": 5,  "tileState": "Spores" },
+    { "x": 7,  "y": 6,  "tileState": "Spores" },
+
+    // Spore cluster B: near vine cluster B
+    { "x": 18, "y": 11, "tileState": "Spores" },
+    { "x": 18, "y": 12, "tileState": "Spores" },
+    { "x": 19, "y": 12, "tileState": "Spores" }
+  ]
+}

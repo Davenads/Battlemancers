@@ -1,0 +1,128 @@
+{
+  "mapId": "ashfields",
+  "width": 24,
+  "height": 24,
+  "defaults": { "tileState": "Normal", "elevation": 0, "isPassable": true, "spawnZone": null },
+  "tiles": [
+    // ---- Spawn zones ----
+    // Player 1: top-left quadrant (y 18-23, x 0-3), 8 tiles
+    { "x": 0, "y": 20, "spawnZone": "player1" },
+    { "x": 1, "y": 20, "spawnZone": "player1" },
+    { "x": 0, "y": 21, "spawnZone": "player1" },
+    { "x": 1, "y": 21, "spawnZone": "player1" },
+    { "x": 0, "y": 22, "spawnZone": "player1" },
+    { "x": 1, "y": 22, "spawnZone": "player1" },
+    { "x": 0, "y": 23, "spawnZone": "player1" },
+    { "x": 1, "y": 23, "spawnZone": "player1" },
+
+    // Player 2: bottom-right quadrant (y 0-3, x 22-23), 8 tiles
+    { "x": 22, "y": 0, "spawnZone": "player2" },
+    { "x": 23, "y": 0, "spawnZone": "player2" },
+    { "x": 22, "y": 1, "spawnZone": "player2" },
+    { "x": 23, "y": 1, "spawnZone": "player2" },
+    { "x": 22, "y": 2, "spawnZone": "player2" },
+    { "x": 23, "y": 2, "spawnZone": "player2" },
+    { "x": 22, "y": 3, "spawnZone": "player2" },
+    { "x": 23, "y": 3, "spawnZone": "player2" },
+
+    // ---- Central lava field: 4x4 burning/impassable (x 10-13, y 10-13) ----
+    { "x": 10, "y": 10, "tileState": "Burning", "isPassable": false },
+    { "x": 11, "y": 10, "tileState": "Burning", "isPassable": false },
+    { "x": 12, "y": 10, "tileState": "Burning", "isPassable": false },
+    { "x": 13, "y": 10, "tileState": "Burning", "isPassable": false },
+    { "x": 10, "y": 11, "tileState": "Burning", "isPassable": false },
+    { "x": 11, "y": 11, "tileState": "Burning", "isPassable": false },
+    { "x": 12, "y": 11, "tileState": "Burning", "isPassable": false },
+    { "x": 13, "y": 11, "tileState": "Burning", "isPassable": false },
+    { "x": 10, "y": 12, "tileState": "Burning", "isPassable": false },
+    { "x": 11, "y": 12, "tileState": "Burning", "isPassable": false },
+    { "x": 12, "y": 12, "tileState": "Burning", "isPassable": false },
+    { "x": 13, "y": 12, "tileState": "Burning", "isPassable": false },
+    { "x": 10, "y": 13, "tileState": "Burning", "isPassable": false },
+    { "x": 11, "y": 13, "tileState": "Burning", "isPassable": false },
+    { "x": 12, "y": 13, "tileState": "Burning", "isPassable": false },
+    { "x": 13, "y": 13, "tileState": "Burning", "isPassable": false },
+
+    // ---- Obsidian pillar A: 2x2 at (3, 3) ----
+    { "x": 3, "y": 3, "tileState": "Obsidian", "isPassable": false },
+    { "x": 4, "y": 3, "tileState": "Obsidian", "isPassable": false },
+    { "x": 3, "y": 4, "tileState": "Obsidian", "isPassable": false },
+    { "x": 4, "y": 4, "tileState": "Obsidian", "isPassable": false },
+
+    // ---- Obsidian pillar B: 2x2 at (19, 3) ----
+    { "x": 19, "y": 3, "tileState": "Obsidian", "isPassable": false },
+    { "x": 20, "y": 3, "tileState": "Obsidian", "isPassable": false },
+    { "x": 19, "y": 4, "tileState": "Obsidian", "isPassable": false },
+    { "x": 20, "y": 4, "tileState": "Obsidian", "isPassable": false },
+
+    // ---- Obsidian pillar C: 2x2 at (3, 19) ----
+    { "x": 3, "y": 19, "tileState": "Obsidian", "isPassable": false },
+    { "x": 4, "y": 19, "tileState": "Obsidian", "isPassable": false },
+    { "x": 3, "y": 20, "tileState": "Obsidian", "isPassable": false },
+    { "x": 4, "y": 20, "tileState": "Obsidian", "isPassable": false },
+
+    // ---- Obsidian pillar D: 2x2 at (19, 19) ----
+    { "x": 19, "y": 19, "tileState": "Obsidian", "isPassable": false },
+    { "x": 20, "y": 19, "tileState": "Obsidian", "isPassable": false },
+    { "x": 19, "y": 20, "tileState": "Obsidian", "isPassable": false },
+    { "x": 20, "y": 20, "tileState": "Obsidian", "isPassable": false },
+
+    // ---- West elevated ridgeline (elevation 1, x 0-1, y 6-17) ----
+    { "x": 0, "y": 6,  "elevation": 1 },
+    { "x": 1, "y": 6,  "elevation": 1 },
+    { "x": 0, "y": 7,  "elevation": 1 },
+    { "x": 1, "y": 7,  "elevation": 1 },
+    { "x": 0, "y": 8,  "elevation": 1 },
+    { "x": 1, "y": 8,  "elevation": 1 },
+    { "x": 0, "y": 9,  "elevation": 1 },
+    { "x": 1, "y": 9,  "elevation": 1 },
+    { "x": 0, "y": 10, "elevation": 1 },
+    { "x": 1, "y": 10, "elevation": 1 },
+    { "x": 0, "y": 11, "elevation": 1 },
+    { "x": 1, "y": 11, "elevation": 1 },
+    { "x": 0, "y": 12, "elevation": 1 },
+    { "x": 1, "y": 12, "elevation": 1 },
+    { "x": 0, "y": 13, "elevation": 1 },
+    { "x": 1, "y": 13, "elevation": 1 },
+    { "x": 0, "y": 14, "elevation": 1 },
+    { "x": 1, "y": 14, "elevation": 1 },
+    { "x": 0, "y": 15, "elevation": 1 },
+    { "x": 1, "y": 15, "elevation": 1 },
+    { "x": 0, "y": 16, "elevation": 1 },
+    { "x": 1, "y": 16, "elevation": 1 },
+    { "x": 0, "y": 17, "elevation": 1 },
+    { "x": 1, "y": 17, "elevation": 1 },
+
+    // ---- East elevated ridgeline (elevation 1, x 22-23, y 6-17) ----
+    { "x": 22, "y": 6,  "elevation": 1 },
+    { "x": 23, "y": 6,  "elevation": 1 },
+    { "x": 22, "y": 7,  "elevation": 1 },
+    { "x": 23, "y": 7,  "elevation": 1 },
+    { "x": 22, "y": 8,  "elevation": 1 },
+    { "x": 23, "y": 8,  "elevation": 1 },
+    { "x": 22, "y": 9,  "elevation": 1 },
+    { "x": 23, "y": 9,  "elevation": 1 },
+    { "x": 22, "y": 10, "elevation": 1 },
+    { "x": 23, "y": 10, "elevation": 1 },
+    { "x": 22, "y": 11, "elevation": 1 },
+    { "x": 23, "y": 11, "elevation": 1 },
+    { "x": 22, "y": 12, "elevation": 1 },
+    { "x": 23, "y": 12, "elevation": 1 },
+    { "x": 22, "y": 13, "elevation": 1 },
+    { "x": 23, "y": 13, "elevation": 1 },
+    { "x": 22, "y": 14, "elevation": 1 },
+    { "x": 23, "y": 14, "elevation": 1 },
+    { "x": 22, "y": 15, "elevation": 1 },
+    { "x": 23, "y": 15, "elevation": 1 },
+    { "x": 22, "y": 16, "elevation": 1 },
+    { "x": 23, "y": 16, "elevation": 1 },
+    { "x": 22, "y": 17, "elevation": 1 },
+    { "x": 23, "y": 17, "elevation": 1 },
+
+    // ---- Charged tiles (volcanic electrical hazard) ----
+    // 3 tiles adjacent to the central lava field
+    { "x": 9,  "y": 11, "tileState": "Charged" },
+    { "x": 14, "y": 11, "tileState": "Charged" },
+    { "x": 11, "y": 9,  "tileState": "Charged" }
+  ]
+}
