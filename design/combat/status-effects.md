@@ -119,3 +119,53 @@ Not all statuses should be easily removable. Priority removal targets are DoTs a
 | **Replaced by stronger version** | CHILLED → FROZEN; SLOWED → ROOTED; CHILLED + OVERCOOLED |
 | **Cannot stack or refresh while active** | CHARMED, STASIS, CONFUSION (must expire first) |
 | **Persists through other states** | POISONED through FROZEN; DEATH_MARK through all |
+
+---
+
+## Temperature-Triggered Statuses
+
+The **Temperature system** (see `temperature-system.md`) is a per-unit integer variable [-100, +100] that applies and removes statuses automatically when threshold boundaries are crossed. Three existing status types are used as temperature-triggered statuses: `BURNING`, `SLOWED`, and `FROZEN`.
+
+### Which Statuses Temperature Can Trigger
+
+| Temperature Range | State | Status Triggered |
+|---|---|---|
+| ≥ +61 | OVERHEATED | `BURNING` — 5 HP/turn DoT |
+| +31 to +60 | HOT | `SLOWED` — move range -1 |
+| -31 to -60 | SUPERCOOLED | `SLOWED` — move range -1; also applies BRITTLE_MODIFIER (incoming physical +50%) |
+| ≤ -61 | FROZEN SOLID | `FROZEN` — unit cannot move; turn skipped; SHATTER vulnerability (×2.5 physical/sonic damage) |
+
+The WARM (+1 to +30) and COLD (-1 to -30) ranges have no triggered statuses — they apply passive damage modifiers instead (incoming fire/ice spells deal +10% damage respectively) and are handled entirely inside `TemperatureManager`, not via the status system.
+
+### The Temperature-Held Rule
+
+Status effects applied by temperature use a **temperature-held** mechanism: their duration does not decrement each turn as long as temperature keeps them in the triggering range.
+
+- **`StatusManager.TickStatuses`** skips duration decrement for statuses with the temperature-held sentinel duration value.
+- The status is **removed immediately** when `TemperatureManager` detects that temperature has left the triggering range (e.g., BURNING is removed when temperature drops below +61).
+- If temperature returns to the triggering range, the status is **reapplied** on the next threshold check.
+
+This means temperature-triggered statuses behave more like **persistent conditions** than expiring debuffs, for as long as temperature stays in range.
+
+### Duration Expiry Without Temperature
+
+If a temperature-held status was force-removed by a cleanse spell (e.g., Hydromancer `Cleanse` removes BURNING), the unit is temporarily free of that status. However, if temperature remains in the triggering range at the next threshold check (end of activation or end of turn), the status is **reapplied**. Cleanse provides a one-turn reprieve, not a permanent cure against temperature-held effects.
+
+### Dual-Source Stack Interaction
+
+When the same status type is applied both by temperature AND by an independent source (a direct spell, terrain effect, or AoE):
+
+- **BURNING from OVERHEATED + BURNING from direct fire spell / BURNING terrain:** The temperature-held application takes precedence for duration purposes. The status persists as long as **either** source is active. Specifically:
+  - While temperature remains ≥ +61, BURNING persists regardless of what any direct spell's duration would have been.
+  - When temperature drops below +61, BURNING is removed by `TemperatureManager`. If a direct spell application also had remaining duration, that application is also removed — the temperature system's removal takes precedence.
+  - **Exception:** If BURNING was applied by both temperature and a direct spell simultaneously, and the direct spell has remaining duration after temperature drops, the behavior is: BURNING is removed by temperature exit, then the direct-source BURNING is immediately reapplied by the spell's own source tracking. This maintains correct behavior without requiring `StatusEffect` to track multiple simultaneous sources.
+
+- **SLOWED from HOT or SUPERCOOLED + SLOWED from terrain (Mud tile, Hydromancer):** Both are active simultaneously. The status persists as long as **either** source remains. When temperature exits the HOT/SUPERCOOLED range, `TemperatureManager` removes SLOWED. If the terrain source still applies SLOWED on the same end-of-turn pass, it will be reapplied from the terrain source.
+
+- **FROZEN from FROZEN SOLID + FROZEN from Cryomancer spell:** The temperature-held application has the sentinel (effectively infinite) duration. The FROZEN status persists. When temperature rises above -61, the temperature-held FROZEN is removed. If the Cryomancer spell had remaining duration, that FROZEN instance was overwritten by the replace-if-longer stacking rule when temperature-held was applied (since `int.MaxValue / 2` is longer than any spell duration). The unit is no longer FROZEN once temperature exits FROZEN SOLID range, unless the Cryomancer reapplies it directly.
+
+### BRITTLE_MODIFIER in SUPERCOOLED Range
+
+BRITTLE_MODIFIER is not tracked as a `StatusEffect` instance. Instead, `TemperatureManager.GetCategory` is called during incoming physical damage resolution inside `SpellResolver`. If the category returns `Supercooled`, a ×1.5 multiplier is applied to the damage calculation.
+
+This differs from spell-applied `BRITTLE_ARMOR` (which is a single-trigger `StatusEffect` that removes itself on the first hit). Temperature-driven BRITTLE_MODIFIER reapplies each time a physical hit lands while the unit remains SUPERCOOLED — it is a persistent zone modifier, not a one-time trigger.

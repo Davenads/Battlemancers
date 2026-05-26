@@ -70,6 +70,15 @@ namespace Battlemancers.Core.Simulation
         public int MoveRange { get; set; }
 
         /// <summary>
+        /// Current temperature of this unit on the range [-100, +100].
+        /// 0 = neutral (room temperature). Positive values indicate heat accumulation;
+        /// negative values indicate cold accumulation.
+        /// Temperature decays 10 points toward 0 each turn.
+        /// Threshold crossings trigger status effects via TemperatureManager.
+        /// </summary>
+        public int Temperature { get; set; }
+
+        /// <summary>
         /// Action points available for the current activation.
         /// Mancers start with 6 AP; Chaff and Ranged start with 1 AP.
         /// Reset each turn by ResetForNewTurn().
@@ -142,6 +151,7 @@ namespace Battlemancers.Core.Simulation
             // Mancers have 6 AP; Chaff and Ranged have 1 AP.
             ActionPoints = type == UnitType.Mancer ? 6 : 1;
             ActivatedThisTurn = false;
+            Temperature = 0;
         }
 
         // ---------------------------------------------------------------------------
