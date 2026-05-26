@@ -1,243 +1,134 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
+using System.Linq;
 
 namespace Battlemancers.Core.Data
 {
     /// <summary>
-    /// Persists and retrieves WarbandData to/from the local filesystem.
-    /// One warband = one JSON file. Manifest tracks all saved warbands for fast list loading.
-    ///
-    /// Thread safety: not thread-safe — call from main thread only.
+    /// Loads and persists player warband lists to disk as JSON.
+    /// One instance per application session. Call LoadAll() once at startup.
     /// Zero Unity dependencies — works headless for tests.
     /// </summary>
     public class WarbandRepository
     {
-        private const string ManifestFileName = "manifest.json";
-        private const int MaxWarbands = 20;
+        private const string FileName = "warbands.json";
 
         private readonly string _saveDirectory;
         private readonly Action<string> _logger;
+        private List<WarbandData> _warbands;
 
-        /// <param name="saveDirectory">Directory where warband JSON files are stored.
-        /// In Unity: Application.persistentDataPath + "/warbands".
-        /// In tests: any temp directory.</param>
-        /// <param name="logger">Optional log sink. Defaults to Console.WriteLine.</param>
         public WarbandRepository(string saveDirectory, Action<string> logger = null)
         {
             _saveDirectory = saveDirectory ?? throw new ArgumentNullException(nameof(saveDirectory));
             _logger = logger ?? Console.WriteLine;
         }
 
-        // --- Public API ---
-
-        /// <summary>Load the manifest (list of all saved warband names/IDs). Returns empty manifest if none exists.</summary>
-        public WarbandManifest LoadManifest()
+        /// <summary>Loads all saved warbands from disk. Returns empty list if file doesn't exist.</summary>
+        public List<WarbandData> LoadAll()
         {
-            string path = GetManifestFilePath();
+            string path = Path.Combine(_saveDirectory, FileName);
             if (!File.Exists(path))
-                return new WarbandManifest();
+            {
+                _logger($"[WarbandRepository] No save file found at {path} — starting fresh.");
+                _warbands = new List<WarbandData>();
+                return _warbands;
+            }
 
             try
             {
-                return BattlemancersJsonHelper.DeserializeFile<WarbandManifest>(path)
-                       ?? new WarbandManifest();
+                string json = File.ReadAllText(path);
+                _warbands = BattlemancersJsonHelper.Deserialize<List<WarbandData>>(json)
+                            ?? new List<WarbandData>();
+                _warbands.Sort((a, b) => a.CreatedAt.CompareTo(b.CreatedAt));
+                _logger($"[WarbandRepository] Loaded {_warbands.Count} warband(s).");
             }
             catch (Exception ex)
             {
-                _logger($"[WarbandRepository] Failed to load manifest: {ex.Message}");
-                return new WarbandManifest();
+                _logger($"[WarbandRepository] Failed to load warbands: {ex.Message}. Starting fresh.");
+                _warbands = new List<WarbandData>();
             }
+
+            return _warbands;
         }
 
-        /// <summary>Load a single warband by ID. Returns null if not found.</summary>
-        public WarbandData Load(string warbandId)
-        {
-            if (string.IsNullOrEmpty(warbandId))
-                return null;
+        /// <summary>Returns all loaded warbands. Call LoadAll() first.</summary>
+        public IReadOnlyList<WarbandData> GetAll() =>
+            _warbands ?? throw new InvalidOperationException("Call LoadAll() before GetAll().");
 
-            string path = GetWarbandFilePath(warbandId);
-            if (!File.Exists(path))
-                return null;
-
-            try
-            {
-                return BattlemancersJsonHelper.DeserializeFile<WarbandData>(path);
-            }
-            catch (Exception ex)
-            {
-                _logger($"[WarbandRepository] Failed to load warband '{warbandId}': {ex.Message}");
-                return null;
-            }
-        }
+        /// <summary>Returns warband by ID, or null if not found.</summary>
+        public WarbandData GetById(string warbandId) =>
+            _warbands?.FirstOrDefault(w => w.WarbandId == warbandId);
 
         /// <summary>
-        /// Save a warband. Generates a new WarbandId if one doesn't exist.
-        /// Updates the manifest automatically.
-        /// Throws InvalidOperationException if MaxWarbands is reached and this is a new warband.
+        /// Saves or updates a warband. Generates a new WarbandId if empty.
+        /// Persists the full list to disk immediately.
         /// </summary>
         public void Save(WarbandData warband)
         {
             if (warband == null) throw new ArgumentNullException(nameof(warband));
+            if (string.IsNullOrEmpty(warband.WarbandId))
+                warband.WarbandId = Guid.NewGuid().ToString();
 
-            bool isNew = string.IsNullOrEmpty(warband.WarbandId);
+            warband.LastModified = DateTime.UtcNow;
 
-            if (isNew)
+            _warbands ??= new List<WarbandData>();
+            int idx = _warbands.FindIndex(w => w.WarbandId == warband.WarbandId);
+            if (idx >= 0)
+                _warbands[idx] = warband;
+            else
             {
-                WarbandManifest existingManifest = LoadManifest();
-                if (existingManifest.Entries.Count >= MaxWarbands)
-                    throw new InvalidOperationException(
-                        $"Cannot save warband: maximum of {MaxWarbands} warbands reached.");
-
-                warband.WarbandId = GenerateNewId();
+                warband.CreatedAt = DateTime.UtcNow;
+                _warbands.Add(warband);
             }
 
-            if (string.IsNullOrEmpty(warband.CreatedAt))
-                warband.CreatedAt = DateTime.UtcNow.ToString("o");
-
-            warband.LastModifiedAt = DateTime.UtcNow.ToString("o");
-
-            EnsureDirectoryExists();
-
-            string path = GetWarbandFilePath(warband.WarbandId);
-            try
-            {
-                string json = JsonSerializer.Serialize(warband, BattlemancersJsonHelper.GetOptions());
-                File.WriteAllText(path, json);
-            }
-            catch (Exception ex)
-            {
-                _logger($"[WarbandRepository] Failed to write warband '{warband.WarbandId}': {ex.Message}");
-                throw;
-            }
-
-            UpdateManifestEntry(warband);
+            Persist();
+            _logger($"[WarbandRepository] Saved warband '{warband.Name}' ({warband.WarbandId}).");
         }
 
-        /// <summary>Delete a warband by ID. Updates manifest. No-op if ID doesn't exist.</summary>
+        /// <summary>Deletes a warband by ID. No-op if not found.</summary>
         public void Delete(string warbandId)
         {
-            if (string.IsNullOrEmpty(warbandId))
-                return;
-
-            string path = GetWarbandFilePath(warbandId);
-            if (File.Exists(path))
+            int removed = _warbands?.RemoveAll(w => w.WarbandId == warbandId) ?? 0;
+            if (removed > 0)
             {
-                try
-                {
-                    File.Delete(path);
-                }
-                catch (Exception ex)
-                {
-                    _logger($"[WarbandRepository] Failed to delete warband file '{warbandId}': {ex.Message}");
-                }
+                Persist();
+                _logger($"[WarbandRepository] Deleted warband {warbandId}.");
             }
-
-            RemoveManifestEntry(warbandId);
         }
 
-        /// <summary>Rename a warband (updates both the file and the manifest entry).</summary>
-        public void Rename(string warbandId, string newName)
+        /// <summary>Creates a deep copy of an existing warband with a new ID and "(Copy)" suffix.</summary>
+        public WarbandData Duplicate(string warbandId)
         {
-            if (string.IsNullOrEmpty(warbandId)) throw new ArgumentNullException(nameof(warbandId));
-            if (newName == null) throw new ArgumentNullException(nameof(newName));
-
-            WarbandData warband = Load(warbandId);
-            if (warband == null)
-            {
-                _logger($"[WarbandRepository] Rename failed: warband '{warbandId}' not found.");
-                return;
-            }
-
-            warband.Name = newName;
-            Save(warband);
-        }
-
-        /// <summary>
-        /// Duplicate a warband. Creates a new file with a new WarbandId,
-        /// name = "{original.Name} (Copy)", and current timestamp.
-        /// Returns the new WarbandId.
-        /// </summary>
-        public string Duplicate(string warbandId)
-        {
-            if (string.IsNullOrEmpty(warbandId)) throw new ArgumentNullException(nameof(warbandId));
-
-            WarbandData original = Load(warbandId);
+            var original = GetById(warbandId);
             if (original == null)
-            {
-                _logger($"[WarbandRepository] Duplicate failed: warband '{warbandId}' not found.");
-                return null;
-            }
+                throw new ArgumentException($"Warband {warbandId} not found.", nameof(warbandId));
 
-            // Serialize then deserialize to produce a deep copy without referencing original objects.
-            string json = JsonSerializer.Serialize(original, BattlemancersJsonHelper.GetOptions());
-            WarbandData copy = BattlemancersJsonHelper.Deserialize<WarbandData>(json);
-
-            copy.WarbandId = null;  // cleared so Save() assigns a new ID
-            copy.Name = $"{original.Name} (Copy)";
-            copy.CreatedAt = null;  // cleared so Save() stamps a fresh creation time
+            // Serialize + deserialize for a true deep copy with no shared references.
+            string json = System.Text.Json.JsonSerializer.Serialize(original, BattlemancersJsonHelper.GetOptions());
+            var copy = BattlemancersJsonHelper.Deserialize<WarbandData>(json);
+            copy.WarbandId = Guid.NewGuid().ToString();
+            copy.Name = original.Name + " (Copy)";
+            copy.CreatedAt = DateTime.UtcNow;
+            copy.LastModified = DateTime.UtcNow;
 
             Save(copy);
-            return copy.WarbandId;
+            return copy;
         }
 
-        // --- Private helpers ---
-
-        private string GetWarbandFilePath(string warbandId) =>
-            Path.Combine(_saveDirectory, $"{warbandId}.json");
-
-        private string GetManifestFilePath() =>
-            Path.Combine(_saveDirectory, ManifestFileName);
-
-        private void EnsureDirectoryExists()
+        private void Persist()
         {
-            if (!Directory.Exists(_saveDirectory))
-                Directory.CreateDirectory(_saveDirectory);
-        }
-
-        private void UpdateManifestEntry(WarbandData warband)
-        {
-            WarbandManifest manifest = LoadManifest();
-
-            // Remove stale entry if it exists, then append the fresh one.
-            manifest.Entries.RemoveAll(e => e.WarbandId == warband.WarbandId);
-            manifest.Entries.Add(new WarbandManifestEntry
-            {
-                WarbandId = warband.WarbandId,
-                Name = warband.Name,
-                FactionId = warband.FactionId,
-                CachedTotalCost = warband.CachedTotalCost,
-                LastModifiedAt = warband.LastModifiedAt
-            });
-
-            SaveManifest(manifest);
-        }
-
-        private void RemoveManifestEntry(string warbandId)
-        {
-            WarbandManifest manifest = LoadManifest();
-            int removed = manifest.Entries.RemoveAll(e => e.WarbandId == warbandId);
-            if (removed > 0)
-                SaveManifest(manifest);
-        }
-
-        private void SaveManifest(WarbandManifest manifest)
-        {
-            EnsureDirectoryExists();
-            string path = GetManifestFilePath();
             try
             {
-                string json = JsonSerializer.Serialize(manifest, BattlemancersJsonHelper.GetOptions());
+                Directory.CreateDirectory(_saveDirectory);
+                string path = Path.Combine(_saveDirectory, FileName);
+                string json = System.Text.Json.JsonSerializer.Serialize(_warbands, BattlemancersJsonHelper.GetOptions());
                 File.WriteAllText(path, json);
             }
             catch (Exception ex)
             {
-                _logger($"[WarbandRepository] Failed to write manifest: {ex.Message}");
+                _logger($"[WarbandRepository] Failed to persist warbands: {ex.Message}");
             }
         }
-
-        private static string GenerateNewId() =>
-            Guid.NewGuid().ToString("N"); // 32-char hex, no hyphens
     }
 }
