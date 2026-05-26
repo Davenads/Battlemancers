@@ -545,9 +545,9 @@ These rules are mandatory for all agents:
 | grid-system | 1 | COMPLETE | agent/grid-system | Merged to master |
 | sim-core | 1 | COMPLETE | agent/sim-core | Merged to master; AP fix applied (2→6) |
 | data-schemas | 1 | COMPLETE | agent/data-schemas | Merged to master |
-| mancers-group-a | 2 | RUNNING | agent/mancers-group-a | cryo, geo, aero, electromancer |
-| mancers-group-b | 2 | RUNNING | agent/mancers-group-b | necro, chrono, photo, psychomancer |
-| element-resolver | 2 | RUNNING | agent/element-resolver | ElementResolver.cs + interaction JSON |
-| status-system | 2 | RUNNING | agent/status-system | StatusEffect, StatusManager, StatusTick |
-| pathfinding | 2 | RUNNING | agent/pathfinding | MovementRange, LineOfSight, utils |
-| test-framework | 2 | RUNNING | agent/test-framework | NUnit suites for all simulation code |
+| mancers-group-a | 2 | COMPLETE | agent/mancers-group-a | Merged to master |
+| mancers-group-b | 2 | COMPLETE | agent/mancers-group-b | Merged to master |
+| element-resolver | 2 | COMPLETE | agent/element-resolver | Merged to master; 105 interaction entries |
+| status-system | 2 | COMPLETE | agent/status-system | Merged to master |
+| pathfinding | 2 | COMPLETE | agent/pathfinding | Merged to master; Dijkstra flood fill |
+| test-framework | 2 | COMPLETE | agent/test-framework | Merged to master; 42 test cases |
