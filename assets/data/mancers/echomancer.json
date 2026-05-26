@@ -1,0 +1,221 @@
+{
+  "MancerId": "echomancer",
+  "DisplayName": "Echomancer",
+  "MaxHP": 80,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Arcane",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Highest-skill-ceiling Mancer — derives power from repeating the best spell cast on the battlefield at 60% power for 2 AP. Places Afterimage decoys that are visually identical to the Echomancer; destroyed Afterimages explode for 12 Arcane AoE. Phase Step swaps position with any active Afterimage. TEMPORAL ECHO forces an enemy Mancer to undo their last 2 turns of movement and actions.",
+  "StrongSynergyMancerIds": ["gravimancer", "pyromancer", "cryomancer", "chronomancer", "geomancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "arcane_dart",
+      "DisplayName": "Arcane Dart",
+      "Description": "A pure Arcane projectile that deals exactly 10 damage with no terrain interactions, no secondary status, and no elemental modifications. Ignores all terrain interaction tables. Pierces OBSIDIAN. Destroys an Afterimage in a single hit if it has already taken damage.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 10,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "Condition": "ImpactTileIsCharged",
+          "NewTileState": "Ground",
+          "AoeRadius": 0,
+          "Description": "Arcane energy dissipates CHARGED terrain harmlessly — clears CHARGED without triggering arc chain"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_projectile",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "afterimage",
+      "DisplayName": "Afterimage",
+      "Description": "Places a decoy token on any visible tile within range. The Afterimage is visually identical to the Echomancer. It has 10 HP and explodes for 12 Arcane AoE (1-tile radius) when destroyed. Maximum 3 Afterimages active simultaneously. Placing a 4th collapses the oldest with no explosion.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "AfterimageDestroyedByEchomancer",
+          "BonusType": "FlatDamageBonus",
+          "Value": 6,
+          "Description": "Echomancer-triggered Afterimage destruction deals 18 AoE (up from 12)"
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "afterimage_decoy",
+          "Description": "Places Afterimage token (10 HP). Visually identical to Echomancer. Explodes for 12 Arcane AoE in 1-tile radius on destruction. Immune to POISONED and ROOTED. Does not conduct electricity on CHARGED terrain."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "afterimage_decoy",
+      "MaxSummonCount": 3,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_summon",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "echo",
+      "DisplayName": "Echo",
+      "Description": "Repeats the last spell cast by any Mancer on either team at 60% of its base damage and 60% status effect application probability. Inherits the original spell's element, range, AoE, and all terrain interactions. 1-turn cooldown prevents echoing the same spell twice in a row. Echo target updates every time any Mancer casts.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 0,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "Always",
+          "BonusType": "StoredSpellScaling",
+          "Value": 0.6,
+          "Description": "Echo deals 60% of last spell's base damage; secondary effects apply at 60% probability per target"
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "echo_repeat",
+          "Description": "Fires at last qualifying spell's target location from Echomancer's current position. Inherits element, AoE, range, and terrain interactions. Excluded spells: Phase Step, Afterimage, Temporal Echo, Chronomancer REWIND, any spell cast by the Echomancer this activation."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_echo",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "phase_step",
+      "DisplayName": "Phase Step",
+      "Description": "Instantly swaps positions with a chosen active Afterimage. The Echomancer teleports to the Afterimage's tile; the Afterimage token moves to the Echomancer's prior tile. No range limit — can target any visible Afterimage on the board. Terrain hazards at the destination apply normally after the swap.",
+      "ApCost": 2,
+      "CooldownTurns": 2,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 0,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "position_swap_afterimage",
+          "Description": "Echomancer teleports to target Afterimage's tile. Afterimage moves to Echomancer's prior tile. No path travel, no collision. Destination must have an active Afterimage. Afterimage HP unaffected by swap."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_teleport",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "temporal_echo",
+      "DisplayName": "Temporal Echo",
+      "Description": "Forces one enemy Mancer to undo their last 2 turns of movement and actions. The target is repositioned to their location 2 turns ago with full 6 AP. Statuses gained in the last 2 turns are stripped. Board damage, terrain states, and effects on other units from those turns are NOT reversed. If the target used their Signature Ability in the 2-turn window, its cooldown is restored but its effects remain. Echomancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "SingleTarget",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "temporal_reposition",
+          "Description": "Target Mancer's position reset to 2 turns ago. AP refunded to 6 (base). Statuses applied in last 2 turns removed. Signature ability cooldown restored if used in window. Cannot target units in STASIS. Board state (terrain, damage dealt) not reverted."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_ultimate",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.4
+    }
+  ]
+}

@@ -1,0 +1,273 @@
+{
+  "MancerId": "crystalomancer",
+  "DisplayName": "Crystalomancer",
+  "MaxHP": 95,
+  "MoveRange": 3,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Crystal",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Battlefield architect that wins by building a network of Crystal Nodes, Prisms, and Walls — storing ally elemental spells in Nodes and releasing them as second-strike AoE bursts. Crystal Prisms redirect beam and projectile spells 90 degrees around cover. Lowest direct damage in the roster; power scales entirely with ally coordination and construct survivability.",
+  "StrongSynergyMancerIds": ["electromancer", "photomancer", "pyromancer", "cryomancer", "sonimancer"],
+  "RecommendedFactionId": "gilded_throne",
+  "Spells": [
+    {
+      "SpellId": "crystal_shard",
+      "DisplayName": "Crystal Shard",
+      "Description": "A single crystal projectile that travels in a line and bounces off Crystal Prisms in its path. Deals physical damage and can reach targets around corners when Prisms are positioned correctly.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Crystal",
+      "BaseDamage": 12,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetHasBrittleArmor",
+          "BonusType": "DamageMultiplier",
+          "Value": 1.5,
+          "Description": "BRITTLE_ARMOR triggers on Crystal Shard impact (+50% damage)"
+        },
+        {
+          "Condition": "TargetTileIsResonating",
+          "BonusType": "FlatDamageBonus",
+          "Value": 8,
+          "Description": "Crystal resonates with sonic resonance — deals 20 total damage on RESONATING tile"
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "Condition": "ImpactTileIsIceTile",
+          "NewTileState": "IceTile",
+          "AoeRadius": 1,
+          "Description": "Ice-shard fragments deal 5 cold splash to adjacent units on ICE_TILE impact"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "crystal_projectile",
+      "SfxCastTag": "spell/crystal/cast",
+      "SfxImpactTag": "spell/crystal/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "place_construct",
+      "DisplayName": "Place Construct",
+      "Description": "Deploys a Crystal Node (stores elemental energy), Crystal Prism (redirects beam/projectile spells 90 degrees), or Crystal Wall (3-tile movement barrier) on a target tile. Maximum 3 total constructs active; placing a 4th shatters the oldest.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Crystal",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "place_crystal_construct",
+          "Description": "Deploys chosen construct type (Node/Prism/Wall). Crystal Node: 15 HP, stores last elemental spell that hits it. Crystal Prism: 15 HP, refracts beam/line spells 90 degrees. Crystal Wall: 3-tile line, 20 HP/tile, blocks movement. Constructs shatter for 10 AoE on destruction."
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "Condition": "Always",
+          "NewTileState": "CrystalConstruct",
+          "AoeRadius": 0,
+          "Description": "Places crystal construct on target tile"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "crystal_construct",
+      "MaxSummonCount": 3,
+      "TemperatureDelta": 0,
+      "VfxTag": "crystal_summon",
+      "SfxCastTag": "spell/crystal/cast",
+      "SfxImpactTag": "spell/crystal/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "energy_release",
+      "DisplayName": "Energy Release",
+      "Description": "Triggers a charged Crystal Node within range, releasing its stored elemental spell as a 2-tile AoE burst at 70% of the original spell's base damage. The element, terrain interactions, and secondary effects all match the stored spell. Destroys the Node on use.",
+      "ApCost": 3,
+      "CooldownTurns": 0,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Crystal",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "NodeOnResonatingTile",
+          "BonusType": "StoredDamageMultiplier",
+          "Value": 0.85,
+          "Description": "RESONATING tile amplifies release to 85% of original spell damage (up from 70%)"
+        },
+        {
+          "Condition": "NodeOnChargedTile",
+          "BonusType": "FlatDamageBonus",
+          "Value": 12,
+          "Description": "CHARGED terrain adds 12 Lightning damage to the release burst"
+        },
+        {
+          "Condition": "NodeDamaged",
+          "BonusType": "FlatDamageBonus",
+          "Value": 15,
+          "Description": "Unstable Node (1-14 HP) adds 15 explosive shrapnel damage in 1-tile radius"
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "stored_element_release",
+          "Description": "Releases stored element as 2-tile AoE at 70% base damage. Secondary effects at 70% application probability. Node consumed on release."
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "Condition": "StoredElementDeterminesTerrain",
+          "NewTileState": "VariesByStoredElement",
+          "AoeRadius": 2,
+          "Description": "Terrain changes match the stored element's standard interactions"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "crystal_aoe",
+      "SfxCastTag": "spell/crystal/cast",
+      "SfxImpactTag": "spell/crystal/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "crystal_cascade",
+      "DisplayName": "Crystal Cascade",
+      "Description": "Crystal energy cascades through the Crystalomancer's network starting at the targeted construct, chaining to all other constructs within 3 tiles. Each construct pulses a 1-tile AoE (20 at first, 15 at each subsequent). Participating constructs gain +10 HP from energy reinforcement. Charged Nodes release 20% of stored element alongside the pulse.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 1,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Crystal",
+      "BaseDamage": 20,
+      "ConditionalBonuses": [
+        {
+          "Condition": "ConstructOnResonatingTile",
+          "BonusType": "DamageMultiplier",
+          "Value": 2.0,
+          "Description": "RESONATING tile doubles the cascade pulse damage at that construct (30 HP instead of 15)"
+        },
+        {
+          "Condition": "ConstructOnChargedTile",
+          "BonusType": "AdditionalEffect",
+          "Value": 10,
+          "Description": "CHARGED tile adds 10 Lightning arc discharge chaining to adjacent WET units"
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "construct_chain_pulse",
+          "Description": "Cascade chains construct-to-construct within 3 tiles. 20 HP at primary, 15 HP at each subsequent. Each construct gains +10 HP from energy surge. Nodes release 20% stored charge alongside pulse."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "crystal_chain",
+      "SfxCastTag": "spell/crystal/cast",
+      "SfxImpactTag": "spell/crystal/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "grand_prism_array",
+      "DisplayName": "Grand Prism Array",
+      "Description": "The Crystalomancer generates a Grand Prism Array, auto-placing 6 Crystal Prisms at equidistant points around itself in a 4-tile radius. For 3 turns, any beam or line spell entering the array bounces between Prisms, gaining +10% of original base damage per bounce (max 3 bounces = +30%). The Array collapses after 3 turns, all 6 Prisms shattering simultaneously for 10 HP AoE each. Crystalomancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 4,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Crystal",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "BeamSpellPassesThroughArray",
+          "BonusType": "DamageMultiplierPerBounce",
+          "Value": 0.1,
+          "Description": "Each bounce through Array Prisms adds +10% of original spell base damage (up to 3 bounces)"
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "grand_prism_array_field",
+          "Description": "Spawns 6 Grand Prisms in 4-tile radius around caster. Array persists 3 turns. All 6 Prisms override existing construct limit (oldest 3 standard constructs collapse). Array Prisms immune to destruction for 3-turn duration. All 6 shatter simultaneously on expiry."
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "grand_prism",
+      "MaxSummonCount": 6,
+      "TemperatureDelta": 0,
+      "VfxTag": "crystal_ultimate",
+      "SfxCastTag": "spell/crystal/cast",
+      "SfxImpactTag": "spell/crystal/impact",
+      "CameraShakeIntensity": 0.5
+    }
+  ]
+}
