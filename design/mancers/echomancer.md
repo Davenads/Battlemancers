@@ -378,4 +378,45 @@ The most impactful Ashen Covenant interaction: Wailing Shade kills that generate
 
 ---
 
+## 9. Temperature Effects
+
+### Temperature Effects per Spell
+
+| Spell | Temperature Change | Notes |
+|---|---|---|
+| **Arcane Dart** (1 AP) | **0** | Generic arcane element — no thermal component |
+| **Afterimage** (1 AP) | **0 at placement** | Decoy placement has no thermal effect; destruction explosion carries minor thermal burst based on Echomancer's current temperature (see Afterimage temperature below) |
+| **Echo** (2 AP) | **60% of the original spell's temperature change** | If echoed spell was +35 temperature, Echo applies +21; if -25, Echo applies -15; if 0, Echo applies 0 |
+| **Phase Step** (2 AP) | **0** | Teleportation — no thermal effect |
+
+---
+
+### Temperature Interaction Notes
+
+**Echo temperature rules — full specification:**
+The Echo mechanic mirrors temperature at the same 60% ratio it applies to damage and secondary effects. The full rules:
+- Echo always applies **60% of the original spell's temperature delta**, rounded down
+- If the original spell was **+35 temperature**, Echo applies **+21**
+- If the original spell was **-25 temperature**, Echo applies **-15**
+- If the original spell was **0 temperature**, Echo applies **0** (no change)
+- Echo applies to the **same target position** as the original cast — meaning if the original target's tile still has enemy units when the Echo resolves, they receive the echo temperature change
+- Example: a Cryomancer ally casts Glacial Spike (-30 temperature) at position X. Echomancer uses Echo → **-18 temperature** at position X. If the same enemy is still there: -30 + -18 = **-48 total**, reaching SUPERCOOLED (-31 to -60), applying SLOWED and BRITTLE (+50% physical damage taken)
+
+**THERMAL SHOCK setup with Echo:**
+Echo can contribute to or follow through on THERMAL SHOCK sequences. The key scenario: a Thermomancer ally uses Heat Lance (+35 temperature) on an enemy at -40 temperature (SUPERCOOLED). That is a +75 delta — the target crosses from ≤-31 to ≥+31 in one hit, triggering **THERMAL SHOCK** (bonus damage = |ΔTemp|/2 = 37 bonus + 1-turn STUN). If the target survives THERMAL SHOCK, they are now at +35 temperature (HOT). The Echomancer then echoes Heat Lance: **+21 temperature** to the same target, now at +35. The target moves from +35 to **+56** (HOT). The full sequence: **THERMAL SHOCK → survival → Echo → HOT debuff** — the echo compounds the Thermomancer's work, pushing the weakened target deeper into the HOT zone.
+
+**Echo loop with sustained temperature buildup:**
+An Echomancer repeatedly echoing a fire spell on the same target over consecutive turns creates escalating temperature pressure. Because Echo costs only 2 AP while the original spell cost 3–5 AP, the Echomancer can sustain echo pressure across turns with high AP efficiency. Example: a Pyromancer's Ember Shot applies +25 temperature. Each Echo of Ember Shot applies +15 temperature (+25 × 0.60 = 15). Combined over 3 turns (original cast + 2 echoes): **+25 + +15 + +15 = +55 temperature**, pushing a NEUTRAL target into HOT (+31 to +60) and applying SLOWED. This is slow but AP-efficient — the Echomancer contributes persistent temperature escalation at 2 AP per turn without requiring the Pyromancer to keep investing.
+
+**Echoing Rewind (Chronomancer ally) — temporal resonance:**
+If an ally Chronomancer used Rewind to restore a target's temperature to a previous state (e.g., Rewind brought a target from +70 back to +40, restoring +30 temperature toward neutral), and the Echomancer subsequently uses Echo on that Rewind: the Echo applies **60% of the temperature restoration** — if Rewind restored +30 temperature, the Echo restores an additional **+18 temperature** (brings target from +40 to +22, further toward WARM). Echoing temporal effects feels thematically dissonant — this interaction is documented as **"temporal resonance,"** a case where the Echomancer's recursion mechanic bleeds into the Chronomancer's time-manipulation domain. The flavor interpretation: the Echomancer doesn't fully understand what it is doing when it echoes Rewind; it is replaying a thermal memory rather than deliberately manipulating time. Mechanically it works; fictionally it is strange.
+
+**Afterimage temperature — explosion carries Echomancer's thermal state:**
+When an Afterimage is destroyed (its 10 HP pool is depleted, triggering the 12 HP AoE explosion), the explosion carries a minor thermal burst based on the Echomancer's current temperature at the moment of destruction:
+- If the Echomancer is **OVERHEATED** (+61 or higher): the Afterimage explosion applies **+5 temperature** to all units in the 1-tile blast radius (a hot explosion from a heat-stressed construct)
+- If the Echomancer is **SUPERCOOLED** (-31 to -60) or **FROZEN SOLID** (-61 or lower): the explosion applies **-5 temperature** to all units in the 1-tile blast radius (a burst of cold from a cryogenically stressed construct)
+- If the Echomancer is at any other temperature state (WARM, NEUTRAL, COLD, or HOT): the explosion has no temperature component (0 change) — only the baseline 12 HP Arcane AoE damage
+
+This is a minor mechanic with primarily flavor impact, but it adds physical coherence to the Afterimage system: the decoys are extensions of the Echomancer, and when the Echomancer is at thermal extremes, that is reflected in the way the decoys detonate.
+
 *End of Echomancer design document.*
