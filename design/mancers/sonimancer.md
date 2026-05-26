@@ -372,4 +372,37 @@ Grave Husks generate Necromancer fuel on death. The Sonimancer's AoE cones that 
 
 ---
 
+## 9. Temperature Effects
+
+### Temperature Effects per Spell
+
+| Spell | Temperature Change | Notes |
+|---|---|---|
+| **Sonic Pulse** (1 AP) | **0** | Low intensity — insufficient vibration to generate measurable heat |
+| **Resonance Cone** (3 AP) | **0 direct** | No direct thermal effect on cast; however, applies RESONATING terrain — see Thermal Resonance below |
+| **Shatter Scream** (4 AP) | **0** | SILENCED application has conditional duration extension against OVERHEATED targets (see below) |
+| **Dissonance Wave** (3 AP) | **0** | Dissonance disperses rather than focuses energy — thermally neutral |
+| **Sonic Obliteration** (6 AP) | **0 direct** | Indirect thermal effect via mass RESONATING detonation — see below |
+
+---
+
+### Temperature Interaction Notes
+
+**Thermal Resonance — secondary payoff of the RESONATING combo:**
+When a RESONATING tile is hit by a follow-up sonic spell (the existing 2× damage amplification trigger), the vibration intensity at detonation is sufficient to generate heat: **+10 temperature to all units in the resonating area** at the moment of resonance detonation. This is a secondary reward layered onto the Sonimancer's core setup-follow-through mechanic — the resonance combo now delivers both damage amplification AND a heat pulse. A cluster of enemies standing on RESONATING tiles when the follow-up cone detonates receives the full +10 temperature in addition to doubled damage. Combined with the temperature system thresholds, a NEUTRAL unit pushed to +10 enters WARM (fire spells +10% damage), and a COLD unit at -10 is pushed back to neutral — the Sonimancer's resonance detonation has minor but real thermal consequences on the board state.
+
+**Deep Freeze Shatter — compound shatter from FROZEN + RESONATING:**
+A FROZEN SOLID unit (≤ -61 temperature) is physically brittle. The Sonimancer's SHATTER mechanism (RESONATING → follow-up sonic) deals doubled damage. Against a FROZEN SOLID target, the sonic SHATTER (×2.5 physical damage multiplier from FROZEN SOLID status) and the RESONATING double-damage amplification BOTH apply additively. This is documented as the **"Deep Freeze Shatter"** combo:
+1. **Cryomancer** casts Glacial Spike or Blizzard Field — target reaches FROZEN SOLID (≤ -61 temperature)
+2. **Sonimancer** casts Resonance Cone through the target's tile — RESONATING applied; target takes 25 HP
+3. **Sonimancer** follow-up (next activation): any sonic spell through the same tile — RESONATING doubles the damage, AND the FROZEN SOLID SHATTER multiplier (×2.5) applies simultaneously
+
+Damage math example (Shatter Scream follow-up): 35 base × 2 (RESONATING) × 2.5 (FROZEN SOLID SHATTER) = **175 HP** — the theoretical maximum from the Sonimancer's base kit against a properly set-up target.
+
+**OVERHEATED targets and SILENCED duration:**
+Metals and dense materials resonate differently when heat-stressed. If a target is OVERHEATED (≥ +61 temperature), their SILENCED debuff from Shatter Scream has **+1 duration**: SILENCED normally lasts 2 turns, but against OVERHEATED targets it lasts **3 turns** (heat-stressed materials take longer to stop ringing after a sonic impact). This is a minor mechanical bonus with flavor justification — a secondary payoff for the Thermomancer + Sonimancer pairing where Thermomancer pushes targets to OVERHEATED and the Sonimancer follows with Shatter Scream for extended lockdown.
+
+**Sonic Obliteration and mass thermal resonance:**
+When Sonic Obliteration fires in all 4 directions simultaneously, any RESONATING tiles it hits trigger the Thermal Resonance rule: each detonated RESONATING tile generates +10 temperature to all units in that resonating area. In a properly prepared board with RESONATING tiles seeded in multiple directions (via Resonance Cone on prior turns, especially with Resonance Master passive extending duration to 3 turns), the mass resonance detonation from Sonic Obliteration creates a **heat wave across the entire zone** — every unit standing on pre-seeded RESONATING tiles in the blast area receives +10 temperature simultaneously. In a formation where 3 RESONATING tile clusters are detonated at once, every enemy unit in those zones is pushed +10 temperature in a single activation. Combined with pre-existing HOT status (+31 to +60), this can push targets over the OVERHEATED threshold in one Sonic Obliteration cast.
+
 *End of Sonimancer design document.*

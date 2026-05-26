@@ -385,4 +385,40 @@ More impactfully: Grave Husks advancing toward an enemy position can be directed
 
 ---
 
+## 9. Temperature Effects
+
+### Temperature Effects per Spell
+
+| Spell | Temperature Change | Notes |
+|---|---|---|
+| **Crystal Shard** (1 AP) | **0** | Physical projectile — no thermal component |
+| **Place Construct** (2–3 AP) | **0 direct** | The construct itself inherits temperature from its tile: a Crystal Node placed on BURNING terrain (ON_FIRE tile) starts with +10 temperature stored; a Crystal Node placed on ICE_TILE starts with -10 temperature stored |
+| **Energy Release** (3 AP) | **Releases stored temperature alongside the spell effect** | HOT NODE (stored fire spell): release applies +15 temperature to all units in the 2-tile AoE. COLD NODE (stored ice spell): release applies -15 temperature. The exact value scales with what was stored — see Crystal Node temperature storage rules below |
+| **Crystal Cascade** (4 AP) | **0 direct; transmits stored temperature per node** | Each HOT NODE in the cascade chain applies +10 temperature to all units hit at that chain point; each COLD NODE applies -10 temperature |
+
+---
+
+### Temperature Interaction Notes
+
+**Crystal Node temperature storage — full rules:**
+Crystal is an excellent thermal conductor. When a spell hits a Crystal Node, the Node stores BOTH the spell's element AND its associated temperature change:
+- **HOT NODE** (node absorbed a fire spell): the node glows orange. Energy Release from a HOT NODE applies the stored fire spell effects AND a temperature change of **+15 to +35** to all units in the AoE (the exact value depends on the spell stored — a weak fire spell stores +15; a high-power fire spell like Pillar of Flame stores +35).
+- **COLD NODE** (node absorbed an ice spell): the node glows blue. Energy Release from a COLD NODE applies the stored ice spell effects AND a temperature change of **-15 to -35** to all units in the AoE.
+- **NEUTRAL NODE** (node absorbed an earth, wind, or non-thermal spell): no temperature effect on release.
+- A Crystal Node stores ONE thermal state at a time. Hitting a HOT NODE with an ice spell **converts** it to a COLD NODE — the thermal state is overwritten, not summed. This creates a tactical vulnerability: an opponent who fires a cold spell into a HOT NODE neutralizes the Crystalomancer's stored thermal payload.
+
+**Crystal Prism and temperature refraction:**
+When a thermal spell (fire, ice, or any spell carrying a temperature change) refracts through a Crystal Prism, the temperature change refracts with it — **each refracted path carries the full thermal payload, not a split portion**. A fire beam spell with a +20 temperature change that bounces through a Crystal Prism hits two targets — BOTH targets take +20 temperature (the crystal amplifies rather than divides the thermal energy). This makes Crystal Prism refraction a temperature-multiplier as well as a LoS bypass: one high-temperature spell directed through a Prism applies its full thermal effect to both the original target and the refracted target simultaneously.
+
+**FROZEN terrain and Crystal Wall — frost corridors:**
+Crystal Walls placed on FROZEN tiles (tiles in FROZEN terrain state, typically from Cryomancer activity) become **FROST CRYSTAL WALLS**. A FROST CRYSTAL WALL applies **-5 temperature per turn** to all units adjacent to it. Any unit that spends an activation adjacent to a FROST CRYSTAL WALL is temperature-drained by the crystalline cold radiating from the frozen substrate. Combined with a Cryomancer's FROZEN terrain, a well-placed Crystal Wall across a corridor creates a cold corridor that temperature-drains any unit moving through it. A unit moving through a 3-tile FROST CRYSTAL WALL corridor over 2 turns loses -10 temperature from wall proximity — enough to push a NEUTRAL unit into COLD (-10), or push a COLD unit toward SUPERCOOLED territory.
+
+**The Thermal Cascade — Crystal Cascade as temperature amplifier:**
+In a Crystal Cascade, each node in the chain transmits its stored temperature alongside the cascade pulse. A chain through **3 HOT NODES** applies +10 temperature per node = **+30 total temperature** to enemy units caught in the full cascade. This is the Crystalomancer's most powerful temperature-escalation tool, and requires deliberate setup:
+1. **Crystalomancer** places 3 Crystal Nodes at tactically spaced positions
+2. **Pyromancer ally** fires into each Node (3 activations, or one Scorched Earth that covers all Node tiles) — all 3 Nodes become HOT NODES (+25 to +35 temperature stored each)
+3. **Crystalomancer** triggers Crystal Cascade through all 3 HOT NODES — each Node transmits +10 temperature, pushing a cluster of NEUTRAL enemies to +30 temperature (entering HOT — SLOWED) in a single action
+
+This combo is documented as **"The Thermal Cascade."** Against enemies already in WARM state (+1 to +30), a +30 temperature spike from the Thermal Cascade pushes them directly to OVERHEATED (+61), triggering BURNING DoT (5 HP/turn) and opening them to THERMAL SHOCK vulnerability on the following turn.
+
 *End of Crystalomancer design document.*
