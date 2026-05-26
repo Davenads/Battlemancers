@@ -1,0 +1,270 @@
+{
+  "MancerId": "toximancer",
+  "DisplayName": "Toximancer",
+  "MaxHP": 85,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Poison",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Poison stack specialist. Applies POISONED stacks via spells and TOXIC_TERRAIN. Stack threshold goal is 5 stacks (DEBILITATED). Wins through sustained attrition and Contamination events that spread stacks across multiple enemies simultaneously.",
+  "StrongSynergyMancerIds": ["hydromancer", "floramancer", "necromancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "venom_dart",
+      "DisplayName": "Venom Dart",
+      "Description": "A concentrated venom projectile that applies 2 POISONED stacks. Leaves TOXIC_RESIDUE on the impact tile. Firing into WET terrain triggers an immediate Contamination check on the struck unit.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 7,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Poison",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetTemperatureAtLeast20",
+          "BonusStacksApplied": 1,
+          "BonusDamage": 0,
+          "Description": "WARM target (+20 or higher) potentiates venom: applies 3 stacks instead of 2."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Poisoned",
+          "Duration": 3,
+          "StacksApplied": 2,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "ToxicResidue",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Wet",
+          "ToState": "Wet",
+          "TriggersContamination": true
+        },
+        {
+          "FromState": "Spores",
+          "ToState": "ToxicSpores"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "poison_projectile",
+      "SfxCastTag": "spell/poison/cast",
+      "SfxImpactTag": "spell/poison/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "venomous_ground",
+      "DisplayName": "Venomous Ground",
+      "Description": "Erupts venom into a 2-tile radius, creating TOXIC_TERRAIN that persists 5 turns. Units entering or ending turns on TOXIC_TERRAIN receive 1 POISONED stack per tile crossed.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Poison",
+      "BaseDamage": 5,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "ToxicTerrain",
+          "Duration": 5,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Ground",
+          "ToState": "ToxicTerrain"
+        },
+        {
+          "FromState": "Wet",
+          "ToState": "WetToxic"
+        },
+        {
+          "FromState": "Spores",
+          "ToState": "VirulentSpores"
+        },
+        {
+          "FromState": "OnFire",
+          "ToState": "ToxicFire"
+        },
+        {
+          "FromState": "IceTile",
+          "ToState": "ToxicIce"
+        },
+        {
+          "FromState": "Charged",
+          "ToState": "ToxicTerrain",
+          "TriggersArcDischarge": true
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "poison_ground_eruption",
+      "SfxCastTag": "spell/poison/cast",
+      "SfxImpactTag": "spell/poison/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "toxic_surge",
+      "DisplayName": "Toxic Surge",
+      "Description": "Deals 12 damage and applies 1 POISONED stack. If the target is on WET terrain or already POISONED, immediately triggers Contamination — all 8 adjacent units receive 1 POISONED stack each.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Poison",
+      "BaseDamage": 12,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Poisoned",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "poison_surge",
+      "SfxCastTag": "spell/poison/cast",
+      "SfxImpactTag": "spell/poison/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "virulent_injection",
+      "DisplayName": "Virulent Injection",
+      "Description": "Melee-range injection dealing 20 damage and applying 3 POISONED stacks with 4-turn duration. If the target already has 2+ stacks, immediately reaches the 5-stack DEBILITATED threshold.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "SingleTarget",
+      "Range": 1,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Poison",
+      "BaseDamage": 20,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Poisoned",
+          "Duration": 4,
+          "StacksApplied": 3,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "poison_injection",
+      "SfxCastTag": "spell/poison/cast",
+      "SfxImpactTag": "spell/poison/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "pandemic",
+      "DisplayName": "Pandemic",
+      "Description": "Global ability. Doubles all POISONED stacks on every enemy unit currently carrying at least 1 stack, up to the 5-stack cap. All doubled stacks are refreshed to 3-turn duration. For 2 turns after cast, all Contamination events spread 2 stacks instead of 1. Costs the entire activation; Toximancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "AllEnemiesInRange",
+      "Range": 0,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Poison",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "PandemicAmplify",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "poison_pandemic",
+      "SfxCastTag": "spell/poison/cast",
+      "SfxImpactTag": "spell/poison/impact",
+      "CameraShakeIntensity": 0.5
+    }
+  ]
+}

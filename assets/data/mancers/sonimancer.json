@@ -1,0 +1,379 @@
+{
+  "MancerId": "sonimancer",
+  "DisplayName": "Sonimancer",
+  "MaxHP": 85,
+  "MoveRange": 3,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Sound",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Positioning-dependent AoE cone specialist. All spells are 90-degree cones originating from the Sonimancer's tile extending 3 tiles. Sonic damage passes through walls. Applies DEAFENED, SILENCED, and RESONANCE_CHARGE stacks. Core mechanic: Resonance Cone seeds RESONATING terrain for 2x damage on the follow-up hit. Thrives when enemy formations cluster; struggles against spread opponents.",
+  "StrongSynergyMancerIds": ["gravimancer", "cryomancer", "crystalomancer", "toximancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "sonic_pulse",
+      "DisplayName": "Sonic Pulse",
+      "Description": "A rapid sonic cone dealing 10 damage to all units in a 3-tile 90-degree arc. Applies DEAFENED (-1 AP effective, 2-turn duration). Passes through all physical barriers. Deals 20 damage on RESONATING tiles (double). Builds RESONANCE_CHARGE stacks; at 3 stacks triggers auto-STUN and +15 bonus damage.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Cone",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Sound",
+      "BaseDamage": 10,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TileIsResonating",
+          "BonusDamage": 10,
+          "Description": "RESONATING tile doubles damage to 20."
+        },
+        {
+          "Condition": "TargetAtMaxResonanceCharge",
+          "BonusDamage": 15,
+          "Description": "3 RESONANCE_CHARGE stacks trigger auto-STUN and +15 bonus damage."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Deafened",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "ResonanceCharge",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "IceTile",
+          "ToState": "Wet",
+          "Notes": "Sonic vibration cracks ice; SHATTER triggered on FROZEN units on ICE_TILE."
+        },
+        {
+          "FromState": "Overgrowth",
+          "ToState": "Ground",
+          "Notes": "Sonic shatters vine barriers; ROOTED removed from units in OVERGROWTH."
+        },
+        {
+          "FromState": "Permafrost",
+          "ToState": "Mud",
+          "Notes": "High-amplitude sonic fractures PERMAFROST; thaws to MUD."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "sound_cone",
+      "SfxCastTag": "spell/sound/cast",
+      "SfxImpactTag": "spell/sound/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "resonance_cone",
+      "DisplayName": "Resonance Cone",
+      "Description": "A focused sonic cone dealing 25 damage and applying 1 RESONANCE_CHARGE stack to all units hit. All tiles in the cone become RESONATING (2-turn duration) — the next sonic spell through those tiles deals 2x damage. On FROZEN targets triggers SHATTER (25 x2.5 = 62 damage). On already-RESONATING tiles creates DEEP_RESONANCE (3x damage, 1-turn duration).",
+      "ApCost": 3,
+      "CooldownTurns": 1,
+      "Tier": "Standard",
+      "TargetType": "Cone",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Sound",
+      "BaseDamage": 25,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 37,
+          "Description": "FROZEN target triggers SHATTER (25 x2.5 = 62 damage); FROZEN removed."
+        },
+        {
+          "Condition": "TileIsResonating",
+          "BonusDamage": 0,
+          "Description": "Already-RESONATING tile upgrades to DEEP_RESONANCE (3x damage on next sonic hit, 1-turn duration)."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "ResonanceCharge",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "Resonating",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "IceTile",
+          "ToState": "Wet",
+          "Notes": "Sonic shatters ice; SHATTER on FROZEN units on ICE_TILE."
+        },
+        {
+          "FromState": "Overgrowth",
+          "ToState": "Ground",
+          "Notes": "Sonic shatters vine barriers."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "sound_resonance_cone",
+      "SfxCastTag": "spell/sound/cast",
+      "SfxImpactTag": "spell/sound/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "shatter_scream",
+      "DisplayName": "Shatter Scream",
+      "Description": "A high-intensity sonic cone dealing 35 damage. Applies SILENCED to all hit units (cannot cast spells, 1 turn). Triggers RESONANCE_CHARGE max-stack burst if target has 3 stacks (+15 damage, auto-STUN, SHATTER if FROZEN). Against RESONATING tiles deals 70 damage (35x2). Destroys Crystal Walls (20 AoE shrapnel damage within 1 tile of wall).",
+      "ApCost": 4,
+      "CooldownTurns": 2,
+      "Tier": "Heavy",
+      "TargetType": "Cone",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Sound",
+      "BaseDamage": 35,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TileIsResonating",
+          "BonusDamage": 35,
+          "Description": "RESONATING tile doubles damage to 70."
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 52,
+          "Description": "FROZEN target triggers SHATTER (35 x2.5 = 87 damage); FROZEN removed."
+        },
+        {
+          "Condition": "TileIsResonatingAndTargetIsFrozen",
+          "BonusDamage": 140,
+          "Description": "RESONATING + FROZEN: 70 x2.5 SHATTER = 175 damage — maximum achievable from base kit."
+        },
+        {
+          "Condition": "TargetAtMaxResonanceCharge",
+          "BonusDamage": 15,
+          "Description": "3 RESONANCE_CHARGE stacks trigger burst: +15 damage, auto-STUN, SHATTER if FROZEN."
+        },
+        {
+          "Condition": "TargetIsOverheated",
+          "BonusDamage": 0,
+          "Description": "OVERHEATED targets have SILENCED duration extended by 1 turn (3 turns total)."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Silenced",
+          "Duration": 1,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "IceTile",
+          "ToState": "Wet",
+          "Notes": "SHATTER triggered on FROZEN units; ICE_TILE destroyed."
+        },
+        {
+          "FromState": "CrystalWall",
+          "ToState": "Ground",
+          "Notes": "Crystal Wall shattered; 20 AoE shrapnel damage to all units within 1 tile of wall."
+        },
+        {
+          "FromState": "Overgrowth",
+          "ToState": "Ground",
+          "Notes": "Sonic shatters vine barriers; ROOTED removed."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "sound_scream",
+      "SfxCastTag": "spell/sound/cast",
+      "SfxImpactTag": "spell/sound/impact",
+      "CameraShakeIntensity": 0.6
+    },
+    {
+      "SpellId": "dissonance_wave",
+      "DisplayName": "Dissonance Wave",
+      "Description": "A disruptive sonic cone dealing 18 base damage. Adds +6 damage per unique debuff status the target is carrying (max +18 from 3 debuffs). Disrupts queued actions in the blind-turn phase for any unit in the cone. Each RESONANCE_CHARGE stack also counts as a debuff (+6 each); at 3 stacks triggers the RESONANCE_CHARGE burst. SILENCED targets take +6 damage and have their SILENCED duration extended by 1 turn.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Cone",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Sound",
+      "BaseDamage": 18,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetHasDebuffs",
+          "BonusDamage": 0,
+          "Description": "+6 damage per unique debuff status on target (CHILLED, BURNING, POISONED, DEAFENED, HEAVY, SLOWED, BLINDED, BRITTLE, CALCIFIED, ROOTED, RESONANCE_CHARGE stacks); max +18."
+        },
+        {
+          "Condition": "TargetAtMaxResonanceCharge",
+          "BonusDamage": 15,
+          "Description": "3 RESONANCE_CHARGE stacks trigger burst: +15 damage, auto-STUN, SHATTER if FROZEN."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "ActionDisrupted",
+          "Duration": 0,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "ToxicTerrain",
+          "ToState": "ToxicTerrain",
+          "Notes": "Sonic disperses toxic surface particles; units in cone above TOXIC_TERRAIN receive 1 POISONED stack from airborne dispersal."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "sound_dissonance",
+      "SfxCastTag": "spell/sound/cast",
+      "SfxImpactTag": "spell/sound/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "sonic_obliteration",
+      "DisplayName": "Sonic Obliteration",
+      "Description": "Fires four simultaneous 90-degree sonic cones in all cardinal directions (N/S/E/W), each extending 3 tiles. Every unit within 3 tiles in any cardinal direction takes 40 Sonic damage and SILENCED (1 turn). Each unit is hit only once regardless of cone overlap. All RESONATING tiles in all four cone areas are simultaneously detonated for 80 damage (2x). SHATTER on FROZEN targets (40x2.5 = 100; 80x2.5 = 200 on RESONATING). Costs the entire activation; Sonimancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 3,
+      "AoeRadius": 3,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Sound",
+      "BaseDamage": 40,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TileIsResonating",
+          "BonusDamage": 40,
+          "Description": "RESONATING tiles are detonated for 80 damage (2x amplification). Also generates +10 temperature to all units in the resonating area."
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 60,
+          "Description": "FROZEN target triggers SHATTER (40 x2.5 = 100 damage); FROZEN removed."
+        },
+        {
+          "Condition": "TileIsResonatingAndTargetIsFrozen",
+          "BonusDamage": 160,
+          "Description": "RESONATING + FROZEN: 80 x2.5 SHATTER = 200 damage."
+        },
+        {
+          "Condition": "TargetAtMaxResonanceCharge",
+          "BonusDamage": 15,
+          "Description": "3 RESONANCE_CHARGE stacks trigger burst: +15 damage, auto-STUN, SHATTER if FROZEN."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Silenced",
+          "Duration": 1,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Resonating",
+          "ToState": "Ground",
+          "Notes": "All RESONATING tiles in all four cone areas simultaneously detonated; converted back to base terrain after amplified hit."
+        },
+        {
+          "FromState": "IceTile",
+          "ToState": "Wet",
+          "Notes": "Sonic vibration cracks ice in all cone directions."
+        },
+        {
+          "FromState": "Overgrowth",
+          "ToState": "Ground",
+          "Notes": "Sonic shatters vine barriers in all directions."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "sound_obliteration",
+      "SfxCastTag": "spell/sound/cast",
+      "SfxImpactTag": "spell/sound/impact",
+      "CameraShakeIntensity": 1.0
+    }
+  ]
+}
