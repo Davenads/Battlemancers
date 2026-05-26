@@ -52,6 +52,7 @@ The Floramancer's four base spells cover distinct combat functions:
 | **Base Damage** | 6 (impact of vine eruption — minor) |
 | **Element** | Plant/Nature |
 | **Effects Applied** | Target tile becomes `VINES` terrain (movement cost 2.0; persists 4 turns). Any unit ending their turn on a VINES tile is immediately `ROOTED` (cannot move; can still cast; duration 1 turn). Unit on the tile at cast time takes 6 damage and must make an immediate ROOTED check — if the cast lands while the unit is standing still (not mid-move), ROOTED applies immediately at 1-turn duration. |
+| **Temperature Effects** | **0 temperature change** (vines do not transfer heat). The VINES terrain itself has no thermal properties. |
 | **Terrain Interaction** | Casting on `GROUND`: creates VINES (standard). Casting on `WET`: vines grow faster — VINES terrain persists 5 turns instead of 4; unit movement cost on WET VINES is 2.5 (waterlogged growth). Casting on `MUD`: VINES grow through mud and merge — VINES + MUD combined state (movement cost 3.0; impassable to most infantry without spending 3 AP per tile). Casting on `ON_FIRE`: vines are instantly destroyed; no terrain state created; Floramancer wastes the cast. Casting on `SPORES`: SPORES terrain is not replaced — VINES grow beneath the cloud, creating a stacked VINES + SPORES tile (units stepping on it are both ROOTED and exposed to SPORES simultaneously). Casting on `OBSIDIAN`: vines cannot grow on hardened obsidian; cast fails. |
 
 **Design note:** Vine Surge is the Floramancer's workhorse — low cost, no cooldown, highly spammable. Two uses in one activation (2 AP + 2 AP) seed two VINES tiles, potentially covering both sides of a chokepoint. The key skill in using Vine Surge is lead placement: vines should be placed where the enemy will be, not where they are now. A ROOTED unit cannot move but can still cast spells — the root is a positioning lock, not a full incapacitation. Floramancer players must pair vine placement with allied spells that punish stationary targets.
@@ -71,6 +72,7 @@ The Floramancer's four base spells cover distinct combat functions:
 | **Base Damage** | 4 (pollen irritant; minor on-cast damage) |
 | **Element** | Plant/Nature |
 | **Effects Applied** | All tiles in radius become `SPORES` terrain (persists 3 turns; does not spread naturally). Any unit that moves through or ends their turn in SPORES terrain receives 1 stack of `POISONED` (3 HP/turn; maximum 5 stacks). Moving through SPORES (not just ending turn) is sufficient — any movement action that crosses a SPORES tile triggers the POISONED stack. POISONED stacks from SPORES terrain are plant-origin: duration is 2 turns per stack (shorter than Toximancer's venom-based 3-turn stacks). |
+| **Temperature Effects** | **0 temperature direct** (spore particles have no inherent thermal property). However, SPORES terrain takes on thermal characteristics from adjacent terrain states — see Temperature Interaction Notes for HOT SPORES and COLD SPORES emergent combinations. |
 | **Terrain Interaction** | Casting on `GROUND`: creates SPORES (standard). Casting on `WET`: SPORES form a wet spore cloud — unit movement cost in the zone increases; POISONED stacks applied are refreshed (not additional) but WET + SPORES combo is conductive (Electromancer chain works through wet spore terrain). Casting on `VINES`: SPORES settle onto VINES — stacked VINES + SPORES tile created (see Vine Surge entry). Casting on `ON_FIRE`: spores combust — brief TOXIC_FIRE flash (all units in radius take 8 fire damage + 1 POISONED stack, then terrain clears to GROUND; the cloud is burned away instantly). Casting on `WET` terrain already containing SPORES: Toximancer-amplified virulent cloud is created if Toximancer has cast Venomous Ground nearby — see Combo Section 7. Casting on `CHARGED`: spores conduct charge; chain arc fires immediately to all adjacent units (spore particles are conductive), then SPORES terrain forms normally. |
 
 **Design note:** Pollen Burst is the Floramancer's distinctive poison delivery — it creates a hazard zone that persists independently of whether the Floramancer remains alive or in range. The shorter-duration POISONED stacks (2 turns vs. Toximancer's 3 turns) reflect plant-pollen origin vs. concentrated venom: the Floramancer's poison is ambient and environmental, not precision-applied. SPORES terrain does not spread on its own, making precise placement critical. Once a SPORES cloud expires or is burned away, those poison stacks on affected units do not linger unless renewed.
@@ -90,6 +92,7 @@ The Floramancer's four base spells cover distinct combat functions:
 | **Base Damage** | 0 (terrain placement; no direct damage) |
 | **Element** | Plant/Nature |
 | **Effects Applied** | Creates a 3-tile-long line of `OVERGROWTH` terrain features. OVERGROWTH functions as a soft barrier: blocks line-of-sight, imposes movement cost 2.0 to enter or pass through, does not fully block movement (unlike a wall — units CAN move into OVERGROWTH, they just pay double movement cost). Units in OVERGROWTH tiles are partially concealed: ranged attacks against OVERGROWTH-occupying units have a 25% miss chance (cover property). OVERGROWTH persists 6 turns (longest persistence of any Floramancer terrain). |
+| **Temperature Effects** | **0 temperature** (organic plant barrier, no heat transfer). |
 | **Terrain Interaction** | On `ON_FIRE`: OVERGROWTH is instantly destroyed and replaced by ON_FIRE (organic matter burns); this is the Pyromancer's primary counter to Floramancer barrier play. On `WET`: OVERGROWTH grows thicker — movement cost through WET OVERGROWTH is 2.5; miss chance from cover increases to 35%. On `GROUND`: standard creation. On `FROZEN` (ice tile): OVERGROWTH cannot root in frozen ground — cast fails; tile remains FROZEN. On `OBSIDIAN`: cannot grow on obsidian. On `NECROTIC_ASH` (Necromancer): organic matter withers in necrotic soil — OVERGROWTH lasts only 2 turns instead of 6; degrades rapidly. |
 
 **Design note:** Overgrowth Barrier is the Floramancer's map-editing tool. At 4 AP, it costs more than half the activation budget and cannot be spammed. The value is long-duration cover and line-of-sight denial — a 3-tile Overgrowth line placed across a central corridor can redirect enemy movement for 6 full turns, forcing opponents into less favorable approach paths. Unlike stone walls, Overgrowth Barriers do not fully block movement — they slow and conceal. Combined with VINES on the far side of the barrier, an approach path can be: enter overgrowth (half movement speed + cover), exit into vines (ROOTED), stand in pollen cloud (POISONED). The 3-turn cooldown prevents the Floramancer from covering the entire board in barriers — it must commit to a specific approach-denial direction.
@@ -109,6 +112,7 @@ The Floramancer's four base spells cover distinct combat functions:
 | **Base Damage** | 14 (on-cast; vines erupt through the ground violently) |
 | **Element** | Plant/Nature |
 | **Effects Applied** | All tiles in radius become `VINES` terrain (movement cost 2.0; persists 4 turns). All units in the radius at cast time take 14 damage and are immediately `ROOTED` (2-turn duration — longer than the passive ROOTED from Vine Surge). The 2-turn ROOTED is the primary feature: units caught in a full-bloom root cannot move for 2 turns, making them trivial targets for allied follow-up spells. The center tile additionally becomes `SPORES` terrain stacked beneath the VINES (combined VINES + SPORES). |
+| **Temperature Effects** | **0 temperature direct** (plant eruption has no thermal component). However: ROOTED units on BURNING tiles cannot move away, suffering the full +10 temperature/turn from BURNING terrain contact with no escape. A unit ROOTED by Entangling Bloom on a BURNING tile gains +10 temperature per turn for the 2-turn root duration — a minimum of +20 temperature applied passively, which can push a WARM unit to HOT or a HOT unit to OVERHEATED. |
 | **Terrain Interaction** | On `GROUND`: standard bloom creation. On `WET`: vines flourish — bloom persists 5 turns; ROOTED duration extends to 3 turns for units on WET tiles within the radius. On `SPORES` (existing): the spore concentration in the target zone intensifies — all POISONED stacks applied by the existing SPORES in the AoE are doubled (2 stacks per movement through the zone instead of 1) for the remainder of their duration. On `ON_FIRE`: bloom is destroyed instantly before it establishes; cast fails; Floramancer loses 4 AP with no effect. On `TOXIC_TERRAIN` (Toximancer): Toximancer's ground toxins feed the bloom — vines grow tainted; ROOTED units on TOXIC_TERRAIN within the bloom take 1 additional POISONED stack at the start of each turn. On `CHARGED`: electrical discharge shatters the vine eruption; bloom creates a 1-tile ring of VINES with a 1-tile-radius lightning burst at center (10 lightning damage AoE); CHARGED is consumed. |
 
 **Design note:** Entangling Bloom is the Floramancer's commitment spell — it costs 4 AP and demands a 3-turn cooldown in exchange for the most powerful root effect in the base roster. A ROOTED unit with a 2-turn duration cannot move for two entire turns, making it a guaranteed setup for any allied Mancer with AoE or high-damage single-target spells. The combined VINES + SPORES at center means a unit trapped directly in the bloom epicenter is simultaneously ROOTED and receiving POISONED stacks every turn. Against clustered enemies, Entangling Bloom can lock multiple units in place and begin the poison accumulation that becomes lethal once Toximancer or repeat Pollen Bursts stack higher.
@@ -315,3 +319,44 @@ This is the Floramancer's most natural and devastating two-Mancer combination, e
 **Dispel and cleanse:** Units with access to ROOTED removal (Aeromancer wind, Geomancer earth) or POISONED cleanse (Hydromancer Mending Current, Photomancer Sunburst) can undo the Floramancer's kit from outside the vine zone. The Floramancer has no answer to reliable cleanse loops beyond stacking multiple terrain states simultaneously and overwhelming the cleanse rate.
 
 **Silenced Floramancer:** A Silenced Floramancer cannot plant VINES or SPORES. Its entire turn becomes useless — it can only move. Sonimancer Silence and Psychomancer Silence are the most dangerous status effects against a Floramancer because, unlike burst Mancers who can at least use movement aggressively, the Floramancer with no spells is simply wasted AP.
+
+---
+
+## 9. Temperature Interaction Notes
+
+Plants are thermally neutral — no Floramancer spell directly modifies temperature. However, the SPORES terrain and ROOTED status create unique temperature interactions when combined with external heat or cold sources. The Floramancer's temperature role is indirect but powerful: it controls enemy mobility, and mobility is how enemies escape thermal hazards.
+
+### HOT SPORES (SPORES + BURNING Terrain)
+
+If a Floramancer creates SPORES terrain and a Pyromancer subsequently heats the area (Scorched Earth or Conflagration Wave on nearby tiles), units moving through SPORES in a HOT area take POISONED stacks AND gain +5 temperature per turn from the heated spore cloud. The spores absorb ambient heat and carry it, making the cloud a dual-threat zone: poisonous AND warming. A unit spending multiple turns in HOT SPORES territory will accumulate POISONED stacks while being pushed toward OVERHEATED.
+
+This is an emergent two-Mancer combination (Floramancer + Pyromancer, available in any faction). Neither Mancer needs to coordinate precisely — once SPORES terrain and BURNING terrain coexist in the same zone, the HOT SPORES state activates automatically.
+
+### COLD SPORES (SPORES + FROZEN Terrain)
+
+If a Cryomancer freezes tiles adjacent to SPORES terrain, units in the SPORES zone lose -5 temperature per turn (cold air condenses the spore cloud into a denser, colder toxic mist that slows movement AND cools). This makes SUPERCOOLED + POISONED a realistic combined status achievable from just two Mancers. A unit caught in COLD SPORES terrain is simultaneously:
+- Taking POISONED stacks (3 HP/turn per stack)
+- Losing -5 temperature per turn toward SUPERCOOLED (SLOWED + BRITTLE modifier)
+
+At SUPERCOOLED with 3+ POISONED stacks, the unit is SLOWED, BRITTLE (vulnerable to physical hits at ×1.5), and taking 9+ HP/turn from poison. The Floramancer + Cryomancer pairing is stronger than it first appears.
+
+### ROOTED on BURNING — The Primary Temperature Contribution
+
+Floramancer's most powerful temperature play is not a direct effect — it is trapping enemies on BURNING tiles. ROOTED units cannot escape BURNING terrain. A ROOTED enemy on a BURNING tile gains +10 temperature per turn with no ability to move away. Two turns of being ROOTED on BURNING terrain = +20 temperature minimum. Three turns = +30 temperature minimum.
+
+If the enemy starts WARM (+20), three turns of ROOTED-BURNING = +30, reaching +50 (HOT → moving toward OVERHEATED at +61). If they were already HOT (+40), one turn of ROOTED-BURNING pushes them to +50, and two turns reaches OVERHEATED (+61) and the BURNING DoT begins stacking.
+
+Entangling Bloom (2-turn ROOTED) placed in an area where Pyromancer has established BURNING tiles is a guaranteed +20 temperature application with no additional Floramancer AP investment. This is a powerful zone-denial combination with any Mancer that creates BURNING terrain — Pyromancer, Thermomancer, or even Electromancer-triggered Firestorm Burst.
+
+### Floramancer Thrives in Cold Environments
+
+VINES and natural terrain have no temperature penalty, so a Cryomancer's frozen-field strategy does not degrade Floramancer's terrain the way it harms BURNING terrain (fire is extinguished by ice; VINES can be suspended but not destroyed by cold). Floramancer + Cryomancer is a surprisingly viable pairing:
+
+- Cryomancer drives enemy temperature down toward SUPERCOOLED or FROZEN SOLID
+- Floramancer ROOTS enemies in the cold zone, preventing escape
+- ROOTED enemies in cold terrain cannot move to warmer tiles, locking in the temperature descent
+- Enemies frozen to FROZEN SOLID while ROOTED are helpless targets for physical finishers (Geomancer, Osteomancer)
+
+The Floramancer's VINES on ICE_TILE have a pre-seed trap value as well — SPORES placed on frozen tiles lie dormant (no POISONED applied while ICE_TILE is active) but activate when the ice thaws. A Floramancer can plant SPORES on ice tiles and wait — when the Cryomancer thaws or melts the ice (or the ice expires naturally), the dormant SPORES cloud activates, applying POISONED stacks to any unit standing on what was, a moment ago, safe frozen ground.
+
+*End of Floramancer design document.*
