@@ -1,0 +1,226 @@
+{
+  "MancerId": "necromancer",
+  "DisplayName": "Necromancer",
+  "MaxHP": 90,
+  "MoveRange": 3,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Necrotic",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": true,
+  "SecondaryResourceName": "Soul Energy",
+  "MaxSecondaryResource": 10,
+  "SecondaryResourceGenerationRuleId": "necromancer_soul_on_kill",
+  "TacticalIdentity": "Attrition and resource-conversion specialist. Converts every corpse on the battlefield — ally or enemy — into fuel for reanimated summons. Weakest in the first two turns before deaths accumulate. Strongest in long engagements where the corpse economy surpasses the opponent's ability to maintain unit count. Up to 3 active summons simultaneously.",
+  "StrongSynergyMancerIds": ["toximancer", "pyromancer", "electromancer", "gravimancer"],
+  "RecommendedFactionId": "ashen_covenant",
+  "Spells": [
+    {
+      "SpellId": "necrotic_bolt",
+      "DisplayName": "Necrotic Bolt",
+      "Description": "Fires a bolt of necrotic energy for 16 damage. Applies Death Mark to the target — on their death, an AoE explosion deals 40% of their max HP as damage in a 2-tile radius. If the target already has Death Mark, deals +8 bonus damage and refreshes the mark instead. If a Death Mark kill occurs, the corpse left behind is upgraded to Veteran Corpse quality. Hitting a tile with an existing corpse pulses necrotic energy (4 damage to adjacent units).",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Necrotic",
+      "BaseDamage": 16,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetAlreadyHasDeathMark",
+          "BonusDamage": 8,
+          "BonusEffectId": "REFRESH_DEATH_MARK"
+        },
+        {
+          "Condition": "TargetTileHasCorpse",
+          "BonusEffectId": "NECROTIC_CORPSE_PULSE",
+          "BonusDamage": 4,
+          "BonusRadius": 1
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "DEATH_MARK",
+          "Duration": -1,
+          "Condition": "OnHit",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -5,
+      "VfxTag": "necrotic_projectile",
+      "SfxCastTag": "spell/necrotic/cast",
+      "SfxImpactTag": "spell/necrotic/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "death_mark",
+      "DisplayName": "Death Mark",
+      "Description": "Brands a target with the mark of death at minimal AP cost. On the target's death, an explosion centered on their tile deals damage equal to 40% of their max HP in a 2-tile radius. Death Mark cannot be dispelled. A unit marked by both Death Mark and a Necrotic Bolt has the explosion radius increased from 2 to 3 tiles.",
+      "ApCost": 1,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Necrotic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "DEATH_MARK",
+          "Duration": -1,
+          "Condition": "OnHit",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -10,
+      "VfxTag": "necrotic_debuff",
+      "SfxCastTag": "spell/necrotic/cast",
+      "SfxImpactTag": "spell/necrotic/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "raise_shambler",
+      "DisplayName": "Raise Shambler",
+      "Description": "Consumes a corpse at the target tile and raises it as a reanimated unit based on corpse quality. Standard Corpse: Risen Shambler (30 HP, 3 Move, 8 melee). Veteran Corpse: Risen Veteran (50 HP, 4 Move, 12 melee). Remnant Token (costs 4 AP): Abyssal Horror (65 HP, 4 Move, 15 necrotic cleave). Charred Remains: Cinder Wraith (20 HP, 5 Move, 6 melee + Burning on hit). Summon activates next turn. Max 3 summons on field.",
+      "ApCost": 3,
+      "CooldownTurns": 1,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Necrotic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "risen_shambler",
+      "MaxSummonCount": 3,
+      "TemperatureDelta": 0,
+      "VfxTag": "necrotic_summon",
+      "SfxCastTag": "spell/necrotic/cast",
+      "SfxImpactTag": "spell/necrotic/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "necrotic_eruption",
+      "DisplayName": "Necrotic Eruption",
+      "Description": "Detonates a wave of death energy in a 3-tile radius, dealing 20 base damage to all living units. Each corpse consumed in the area adds +15 bonus damage to all units in range (Soul Vessel Mancer corpses add +40 each instead). Surviving units are Chilled (2 turns). Tiles in the radius become Necrotic Ash terrain (3-turn duration, 3 Necrotic damage per turn to living units; undead summons immune).",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "AoeCircle",
+      "Range": 4,
+      "AoeRadius": 3,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Necrotic",
+      "BaseDamage": 20,
+      "ConditionalBonuses": [
+        {
+          "Condition": "CorpseInAoe",
+          "BonusEffectId": "CORPSE_CONSUME_DAMAGE",
+          "BonusDamagePerCorpse": 15,
+          "SoulVesselBonusDamage": 40
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "EffectId": "CHILLED",
+          "Duration": 2,
+          "Condition": "OnHitLivingUnit",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TileStateId": "NECROTIC_ASH",
+          "Duration": 3,
+          "Radius": 3
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -15,
+      "VfxTag": "necrotic_aoe",
+      "SfxCastTag": "spell/necrotic/cast",
+      "SfxImpactTag": "spell/necrotic/impact",
+      "CameraShakeIntensity": 0.7
+    },
+    {
+      "SpellId": "army_of_the_dead",
+      "DisplayName": "Army of the Dead",
+      "Description": "Simultaneously raises every corpse within 5 tiles as the appropriate quality summon. All raised units activate this turn rather than next. Summon cap temporarily raised to 5 for 1 turn; excess summons beyond the normal cap of 3 are dismissed at turn end. Soul Vessel corpses (Mancers) heal the Necromancer for 40 HP instead of reanimating. Necromancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 5,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Necrotic",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "risen_shambler",
+      "MaxSummonCount": 5,
+      "TemperatureDelta": 0,
+      "VfxTag": "necrotic_ultimate",
+      "SfxCastTag": "spell/necrotic/cast",
+      "SfxImpactTag": "spell/necrotic/impact",
+      "CameraShakeIntensity": 1.0
+    }
+  ]
+}
