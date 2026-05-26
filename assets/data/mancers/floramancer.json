@@ -1,0 +1,237 @@
+{
+  "MancerId": "floramancer",
+  "DisplayName": "Floramancer",
+  "MaxHP": 80,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Poison",
+  "SecondaryElement": "Earth",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Patient terrain-denial architect. Plants VINES to root enemies in place and creates SPORES clouds that apply POISONED stacks to any unit that moves through them. Builds OVERGROWTH Barriers to redirect movement and deny line-of-sight. Weakest burst on the roster — wins by making the opponent's plan fall apart through sustained terrain attrition. Hard-countered by Pyromancer fire.",
+  "StrongSynergyMancerIds": ["toximancer", "cryomancer", "hydromancer", "osteomancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "vine_surge",
+      "DisplayName": "Vine Surge",
+      "Description": "Erupts VINES terrain on a target tile (movement cost 2.0; persists 4 turns). Units on the tile at cast take 6 damage and are immediately ROOTED for 1 turn. Any unit ending their turn on a VINES tile is ROOTED. Enhanced by WET terrain (5-turn duration). Fails on OBSIDIAN and ON_FIRE tiles. Can be cast twice per activation at 2 AP each.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Ground",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Poison",
+      "BaseDamage": 6,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Rooted",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "Vines",
+          "DurationTurns": 4
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_ground",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "pollen_burst",
+      "DisplayName": "Pollen Burst",
+      "Description": "Releases a cloud of toxic pollen, creating SPORES terrain in a 2-tile radius (persists 3 turns). Any unit moving through or ending their turn in SPORES receives 1 stack of POISONED (3 HP/turn; 2-turn duration — plant-origin stacks are shorter than venom). Stacks with VINES for a combined rooting and poisoning hazard zone.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "AoeCircle",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Poison",
+      "BaseDamage": 4,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Poisoned",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "Spores",
+          "DurationTurns": 3
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_aoe",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "overgrowth_barrier",
+      "DisplayName": "Overgrowth Barrier",
+      "Description": "Raises a 3-tile line of OVERGROWTH terrain starting from the target tile in a chosen direction. Blocks line-of-sight. Movement cost to enter OVERGROWTH is 2.0. Ranged attacks against units inside OVERGROWTH have 25% miss chance. Persists 6 turns — the longest-duration Floramancer terrain. Can be layered with VINES beneath for maximum approach denial.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 3,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Earth",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TerrainType": "Overgrowth",
+          "DurationTurns": 6
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_ground",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "entangling_bloom",
+      "DisplayName": "Entangling Bloom",
+      "Description": "Violent eruption of vines across a 2-tile radius. All tiles become VINES terrain. All units in the radius take 14 damage and are ROOTED for 2 turns — the longest root on the base roster. The center tile additionally becomes SPORES beneath the VINES. Fails on ON_FIRE tiles. Synergizes powerfully with Toximancer to create VIRULENT_SPORES.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "AoeCircle",
+      "Range": 4,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Poison",
+      "BaseDamage": 14,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Rooted",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "Vines",
+          "DurationTurns": 4
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_aoe",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.5
+    },
+    {
+      "SpellId": "verdant_surge",
+      "DisplayName": "The Verdant Surge",
+      "Description": "Consumes the entire activation; Floramancer cannot move. Every GROUND and MUD tile within 5 tiles instantly becomes VINES terrain (5-turn duration). Every unit in the 5-tile radius not on OBSIDIAN, FLOODED, or ON_FIRE terrain is immediately ROOTED for 2 turns. The Floramancer's own tile and OVERGROWTH tiles are unaffected. Verdant Pact Terrain Bond triggers on all created VINES tiles simultaneously.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 5,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Earth",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Rooted",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "Vines",
+          "DurationTurns": 5
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_aoe",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.9
+    }
+  ]
+}

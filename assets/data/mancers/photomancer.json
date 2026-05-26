@@ -1,0 +1,265 @@
+{
+  "MancerId": "photomancer",
+  "DisplayName": "Photomancer",
+  "MaxHP": 90,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Light",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Vision control and beam specialist. Blinds enemy clusters with Solar Flash, marks priority targets with Illuminate for +20% allied damage, and delivers long-range burst via Light Beam. Highest base spell range on the roster. Excels at information denial and damage amplification; relies on allied follow-through to convert control into kills.",
+  "StrongSynergyMancerIds": ["electromancer", "pyromancer", "cryomancer", "necromancer"],
+  "RecommendedFactionId": "gilded_throne",
+  "Spells": [
+    {
+      "SpellId": "light_beam",
+      "DisplayName": "Light Beam",
+      "Description": "A focused beam of radiant light fired at long range. Pierces through intervening units at half damage. Bounces off CRYSTAL terrain tiles at 45 degrees with full damage. Deals bonus damage to BLINDED targets. Reduces FROZEN status duration by 1 turn on hit.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 7,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Light",
+      "BaseDamage": 20,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsIlluminated",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.20
+        },
+        {
+          "Condition": "TargetIsBlinded",
+          "BonusDamageFlat": 10,
+          "BonusDamagePercent": 0.0
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 5,
+      "VfxTag": "light_projectile",
+      "SfxCastTag": "spell/light/cast",
+      "SfxImpactTag": "spell/light/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "solar_flash",
+      "DisplayName": "Solar Flash",
+      "Description": "An intense radial burst of light that blinds all units in a 2-tile radius and creates ILLUMINATED_GROUND terrain. Allies and enemies alike are blinded. ILLUMINATED_GROUND persists 2 turns, granting allies +1 vision range and marking enemies on the tiles for +20% incoming damage.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "AoeCircle",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Light",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Blinded",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IlluminatedGround",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "IlluminatedGround",
+          "DurationTurns": 2
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 5,
+      "VfxTag": "light_aoe",
+      "SfxCastTag": "spell/light/cast",
+      "SfxImpactTag": "spell/light/impact",
+      "CameraShakeIntensity": 0.4
+    },
+    {
+      "SpellId": "illuminate",
+      "DisplayName": "Illuminate",
+      "Description": "Marks a single target with radiant energy. Enemies marked with ILLUMINATED take +20% damage from all sources for 2 turns and are visible to allies regardless of terrain obstruction. When applied to an ally, creates a radiance aura that deals 3 Light damage per turn to adjacent enemies.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 7,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Light",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Illuminated",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "light_buff",
+      "SfxCastTag": "spell/light/cast",
+      "SfxImpactTag": "spell/light/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "sunburst",
+      "DisplayName": "Sunburst",
+      "Description": "A concentrated burst of solar energy detonating in a 2-tile radius. Deals 35 Light damage to all units, blinds them for 2 turns, and cleanses NECROTIC_ASH, TOXIC_TERRAIN, and OVERGROWTH from tiles in the area. Undead units take +50% damage (52 total). Removes BURNING status from units in the zone.",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "AoeCircle",
+      "Range": 4,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Light",
+      "BaseDamage": 35,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsUndead",
+          "BonusDamageFlat": 0,
+          "BonusDamagePercent": 0.50
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Blinded",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "CleansedGround",
+          "DurationTurns": -1
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 15,
+      "VfxTag": "light_aoe",
+      "SfxCastTag": "spell/light/cast",
+      "SfxImpactTag": "spell/light/impact",
+      "CameraShakeIntensity": 0.8
+    },
+    {
+      "SpellId": "solar_convergence",
+      "DisplayName": "Solar Convergence",
+      "Description": "Consumes the entire activation. A massive solar convergence covers a 4-tile radius in ILLUMINATED_GROUND for 4 turns. All units in the zone are immediately BLINDED (3 turns) and ILLUMINATED simultaneously. Each turn the zone persists, all units on ILLUMINATED_GROUND tiles take 5 Light damage (8 vs undead). Cleanses NECROTIC_ASH on cast.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "AoeCircle",
+      "Range": 5,
+      "AoeRadius": 4,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Light",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Blinded",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "Illuminated",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IlluminatedGround",
+          "Duration": 4,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TerrainType": "IlluminatedGround",
+          "DurationTurns": 4
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 10,
+      "VfxTag": "light_aoe",
+      "SfxCastTag": "spell/light/cast",
+      "SfxImpactTag": "spell/light/impact",
+      "CameraShakeIntensity": 1.0
+    }
+  ]
+}
