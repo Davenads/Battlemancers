@@ -1,0 +1,361 @@
+{
+  "MancerId": "cryomancer",
+  "DisplayName": "Cryomancer",
+  "MaxHP": 90,
+  "MoveRange": 3,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Ice",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Control and denial specialist that steals tempo by locking enemy units in CHILLED and FROZEN states. BRITTLE_ARMOR application enables devastating physical burst from allied Geomancer, Osteomancer, or Sonimancer. Operates on a CHILLED-to-FROZEN progression — double Frost Bolt or Ice Lance for direct FROZEN, then alert allies to SHATTER. Blizzard Field is the mass-freeze setup for the Hydromancer flood combo.",
+  "StrongSynergyMancerIds": ["hydromancer", "geomancer", "sonimancer", "osteomancer"],
+  "RecommendedFactionId": "",
+  "Spells": [
+    {
+      "SpellId": "frost_bolt",
+      "DisplayName": "Frost Bolt",
+      "Description": "A projectile ice bolt that applies CHILLED to the target and converts the target tile to ICE_TILE. Zero cooldown enables double-cast in one activation. If the target is already CHILLED, the second Frost Bolt upgrades the status directly to FROZEN — locking the unit for a full turn at a cost of only 4 AP total. Creates slippery ICE_TILE traps on approach paths.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Ice",
+      "BaseDamage": 12,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "+10% ice damage vs. COLD targets (temperature -1 to -30)",
+          "TriggerState": "Cold",
+          "BonusDamage": 1,
+          "IsMultiplicative": true
+        },
+        {
+          "ConditionDescription": "Upgrades CHILLED to FROZEN on hit if target is already CHILLED",
+          "TriggerState": "Chilled",
+          "BonusDamage": 0,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Chilled",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IceTile",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -20,
+      "VfxTag": "ice_projectile",
+      "SfxCastTag": "spell/ice/cast",
+      "SfxImpactTag": "spell/ice/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "ice_lance",
+      "DisplayName": "Ice Lance",
+      "Description": "A heavy ice projectile that applies FROZEN directly — no CHILLED prerequisite required. Deals 22 Ice damage and converts the target tile to ICE_TILE for 2 turns. If the target was already CHILLED, FROZEN lasts 2 turns instead of 1. Against WET units, instantly flash-freezes and propagates cold to adjacent WET units for 8 cold damage. The Cryomancer's definitive single-target freeze tool.",
+      "ApCost": 3,
+      "CooldownTurns": 1,
+      "Tier": "Standard",
+      "TargetType": "Projectile",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Ice",
+      "BaseDamage": 22,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "FROZEN lasts 2 turns instead of 1 if target was already CHILLED",
+          "TriggerState": "Chilled",
+          "BonusDamage": 0,
+          "IsMultiplicative": false
+        },
+        {
+          "ConditionDescription": "Propagates 8 cold damage to adjacent WET units on flash-freeze",
+          "TriggerState": "Wet",
+          "BonusDamage": 8,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Frozen",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IceTile",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "Charged",
+          "ResultState": "FreezeConductor"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -25,
+      "VfxTag": "ice_projectile",
+      "SfxCastTag": "spell/ice/cast",
+      "SfxImpactTag": "spell/ice/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "glacial_spike",
+      "DisplayName": "Glacial Spike",
+      "Description": "Ice shards erupt from the ground in a 2-tile radius, dealing 14 Ice damage to all units and converting all tiles to ICE_TILE. Applies BRITTLE_ARMOR to every unit in the area — the next physical hit on any affected unit deals +50% damage. Does not apply FROZEN or CHILLED directly. FLOODED tiles in the AoE freeze permanently. MUD tiles become PERMAFROST. The Cryomancer's primary BRITTLE_ARMOR setup and terrain-freeze tool.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Ice",
+      "BaseDamage": 14,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "BrittleArmor",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IceTile",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Flooded",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Mud",
+          "ResultState": "Permafrost"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -30,
+      "VfxTag": "ice_aoe",
+      "SfxCastTag": "spell/ice/cast",
+      "SfxImpactTag": "spell/ice/impact",
+      "CameraShakeIntensity": 0.5
+    },
+    {
+      "SpellId": "blizzard_field",
+      "DisplayName": "Blizzard Field",
+      "Description": "A sustained blizzard zone covering a 3-tile radius. On cast, all tiles become ICE_TILE and all units take 10 Ice damage and receive CHILLED. Units already CHILLED are immediately upgraded to FROZEN. The zone persists — each turn a unit begins its turn inside, it takes 4 cold damage and CHILLED is refreshed. Costs nearly a full activation at 5 AP. Against a FLOODED zone, all FLOODED tiles instantly convert to ICE_TILE and every unit on them is directly FROZEN — the flagship Hydromancer + Cryomancer mass-freeze combo.",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 3,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Ice",
+      "BaseDamage": 10,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "CHILLED units in the AoE are immediately upgraded to FROZEN",
+          "TriggerState": "Chilled",
+          "BonusDamage": 0,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Chilled",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "IceTile",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Flooded",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -15,
+      "VfxTag": "ice_aoe",
+      "SfxCastTag": "spell/ice/cast",
+      "SfxImpactTag": "spell/ice/impact",
+      "CameraShakeIntensity": 0.7
+    },
+    {
+      "SpellId": "ice_shard_spray",
+      "DisplayName": "Ice Shard Spray",
+      "Description": "A short-range spray of ice shards in a narrow cone. Deals modest damage and applies CHILLED to all units hit. Used for quick CHILLED application to multiple targets when the Cryomancer needs to prime a group for a follow-up Blizzard Field or when Frost Bolt is insufficient for multi-target coverage.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "Cone",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 3,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Ice",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Chilled",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 0.8
+        },
+        {
+          "StatusType": "IceTile",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "IceTile"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "IceTile"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -12,
+      "VfxTag": "ice_cone",
+      "SfxCastTag": "spell/ice/cast",
+      "SfxImpactTag": "spell/ice/impact",
+      "CameraShakeIntensity": 0.15
+    }
+  ]
+}

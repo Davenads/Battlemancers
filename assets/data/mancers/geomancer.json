@@ -1,0 +1,327 @@
+{
+  "MancerId": "geomancer",
+  "DisplayName": "Geomancer",
+  "MaxHP": 100,
+  "MoveRange": 3,
+  "BaseArmor": 2,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Earth",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Battlefield architect who permanently reshapes terrain geometry. Raises walls to block LoS and movement, creates elevated positions for allied Mancers, smothers fire into permanent Obsidian, and triggers SHATTER on Cryomancer-frozen targets via high physical damage. Wins by making the map look like the Geomancer built it. AP-intensive construction requires protection during setup turns.",
+  "StrongSynergyMancerIds": ["cryomancer", "pyromancer", "hydromancer", "aeromancer"],
+  "RecommendedFactionId": "",
+  "Spells": [
+    {
+      "SpellId": "rock_throw",
+      "DisplayName": "Rock Throw",
+      "Description": "A physical projectile with the highest base damage of any Quick spell in the roster. Zero cooldown enables three casts in one activation. Smothers ON_FIRE tiles into permanent OBSIDIAN on impact. Triggers SHATTER on FROZEN targets (25 × 2.5 = 62 HP) and BRITTLE_ARMOR bonus on BRITTLE targets (+50%). The premier physical damage tool for Cryomancer freeze-shatter combos. Kicks up debris for a 1-turn SLOWED on the target.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Earth",
+      "BaseDamage": 25,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "SHATTER: ×2.5 damage vs. FROZEN targets (physical trigger); FROZEN removed on hit",
+          "TriggerState": "Frozen",
+          "BonusDamage": 38,
+          "IsMultiplicative": false
+        },
+        {
+          "ConditionDescription": "BRITTLE_ARMOR: ×1.5 damage vs. targets with BRITTLE_ARMOR; BRITTLE_ARMOR consumed",
+          "TriggerState": "BrittleArmor",
+          "BonusDamage": 13,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Slowed",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 0.75
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Obsidian"
+        },
+        {
+          "TriggerState": "IceTile",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "Flooded",
+          "ResultState": "Mud"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "Mud"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_projectile",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "stone_wall",
+      "DisplayName": "Stone Wall",
+      "Description": "Places a STONE_WALL terrain feature on up to 3 contiguous target tiles. Each wall segment is completely impassable, blocks line of sight, and has 80 structural HP before destruction. Persists indefinitely. A 3-tile wall placed in a corridor creates a permanent blocking structure that forces enemy movement around it and denies LoS to all spells requiring it. Cannot be placed on occupied tiles or ON_FIRE tiles.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 3,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Earth",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "StoneWall",
+          "Duration": -1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "StoneWall"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "StoneWall"
+        },
+        {
+          "TriggerState": "Mud",
+          "ResultState": "StoneWall"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_wall",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.4
+    },
+    {
+      "SpellId": "raise_terrain",
+      "DisplayName": "Raise Terrain",
+      "Description": "Raises a single tile or 2×2 tile cluster to ELEVATED status permanently. Units on targeted tiles take 12 impact damage and are displaced upward. ELEVATED tiles grant +1 spell range to any unit standing on them and increase movement cost to enter by 1 AP. Creates fall hazards for displacement combos: fall_distance × 8 HP per tile of drop. FLOODED tiles drain as the ground rises. At 5 AP, this is an investment in map control across the whole match.",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 3,
+      "AoeRadius": 1,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Earth",
+      "BaseDamage": 12,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Elevated",
+          "Duration": -1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Elevated"
+        },
+        {
+          "TriggerState": "Flooded",
+          "ResultState": "Elevated"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "Elevated"
+        },
+        {
+          "TriggerState": "Mud",
+          "ResultState": "Elevated"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 1,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 12
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_raise",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.8
+    },
+    {
+      "SpellId": "earthen_smash",
+      "DisplayName": "Earthen Smash",
+      "Description": "A ground-targeted earth detonation dealing 20 physical damage in a 2-tile radius. Knocks all units 1 tile outward from the center and converts all tiles in the AoE to MUD (movement cost +2, 3 turns). Units knocked into walls or other units take 8 collision damage. Smothers all ON_FIRE tiles in the AoE to OBSIDIAN simultaneously — the fastest mass-smother available. SHATTER triggers on FROZEN units in the AoE (20 × 2.5 = 50 HP).",
+      "ApCost": 4,
+      "CooldownTurns": 2,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Earth",
+      "BaseDamage": 20,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "SHATTER: ×2.5 damage vs. FROZEN targets in AoE; FROZEN removed on hit",
+          "TriggerState": "Frozen",
+          "BonusDamage": 30,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Mud",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Mud"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Obsidian"
+        },
+        {
+          "TriggerState": "IceTile",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "Flooded",
+          "ResultState": "Mud"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 1,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 8
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_aoe",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.9
+    },
+    {
+      "SpellId": "stone_spike",
+      "DisplayName": "Stone Spike",
+      "Description": "A sharp stone spike erupts from a single target tile, impaling units standing on it for physical damage and briefly pinning them in place with ROOTED for 1 turn. Applies SLOWED from debris impact. A quick single-target physical option that does not require a full-turn investment and can be used after movement to punish isolated targets.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Earth",
+      "BaseDamage": 18,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "SHATTER: ×2.5 damage vs. FROZEN targets; FROZEN removed on hit",
+          "TriggerState": "Frozen",
+          "BonusDamage": 27,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Rooted",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 0.9
+        },
+        {
+          "StatusType": "Slowed",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Ground"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Obsidian"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "earth_spike",
+      "SfxCastTag": "spell/earth/cast",
+      "SfxImpactTag": "spell/earth/impact",
+      "CameraShakeIntensity": 0.3
+    }
+  ]
+}

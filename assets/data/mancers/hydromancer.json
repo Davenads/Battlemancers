@@ -1,0 +1,292 @@
+{
+  "MancerId": "hydromancer",
+  "DisplayName": "Hydromancer",
+  "MaxHP": 100,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Water",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Primary team enabler and the only base-roster Mancer with reliable healing. Wins by saturating the board with WET terrain for Electromancer chain combos and cooling enemies toward Cryomancer freeze thresholds. Flood Zone is the game's premier combo setup tool. Mending Current is single-target triage. Must balance setup, healing, and displacement across limited AP.",
+  "StrongSynergyMancerIds": ["electromancer", "cryomancer", "geomancer", "pyromancer"],
+  "RecommendedFactionId": "gilded_throne",
+  "Spells": [
+    {
+      "SpellId": "aqua_lance",
+      "DisplayName": "Aqua Lance",
+      "Description": "A piercing bolt of pressurized water fired at a single enemy. Low individual damage, but applies WET to the target unit and target tile. Zero cooldown makes it the Hydromancer's primary combo primer — reliable, repeatable, and AP-cheap. Two casts in one activation apply WET to two separate targets or push a single target to -20 COLD for Cryomancer follow-up.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Water",
+      "BaseDamage": 10,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Wet",
+          "Duration": 2,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "Wet",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "Charged",
+          "ResultState": "Ground"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -10,
+      "VfxTag": "water_projectile",
+      "SfxCastTag": "spell/water/cast",
+      "SfxImpactTag": "spell/water/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "tidal_surge",
+      "DisplayName": "Tidal Surge",
+      "Description": "A surging wave of water blasting outward in a straight line from the Hydromancer. Hits all units in the line, applies WET, and pushes each unit 2 tiles away from the caster along the line direction. Excellent crowd control — breaks formations, pushes into hazards, and primes for Electromancer chains. Units pushed into walls or pits take collision or fall damage.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Line",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 5,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Water",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Wet",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 2,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 4
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -15,
+      "VfxTag": "water_line",
+      "SfxCastTag": "spell/water/cast",
+      "SfxImpactTag": "spell/water/impact",
+      "CameraShakeIntensity": 0.4
+    },
+    {
+      "SpellId": "mending_current",
+      "DisplayName": "Mending Current",
+      "Description": "The only base heal on the Mancer roster. Channels stabilizing water energy toward a single allied target, healing 22 HP (32 HP if target stands on a WET or FLOODED tile). Removes BURNING and POISONED from the target. Requires line of sight. The 2-turn cooldown demands careful timing — wasting the heal on minor chip damage leaves the Hydromancer unable to respond to burst.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Water",
+      "BaseDamage": -22,
+      "ConditionalBonuses": [
+        {
+          "ConditionDescription": "+10 healing when target stands on WET or FLOODED tile",
+          "TriggerState": "Wet",
+          "BonusDamage": -10,
+          "IsMultiplicative": false
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "RemoveBurning",
+          "Duration": 0,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "RemovePoisoned",
+          "Duration": 0,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -5,
+      "VfxTag": "water_heal",
+      "SfxCastTag": "spell/water/cast",
+      "SfxImpactTag": "spell/water/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "flood_zone",
+      "DisplayName": "Flood Zone",
+      "Description": "Converts a large 3-tile radius into persistent FLOODED terrain. All tiles in the zone become FLOODED and every unit in it on cast receives WET for 3 turns. Movement cost increases by 1 for units in the zone. The FLOODED state expands 1 tile every 2 turns and applies -5 temperature per turn to units standing on it — a sustained setup engine for Electromancer chains and Cryomancer mass-freezes. Costs nearly the entire activation at 5 AP.",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 4,
+      "AoeRadius": 3,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Water",
+      "BaseDamage": 6,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Wet",
+          "Duration": 3,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        },
+        {
+          "StatusType": "Flooded",
+          "Duration": -1,
+          "StacksApplied": 1,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Flooded"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "SteamCloud"
+        },
+        {
+          "TriggerState": "Wet",
+          "ResultState": "Flooded"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "water_aoe",
+      "SfxCastTag": "spell/water/cast",
+      "SfxImpactTag": "spell/water/impact",
+      "CameraShakeIntensity": 0.6
+    },
+    {
+      "SpellId": "water_jet",
+      "DisplayName": "Water Jet",
+      "Description": "A high-pressure burst of water directed at a single target. Deals moderate damage, applies WET, and pushes the target 1 tile directly away from the Hydromancer. A shorter-range defensive option for creating space against approaching threats when Tidal Surge is on cooldown.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Water",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "Wet",
+          "Duration": 1,
+          "StacksApplied": 1,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "TriggerState": "Ground",
+          "ResultState": "Wet"
+        },
+        {
+          "TriggerState": "OnFire",
+          "ResultState": "Wet"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 1,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 4
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": -8,
+      "VfxTag": "water_projectile",
+      "SfxCastTag": "spell/water/cast",
+      "SfxImpactTag": "spell/water/impact",
+      "CameraShakeIntensity": 0.15
+    }
+  ]
+}
