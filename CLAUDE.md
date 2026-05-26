@@ -6,7 +6,59 @@ This project uses **multi-agent parallel development** with git worktrees. Befor
 
 > **`design/agent-orchestration.md`** — full agent roster, worktree setup, task specification format, file ownership map, and orchestrator runbook
 
-12 subagents operate across 2 waves. Each agent owns exclusive file paths (no overlap) and pushes to its own branch. The orchestrator merges waves and spawns the next. **Do not modify files outside your assigned ownership domain.**
+Subagents operate across multiple waves. Each agent owns exclusive file paths (no overlap) and pushes to its own branch. The orchestrator merges waves and spawns the next. **Do not modify files outside your assigned ownership domain.**
+
+---
+
+## Code Quality Standards
+
+These standards apply to **all code in this project**, regardless of which agent writes it. Violations must be fixed before merging.
+
+### DRY (Don't Repeat Yourself)
+
+- **No duplicate logic.** If two places do the same thing, extract a shared method or class.
+- **Named constants only.** No magic numbers in simulation code. Use `const` or `static readonly` fields with descriptive names (e.g., `TemperatureManager.ThresholdBurstDamage = 5`, not `damage += 5`).
+- **One loader per data type.** A single class owns JSON parsing for each data type (e.g., `MancerDataLoader`, `MapLoader`). No inline `JsonSerializer.Deserialize` calls scattered across the codebase.
+- **No copy-paste JSON parsing.** Use `BattlemancersJsonHelper` for shared deserialization patterns. Add helpers there rather than duplicating serializer options.
+
+### Modularity
+
+- **Single responsibility per class.** A class does one thing. `TemperatureManager` manages temperature. `SpellResolver` resolves spells. They do not do each other's jobs.
+- **Constructor injection for dependencies.** Systems receive `TemperatureManager`, `StatusManager`, `ElementResolver`, etc. via constructor parameters — never via static access, singletons, or `FindObjectOfType`.
+- **Event-based system communication.** Systems that need to notify others publish to `SimulationEventBus`. They do not hold references to presentation-layer objects or call Unity APIs directly.
+- **No circular dependencies.** If A depends on B, B must not depend on A. Draw the dependency graph before introducing a new cross-system reference.
+- **Interface boundaries between layers.** The simulation layer (`src/core/`) must never import anything from Unity (`UnityEngine`, `UnityEngine.UI`, `TMPro`, etc.). All Unity-coupled code lives in presentation/adapter layers only.
+
+### Pure C# Simulation Layer
+
+- **Zero Unity dependencies in `src/core/` and `src/simulation/`.** No `MonoBehaviour`, `ScriptableObject`, `Vector2`, `Vector3`, `Debug.Log`, or any `UnityEngine.*` namespace. Use `System.Numerics` if vector math is needed.
+- **All simulation state lives in `SimulationState` and `UnitState`.** Do not store mutable game state in manager classes, static fields, or ScriptableObjects at runtime.
+- **Determinism is required.** No `System.Random` without a seeded instance. No `DateTime.Now` for logic. No dictionary iteration where order matters (use sorted keys or lists).
+
+### Data Layer Conventions
+
+- **JSON field names must exactly match C# property/field names** (case-sensitive). The data pipeline uses `System.Text.Json` with default naming policy — no camelCase conversion.
+- **ScriptableObjects** (`MancerData`, `SpellData`) are the Unity-side static definition layer. They are never mutated at runtime.
+- **JSON runtime files** live in `assets/data/mancers/`. One file per Mancer archetype (e.g., `assets/data/mancers/pyromancer.json`). Spell data is nested inside the Mancer file under a `spells` array.
+- **`DataRegistry`** is the single Unity-side indexing point for all ScriptableObject lookups. No other MonoBehaviour calls `Resources.Load` or `Addressables.LoadAsset` for game data.
+- **`temperatureDelta`** is an `int` field on `SpellData` (added by `simulation-wiring` agent). Positive = heats target, negative = cools. 0 = no temperature effect. All Mancer JSON files must include this field on every spell entry.
+
+### Testing Conventions
+
+- All simulation tests extend `SimulationTestBase` (provides a pre-wired `SimulationState` with two players, standard grid, and all managers injected).
+- Test method naming: `MethodName_Condition_ExpectedResult` (e.g., `ApplyTemperatureChange_CrossesThreshold_AppliesStatusEffect`).
+- No Unity test runner for simulation tests — these are plain NUnit tests runnable headless.
+- Each new system must ship with at least 3 tests: happy path, boundary/edge case, and failure/validation case.
+
+### C# Naming Conventions
+
+- **Classes / structs / enums:** `PascalCase`
+- **Public properties and fields:** `PascalCase`
+- **Private fields:** `_camelCase` (underscore prefix)
+- **Constants:** `PascalCase` (not `ALL_CAPS`)
+- **Local variables and parameters:** `camelCase`
+- **Interfaces:** `IPascalCase` (e.g., `ICommand`, `IStatusEffect`)
+- **Events / delegates:** `PascalCase`, past-tense or noun (e.g., `TemperatureChanged`, `UnitDied`)
 
 ---
 
