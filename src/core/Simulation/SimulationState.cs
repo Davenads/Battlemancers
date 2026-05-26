@@ -49,6 +49,18 @@ namespace Battlemancers.Core.Simulation
         public TurnPhase Phase { get; internal set; }
 
         // ---------------------------------------------------------------------------
+        // Thermal Composure charge tracking
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Set of player IDs that still have their once-per-match Thermal Composure charge available.
+        /// Initialized from <see cref="PlayerIds"/> at construction; charges are consumed via
+        /// <see cref="ConsumeThermalComposure"/>. Once consumed a player cannot use the ability again
+        /// in the same match.
+        /// </summary>
+        public HashSet<string> ThermalComposureAvailablePlayers { get; private set; }
+
+        // ---------------------------------------------------------------------------
         // Unit registry
         // ---------------------------------------------------------------------------
 
@@ -78,6 +90,39 @@ namespace Battlemancers.Core.Simulation
             PlayerIds = playerIds;
             TurnNumber = 1;
             Phase = TurnPhase.Planning;
+            ThermalComposureAvailablePlayers = new HashSet<string>(playerIds);
+        }
+
+        // ---------------------------------------------------------------------------
+        // Thermal Composure methods
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Checks whether the specified player still has their once-per-match Thermal Composure charge.
+        /// </summary>
+        /// <param name="playerId">The player ID to check.</param>
+        /// <returns>
+        /// True if the player has a Thermal Composure charge remaining; false if the charge has
+        /// already been consumed this match or if the player ID is not recognized.
+        /// </returns>
+        public bool HasThermalComposure(string playerId)
+        {
+            return playerId != null && ThermalComposureAvailablePlayers.Contains(playerId);
+        }
+
+        /// <summary>
+        /// Consumes the specified player's once-per-match Thermal Composure charge.
+        /// After this call, <see cref="HasThermalComposure"/> will return false for this player.
+        /// </summary>
+        /// <param name="playerId">The player ID whose charge is being consumed.</param>
+        /// <returns>
+        /// True if the charge was successfully consumed (player had a charge available);
+        /// false if the player had no charge remaining (already used or unrecognized player ID).
+        /// </returns>
+        public bool ConsumeThermalComposure(string playerId)
+        {
+            if (playerId == null) return false;
+            return ThermalComposureAvailablePlayers.Remove(playerId);
         }
 
         // ---------------------------------------------------------------------------

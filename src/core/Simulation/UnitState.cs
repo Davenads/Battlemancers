@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Battlemancers.Core.Grid;
 using Battlemancers.Core.Simulation.Events;
@@ -79,6 +80,18 @@ namespace Battlemancers.Core.Simulation
         public int Temperature { get; set; }
 
         /// <summary>
+        /// Number of consecutive turns this unit has ended at OVERHEATED (temperature ≥ +61).
+        /// Incremented at end of turn by <see cref="TemperatureManager.TickHeatstrokePenalties"/>.
+        /// Reset to 0 the moment the unit's temperature drops below +61 (either from a spell,
+        /// terrain change, natural decay, or Thermal Composure).
+        ///
+        /// Used to compute the Heatstroke AP penalty applied at the start of each activation:
+        /// <c>penalty = Max(0, Min(3, ConsecutiveOverheatedTurns - 2))</c>
+        /// — no penalty at 1–2 turns; -1 AP at turn 3; -2 AP at turn 4; -3 AP at turn 5+.
+        /// </summary>
+        public int ConsecutiveOverheatedTurns { get; set; }
+
+        /// <summary>
         /// Action points available for the current activation.
         /// Mancers start with 6 AP; Chaff and Ranged start with 1 AP.
         /// Reset each turn by ResetForNewTurn().
@@ -152,6 +165,7 @@ namespace Battlemancers.Core.Simulation
             ActionPoints = type == UnitType.Mancer ? 6 : 1;
             ActivatedThisTurn = false;
             Temperature = 0;
+            ConsecutiveOverheatedTurns = 0;
         }
 
         // ---------------------------------------------------------------------------
@@ -191,13 +205,24 @@ namespace Battlemancers.Core.Simulation
 
         /// <summary>
         /// Resets per-turn transient state at the start of a new planning phase.
-        /// Sets ActivatedThisTurn to false and restores ActionPoints to the unit's base value.
+        /// Sets ActivatedThisTurn to false and restores ActionPoints to the unit's base value,
+        /// then subtracts any active Heatstroke AP penalty.
+        ///
+        /// Heatstroke penalty formula: <c>Max(0, Min(3, ConsecutiveOverheatedTurns - 2))</c>.
+        /// No penalty at 1–2 consecutive OVERHEATED turns; -1 AP at turn 3; -2 AP at turn 4;
+        /// -3 AP at turn 5 and beyond (maximum penalty, never goes lower). ActionPoints is
+        /// floored at 0 and never goes negative.
+        ///
         /// Called on all living units by SimulationState.ResetUnitsForNewTurn().
         /// </summary>
         public void ResetForNewTurn()
         {
             ActivatedThisTurn = false;
             ActionPoints = Type == UnitType.Mancer ? 6 : 1;
+
+            // Apply Heatstroke AP penalty for units that have been OVERHEATED 3+ consecutive turns.
+            int heatstrokePenalty = Math.Max(0, Math.Min(3, ConsecutiveOverheatedTurns - 2));
+            ActionPoints = Math.Max(0, ActionPoints - heatstrokePenalty);
         }
 
         /// <inheritdoc/>

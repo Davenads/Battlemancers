@@ -112,7 +112,120 @@ This means crossing through the full WARM/COLD band in a single hit — a jump o
 
 ---
 
-## 7. Status Integration
+## 7. Extended Temperature Mechanics
+
+Four additional mechanics layer on top of the core temperature system. All four are implemented in `TemperatureManager` and evaluated in the order listed below within `ApplyTemperatureChange`.
+
+---
+
+### 7.1 Threshold Burst
+
+**Rule:** When a single temperature application crosses one or more harmful tier boundaries in one hit, deal 5 bonus damage per boundary crossed to the affected unit.
+
+**Harmful tier boundaries (Threshold Burst triggers):**
+
+| Boundary | Direction | Condition |
+|---|---|---|
+| Entering HOT | Heating | Previous temp ≤ +30, new temp ≥ +31 |
+| Entering OVERHEATED | Heating | Previous temp ≤ +60, new temp ≥ +61 |
+| Entering SUPERCOOLED | Cooling | Previous temp ≥ -30, new temp ≤ -31 |
+| Entering FROZEN SOLID | Cooling | Previous temp ≥ -60, new temp ≤ -61 |
+
+**Not Threshold Burst triggers:**
+- NEUTRAL → WARM (+1 to +30): WARM has no status effect; crossing into it is not harmful.
+- WARM → NEUTRAL: Moving back toward center; not a harmful tier entry.
+- COLD → NEUTRAL: Same reason.
+
+**Multi-boundary example:** A Thermomancer's Thermal Spike hits a unit at temperature 0 for +70 delta, pushing it to +70 (clamped to +70). The spike crosses both the +30 boundary (into HOT) and the +61 boundary (into OVERHEATED) in one application — 2 procs × 5 damage = **10 total Threshold Burst damage**.
+
+**Implementation details:**
+- Damage applied directly to `UnitState.CurrentHP`, floored at 0.
+- Published as `UnitDamagedEvent` with `DamageSource = "temperature_threshold_burst"`.
+- Evaluated before Flash Freeze Rupture and Thermal Shock in `ApplyTemperatureChange`.
+- Does NOT itself trigger further temperature changes.
+
+**Design intent:** Threshold Burst creates a tactically meaningful cost to dramatic temperature swings. A spell that barely crosses into OVERHEATED deals 5 bonus damage; a spell that crosses two boundaries at once deals 10. This rewards deliberate temperature setup (pushing an enemy just past a threshold rather than spiking from neutral) and makes each tier crossing feel impactful beyond the status effect it confers.
+
+---
+
+### 7.2 Heatstroke
+
+**Rule:** If a unit spends 3 or more consecutive turns at OVERHEATED (temperature ≥ +61), they accumulate an increasing AP penalty on subsequent activations.
+
+**Penalty schedule:**
+
+| Consecutive OVERHEATED Turns | AP Penalty |
+|---|---|
+| 1 | 0 |
+| 2 | 0 |
+| 3 | -1 AP |
+| 4 | -2 AP |
+| 5+ | -3 AP (maximum) |
+
+Formula: `penalty = Max(0, Min(3, ConsecutiveOverheatedTurns - 2))`
+
+**Counter mechanics:**
+- `ConsecutiveOverheatedTurns` is incremented once per turn by `TemperatureManager.TickHeatstrokePenalties`, called at the end of `ApplyTerrainTemperatureEffects`.
+- The counter resets to 0 **immediately** the moment the unit's temperature drops below +61, regardless of turn timing — this reset fires in `ApplyTemperatureChange` and `ApplyTerrainTemperatureEffects` whenever the unit exits OVERHEATED.
+- The AP penalty is applied at the start of each turn in `UnitState.ResetForNewTurn()`, after restoring base ActionPoints but before the unit can spend AP. ActionPoints are never reduced below 0.
+
+**Events:**
+- `HeatstrokeTickEvent` is published when the penalty first activates (counter reaches 3) and whenever the penalty value increases (counter passes 4, then 5).
+- Contains `UnitId`, `ConsecutiveTurns`, and `APPenalty` for HUD display.
+
+**Design intent:** Heatstroke creates urgency around managing OVERHEATED duration. A unit trapped at OVERHEATED not only suffers the BURNING DoT (5 HP/turn) but progressively loses action economy — at 5 turns OVERHEATED, a Mancer's 6 AP becomes 3 AP, effectively halving their action capacity. This gives the defending player an incentive to spend resources cooling their unit before the AP penalty compounds the pressure, and rewards the attacker for maintaining heat over multiple turns rather than a single burst.
+
+---
+
+### 7.3 Flash Freeze Rupture
+
+**Rule:** If a single temperature application moves a unit from temperature ≥ 0 (NEUTRAL or WARM — not already cold) directly to ≤ -61 (FROZEN SOLID) in one hit, deal 15 bonus rupture damage. This represents the catastrophic structural shock of instant crystallization.
+
+**Trigger conditions (all must be true):**
+- Previous temperature ≥ 0 (unit was NEUTRAL or WARM; not already COLD)
+- New temperature ≤ -61 (unit is now FROZEN SOLID)
+- Both conditions checked after clamping to [-100, +100]
+
+**Rarity note:** To trigger Flash Freeze Rupture from temperature 0, a spell must apply a ΔTemp of -61 or worse in a single hit. With baseline spell values (Ice Heavy = -30 to -35; Thermomancer Calcify = -35; Blizzard Field = -15/tick), no standard spell can reach this threshold from neutral alone. Realistic triggers require:
+- Thermomancer with cold upgrade stack (Calcify upgraded to -40+ ΔTemp) applied to a WARM unit
+- Crystal Node storing a Glacial Spike then releasing it in combination with a Thermomancer chill
+- Coordinated dual-cast: Thermomancer standard (-35) + Cryomancer Quick (-15) targeting the same unit in the same resolution window, landing on a unit at +5 to +10 temperature
+
+Flash Freeze Rupture is intentionally an edge-case reward for extraordinary cold coordination, not a routine combo trigger.
+
+**Implementation details:**
+- Checked after Threshold Burst in `ApplyTemperatureChange` — both can trigger on the same hit.
+- Damage applied directly to `UnitState.CurrentHP`, floored at 0.
+- Published as `UnitDamagedEvent` with `DamageSource = "temperature_flash_freeze_rupture"`.
+- Does NOT trigger further temperature changes.
+
+**Design intent:** Flash Freeze Rupture gives the Cryomancer + Thermomancer pairing a dramatic payoff for engineering an extreme cold spike. The 15 bonus damage is on top of Threshold Burst procs (which would also fire for crossing the -30 and -61 boundaries), and on top of the FROZEN SOLID status — a successful Flash Freeze Rupture simultaneously deals ~25 total bonus damage (10 Threshold Burst + 15 Rupture), locks the unit in FROZEN SOLID, and enables SHATTER combos. The rarity of the setup prevents it from being a routine opener.
+
+---
+
+### 7.4 Thermal Composure
+
+**Rule:** Once per match, any unit may spend 3 AP to instantly reset their temperature to 0. Each player has exactly 1 charge per match, shared across all their units. The charge cannot be replenished.
+
+**Mechanics:**
+- Activated via `ThermalComposureCommand`, which validates: unit exists and is alive, unit has ≥ 3 AP, and the owning player still has their charge (`SimulationState.HasThermalComposure`).
+- Execution: deducts 3 AP from the unit; consumes the player's charge via `SimulationState.ConsumeThermalComposure`; sets `unit.Temperature = 0`; resets `unit.ConsecutiveOverheatedTurns = 0`.
+- `ActivationCost = 0`: the 3 AP is charged against the unit's own ActionPoints pool, not the activation budget. This follows the same pattern as SpellCommand.
+- Status effects held by temperature thresholds (BURNING from OVERHEATED, FROZEN from FROZEN SOLID, SLOWED from HOT or SUPERCOOLED) are **not immediately removed**. They expire at the next threshold check in `ApplyTemperatureChange` or `TickHeatstrokePenalties`, when the unit's temperature of 0 causes them to be cleaned up. A BURNING DoT that was separately applied by a direct spell (not temperature-held) also remains active — Thermal Composure closes the temperature source, not the current status effect stack.
+
+**Events published:**
+- `ThermalComposureUsedEvent` (contains `PlayerId`, `UnitId`, `TemperatureReset` — the temperature value before reset)
+- `TemperatureChangedEvent` (previousTemp → 0, for thermometer bar animation)
+
+**Design intent:** Thermal Composure is a tactical safety valve. A player pinned in OVERHEATED for 3+ turns (suffering Heatstroke AP loss and BURNING DoT) can spend this charge to escape the thermal trap — but only once. The cost of 3 AP means using it removes roughly half a Mancer's action economy for that turn. The once-per-match constraint prevents it from becoming a routine cooldown and instead makes it a high-stakes decision: spend the charge now, or hold it for a worse situation later? This mirrors similar limited-use abilities in tactical games (Limit Breaks, Overdrives, tactical retreats) where scarcity creates dramatic decision-making.
+
+**The once-per-match constraint reasoning:** If Thermal Composure were per-turn or per-cooldown, it would nullify the entire Heatstroke system (just use Composure every time you hit OVERHEATED) and trivialize sustained temperature pressure as a strategy. Once-per-match ensures temperature management remains meaningful throughout the game; the Composure charge is insurance, not a counter.
+
+**Design note — warband composition bonus (Planned, not yet implemented):** A warband with zero cold/water Mancers (no Cryomancer, Hydromancer, or Thermomancer) receives 2 Thermal Composure charges instead of 1. This compensates for the reduced self-cooling options in pure-hot or non-temperature warbands, ensuring that cold-focused opponents cannot freely lock down a fire-only warband with zero counterplay available. This bonus is recorded here as a design intent and will be implemented in a future pass when warband composition is tracked in `SimulationState`.
+
+---
+
+## 8. Status Integration
 
 ### Temperature-held vs. Duration-held
 
