@@ -88,6 +88,8 @@ The Toximancer's four base spells cover distinct combat functions:
 | **Effects Applied** | Applies 2 stacks of `POISONED` (3 HP/turn per stack; 3-turn venom-origin duration) to hit unit. Tile beneath target becomes `TOXIC_RESIDUE` — a minor terrain marker (not full TOXIC_TERRAIN; movement cost unchanged; units on TOXIC_RESIDUE tile take 1 POISONED stack if they end their turn there for up to 2 turns). |
 | **Terrain Interaction** | Firing into `WET` terrain: if the projectile hits a WET tile/unit, Contamination check triggers immediately on the unit struck (the dart venom + water = instant spread). The Contamination fires before additional stacks are counted, meaning the struck unit's current stacks spread, then the dart's 2 stacks are added. Firing into `SPORES` terrain: the dart disrupts the spore cloud — SPORES terrain in the tile hit converts from SPORES to `TOXIC_SPORES` (hybrid: 1 venom POISONED stack per movement through, longer-duration spore effect). |
 
+**Temperature Effects:** **0 temperature change.** Venom is thermally neutral — the dart delivers concentrated toxins with no heat or cold component. Exception: if the target is WARM (+1 to +30 temperature), the ambient heat slightly potentiates the venom — apply an extra 0.5 effective stack, rounded up to 1 additional stack when the target is at +20 temperature or higher. At +20 or above WARM, a single Venom Dart effectively applies 3 stacks instead of 2.
+
 **Design note:** Venom Dart is the Toximancer's workhorse — 2 stacks for 2 AP, no cooldown, longest range on the spell list (7 tiles). It can be cast twice per activation (2 + 2 = 4 AP) to apply 4 stacks total, split between two targets or combined on one. Two darts on one target applies all 4 stacks: at turn start they deal 12 HP/turn (4 × 3). Double-darting one high-value target and walking one tile is a standard Toximancer activation that establishes a kill threat within 2 turns. The TOXIC_RESIDUE terrain marker is a secondary benefit — units who stand still on the dart's impact tile take 1 extra stack, punishing stationary enemies.
 
 ---
@@ -106,6 +108,8 @@ The Toximancer's four base spells cover distinct combat functions:
 | **Element** | Poison |
 | **Effects Applied** | All tiles in radius become `TOXIC_TERRAIN` (persists 5 turns; does not spread naturally). Any unit that enters or ends their turn on TOXIC_TERRAIN receives 1 POISONED stack per turn. Units who move through TOXIC_TERRAIN receive 1 stack per tile crossed (not just per end-of-turn). |
 | **Terrain Interaction** | On `GROUND`: TOXIC_TERRAIN created (standard). On `WET`: water-diluted poison — terrain becomes `WET_TOXIC` (TOXIC_TERRAIN properties + WET conductivity); units on WET_TOXIC terrain are both in poison ground AND conductive (Electromancer chains propagate). Additionally: WET dilution reduces stack accumulation to 1 stack every 2 turns instead of every turn (water weakens concentrated venom). On `SPORES` (Floramancer): Floramancer's plant-origin spores amplify with ground venom — SPORES terrain becomes `VIRULENT_SPORES` (2 POISONED stacks per movement through, venom-duration 3 turns). This is the Floramancer + Toximancer VIRULENT_SPORES interaction. On `ON_FIRE`: ground venom ignites — creates `TOXIC_FIRE` hybrid (both BURNING and 1 POISONED stack per turn; standard Pyromancer interaction). On `ICE_TILE`: venom freezes into the ice — `TOXIC_ICE` terrain (venom preserved until ice melts; when a Fire spell or thaw effect hits TOXIC_ICE, the venom releases: all units within 2 tiles receive 2 POISONED stacks simultaneously from the venom burst). On `CHARGED`: venom conducts charge — CHARGED is consumed; chain arc fires through all adjacent units; TOXIC_TERRAIN forms normally after discharge. |
+
+**Temperature Effects:** **0 temperature change.** Ground venom is chemically inert thermally — seeding TOXIC_TERRAIN does not heat or cool the environment.
 
 **Design note:** Venomous Ground is the Toximancer's passive-income spell — it seeds an approach zone that generates stacks every turn without requiring the Toximancer to directly target units. Against infantry that must advance through the zone, it creates 1 stack per tile crossed. A 4-tile advance through Venomous Ground creates 4 stacks. Combined with 2 stacks from Venom Dart, a unit advancing through poisoned ground and being dart-targeted reaches 6 stacks in one activation — capped at 5 (DEBILITATED), with 1 wasted. The Toximancer should use Venomous Ground to poison choke points and high-traffic corridors, then use Venom Dart to confirm the DEBILITATED threshold on units that passed through.
 
@@ -126,6 +130,8 @@ The Toximancer's four base spells cover distinct combat functions:
 | **Effects Applied** | Deals 12 damage to the target. Applies 1 POISONED stack to the target. Then: if the target is standing on WET terrain OR is already POISONED (any number of stacks), Contamination immediately triggers — all 8 adjacent units receive 1 POISONED stack each. The trigger requires either WET terrain OR prior POISONED status on the target (not both mandatory — either condition fires Contamination). |
 | **Terrain Interaction** | The spell itself applies 1 stack to the target; if the target is WET OR was already POISONED, Contamination fires from the target's position. This means Toxic Surge is the Toximancer's Contamination engine — it deliberately enables Contamination spread without requiring the target to physically move through WET terrain (the spell itself triggers the water-venom interaction if the target is WET). Hitting a BURNING target with Toxic Surge: BURNING + POISONED = Toxic Combustion (POISONED converts to BURNING DoT; AoE toxic fumes affect adjacent units — see status-effects.md). This converts the Toximancer's stacks into a Pyromancer-adjacency combo without requiring a Pyromancer ally. |
 
+**Temperature Effects:** **0 temperature change.** Toxic Surge delivers poison via venom fluid — no thermal component.
+
 **Design note:** Toxic Surge is the Toximancer's Contamination activator. Its primary use is not the 12 damage or even the 1 direct stack — it is the forced Contamination event. A Hydromancer who has WET a target (1-2 stacks from Venom Dart) gives the Toximancer a Toxic Surge target that spreads to all 8 adjacent units in one 3-AP cast. Against a clustered formation, Toxic Surge can distribute POISONED stacks to 8 units simultaneously with a single spell. Against an already-POISONED target (any stacks), Toxic Surge triggers Contamination regardless of terrain — the Toximancer does not need the Hydromancer to be active if the target was already poisoned by any prior source.
 
 ---
@@ -144,6 +150,8 @@ The Toximancer's four base spells cover distinct combat functions:
 | **Element** | Poison |
 | **Effects Applied** | Deals 20 damage. Applies 3 POISONED stacks immediately. Additionally, the injected venom is virulent — the stacks applied by Virulent Injection each last 4 turns (instead of standard 3-turn venom duration), making them persist longer than any other Toximancer delivery method. If the target was already at 2+ stacks, Virulent Injection pushes them to 5 stacks (DEBILITATED) immediately (2 existing + 3 injected = 5 cap). |
 | **Terrain Interaction** | Being at melee range to inject means the Toximancer is in close proximity to the target. If the target is on TOXIC_TERRAIN, the Toximancer also takes 1 POISONED stack (standing on its own ground venom while adjacent). On WET terrain: Virulent Injection + WET = instant Contamination from the target (the 3 injected stacks + WET trigger = 1 stack spreads to all 8 adjacent units immediately). Injecting into a FROZEN target: the virulent venom is preserved in the frozen state (POISONED persists through FROZEN per status-effects.md) — when the FROZEN ends, the virulent stacks tick at full damage. |
+
+**Temperature Effects:** **0 temperature change.** Injected venom is biochemically active but thermally neutral.
 
 **Design note:** Virulent Injection is the Toximancer's high-commitment melee finisher. It requires closing to 1-tile range — a major risk for an 85-HP Mancer with 1 armor — but delivers the fastest DEBILITATED application in the kit: 3 stacks in one cast, with 4-turn duration. Against a unit already at 2 stacks (achievable via two Venom Darts earlier in the fight), Virulent Injection confirms DEBILITATED immediately. The 4-AP cost + melee requirement means it consumes most of the Toximancer's activation: 2 tiles of movement + Virulent Injection = 2 + 4 = 6 AP full turn. It should be used as a closing move against isolated or low-HP targets that the Toximancer can safely reach, not as an opening spell.
 
@@ -370,3 +378,47 @@ This combo is fully documented in the Necromancer design document and referenced
 **FLOODED zone blocking TOXIC_TERRAIN:** A Hydromancer who pre-floods approach corridors prevents TOXIC_TERRAIN from being established there. The Toximancer cannot plant Venomous Ground on FLOODED tiles. If the opponent controls the approach paths with water, the Toximancer's terrain control strategy is disabled in those corridors. The Toximancer must either contest FLOODED zones with Venom Dart single-target stacking (no terrain setup) or find un-flooded paths to seed.
 
 **Photomancer mass cleanse:** Photomancer Sunburst (area cleanse) is the hardest counter to TOXIC_TERRAIN and VIRULENT_SPORES — it removes POISONED from all units in the burst area and can eliminate TOXIC_TERRAIN terrain state simultaneously. A Photomancer who Sunbursts the VIRULENT_SPORES zone that the Floramancer and Toximancer spent multiple activations building destroys the primary terrain investment in one 3-AP cast.
+
+---
+
+## 9. Temperature Interaction Notes
+
+Poison is thermally neutral — venom does not directly heat or cool targets. All Toximancer spells apply **0 temperature change**. However, the Toximancer has significant emergent interactions when temperature effects from other Mancers are present on the board.
+
+### Toxic Fever (OVERHEATED + POISONED)
+
+When a unit is simultaneously OVERHEATED (temperature ≥ +61) AND POISONED, the heat accelerates toxin metabolism — POISONED ticks deal an additional **+2 damage per stack per tick** while OVERHEATED. This bonus stacks with current stack count:
+
+- 1 stack OVERHEATED: (3 + 2) = 5 dmg/tick
+- 3 stacks OVERHEATED: (9 + 6) = 15 dmg/tick
+- 5 stacks (DEBILITATED) OVERHEATED: (15 + 10) = 25 dmg/tick; the unit is simultaneously DEBILITATED and taking accelerated poison damage
+
+Additionally, a unit that is OVERHEATED also takes the standard 5 dmg/turn BURNING DoT from the OVERHEATED threshold. A unit at 3 POISONED stacks + OVERHEATED therefore takes 15 dmg/tick from accelerated poison + 5 dmg/turn BURNING = **20 dmg/tick total**.
+
+**Primary combo:** Toximancer + Pyromancer or Toximancer + Thermomancer. The Pyromancer overheats the environment (driving enemy temperature to ≥ +61 via ON_FIRE terrain or fire spells), and the Toximancer stacks POISONED. Once the target crosses the OVERHEATED threshold, every poison tick becomes significantly more deadly. This is one of the most punishing sustained damage combinations in the game.
+
+### Preserved Venom (SUPERCOOLED + POISONED)
+
+When a unit is SUPERCOOLED (temperature ≤ -31) AND POISONED, the cold slows their metabolism — POISONED stacks **do not tick down** while SUPERCOOLED. Stack count is frozen at its current value; duration timers pause. When the unit warms above -31 and exits SUPERCOOLED, all remaining stacks resume ticking at normal rate with their original stack durations intact.
+
+**Primary combo:** Toximancer + Cryomancer. The strategic play: stack the target to 3-5 POISONED via Venom Dart and Virulent Injection, then have the Cryomancer drive the target's temperature below -31 (two Frost Bolts or one Glacial Spike). The target's stacks are preserved at full count. When they thaw — whether naturally from temperature decay or by enemy cleanse of the cold status — all remaining stacks resume at full strength. This denies the opponent the ability to manage poison via time; the stacks are waiting for them after any temporary temperature reprieve.
+
+**Preservation window:** If the target is deeply SUPERCOOLED (temperature -50), natural decay (10/turn) takes 2 turns to cross above -31. Two turns of preserved stacks at full count is frequently fight-deciding.
+
+### Contamination + Temperature Interactions
+
+The CONTAMINATION mechanic (POISONED units triggering stack spread via WET terrain or WET spell contact) applies regardless of temperature. However, temperature creates secondary effects on Contamination events:
+
+- **Overheated Contamination chain:** If an OVERHEATED unit triggers Contamination (spreads 1 stack to adjacent units), each adjacent unit that receives a POISONED stack via the spread undergoes a Toxic Fever check. Any adjacent unit already at OVERHEATED (temperature ≥ +61) immediately enters Toxic Fever on the spread stack — even 1 stack on an OVERHEATED unit activates the accelerated tick bonus. In a large OVERHEATED cluster where Hydromancer has applied WET, a single Contamination event can trigger Toxic Fever on multiple units simultaneously, creating a spreading Toxic Fever chain across the cluster.
+
+### Interaction with the Full Temperature Range
+
+| Temperature Threshold | Effect on POISONED Units |
+|---|---|
+| ≥ +61 OVERHEATED | Toxic Fever: +2 dmg per stack per tick; BURNING DoT also active |
+| +31 to +60 HOT | No special poison interaction; unit is SLOWED |
+| +1 to +30 WARM | Venom Dart applies +1 bonus stack at +20 or higher |
+| 0 NEUTRAL | Standard poison behavior |
+| -1 to -30 COLD | No special poison interaction |
+| -31 to -60 SUPERCOOLED | Preserved Venom: POISONED stacks do not tick down |
+| ≤ -61 FROZEN SOLID | FROZEN status applies; POISONED persists through FROZEN per standard rules (stacks preserved until FROZEN ends) |
