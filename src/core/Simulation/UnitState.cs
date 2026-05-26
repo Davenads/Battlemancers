@@ -71,7 +71,7 @@ namespace Battlemancers.Core.Simulation
 
         /// <summary>
         /// Action points available for the current activation.
-        /// Mancers start with 2 AP; Chaff and Ranged start with 1 AP.
+        /// Mancers start with 6 AP; Chaff and Ranged start with 1 AP.
         /// Reset each turn by ResetForNewTurn().
         /// </summary>
         public int ActionPoints { get; set; }
@@ -139,8 +139,8 @@ namespace Battlemancers.Core.Simulation
             MoveRange = moveRange;
             PointCost = pointCost;
 
-            // Mancers have 2 AP; Chaff and Ranged have 1 AP.
-            ActionPoints = type == UnitType.Mancer ? 2 : 1;
+            // Mancers have 6 AP; Chaff and Ranged have 1 AP.
+            ActionPoints = type == UnitType.Mancer ? 6 : 1;
             ActivatedThisTurn = false;
         }
 
@@ -187,7 +187,7 @@ namespace Battlemancers.Core.Simulation
         public void ResetForNewTurn()
         {
             ActivatedThisTurn = false;
-            ActionPoints = Type == UnitType.Mancer ? 2 : 1;
+            ActionPoints = Type == UnitType.Mancer ? 6 : 1;
         }
 
         /// <inheritdoc/>
