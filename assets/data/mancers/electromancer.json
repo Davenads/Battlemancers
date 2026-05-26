@@ -1,0 +1,308 @@
+{
+  "MancerId": "electromancer",
+  "DisplayName": "Electromancer",
+  "MaxHP": 90,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Lightning",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Combo-detonator. Converts Wet terrain set up by allies into chain-arc mass stuns. In isolation deals functional single-target Lightning damage. In a team, a single chain arc through a Flooded zone can Stun the entire enemy formation simultaneously — the highest single-action swing in the game.",
+  "StrongSynergyMancerIds": ["hydromancer", "cryomancer", "pyromancer", "necromancer"],
+  "RecommendedFactionId": "",
+  "Spells": [
+    {
+      "SpellId": "arc_bolt",
+      "DisplayName": "Arc Bolt",
+      "Description": "Fires a lightning bolt at a single target for 18 damage. The target tile becomes Charged (1 turn). If the target is Wet, the arc chains to all adjacent Wet units — each takes 18 chain arc damage and is Stunned for 1 turn. Chain propagates outward through the entire connected Wet network.",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Lightning",
+      "BaseDamage": 18,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsWet",
+          "BonusEffectId": "WET_CHAIN_ARC",
+          "ChainArcDamage": 18
+        },
+        {
+          "Condition": "TargetIsBurning",
+          "BonusEffectId": "FIRESTORM_BURST",
+          "BonusDamage": 20,
+          "BonusRadius": 1
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusEffectId": "SHATTER",
+          "DamageMultiplier": 2.5
+        },
+        {
+          "Condition": "TargetIsPoisoned",
+          "BonusEffectId": "TOXIN_SHOCK",
+          "DamagePerStack": 6
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TileStateId": "CHARGED",
+          "Duration": 1,
+          "Radius": 0
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 10,
+      "VfxTag": "lightning_projectile",
+      "SfxCastTag": "spell/lightning/cast",
+      "SfxImpactTag": "spell/lightning/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "static_field",
+      "DisplayName": "Static Field",
+      "Description": "Charges a target tile with electrical energy. The Charged tile persists 2 turns; units stepping onto it take 12 arc damage and may be Stunned if Wet. Placed on a Flooded zone, the charge distributes through the entire connected water — any unit entering the zone triggers a full chain arc.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Lightning",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetTileIsFlooded",
+          "BonusEffectId": "CHARGE_ENTIRE_FLOODED_ZONE"
+        },
+        {
+          "Condition": "TargetTileIsIceTile",
+          "BonusEffectId": "FREEZE_CONDUCTOR",
+          "ArcRangeBonus": 0.5
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TileStateId": "CHARGED",
+          "Duration": 2,
+          "Radius": 0
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 10,
+      "VfxTag": "lightning_trap",
+      "SfxCastTag": "spell/lightning/cast",
+      "SfxImpactTag": "spell/lightning/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "chain_lightning",
+      "DisplayName": "Chain Lightning",
+      "Description": "Fires a high-powered bolt dealing 25 damage. If the primary target is Wet, a chain arc propagates outward through the entire connected Wet network — each chained unit takes 18 arc damage and is Stunned for 1 turn. Chain has no maximum hop count. The chain also hops across empty Wet tiles to reach Wet units on the far side.",
+      "ApCost": 3,
+      "CooldownTurns": 1,
+      "Tier": "Standard",
+      "TargetType": "Chain",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Lightning",
+      "BaseDamage": 25,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsWet",
+          "BonusEffectId": "WET_CHAIN_ARC",
+          "ChainArcDamage": 18
+        },
+        {
+          "Condition": "TargetIsBurning",
+          "BonusEffectId": "FIRESTORM_BURST",
+          "BonusDamage": 20,
+          "BonusRadius": 1
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusEffectId": "SHATTER",
+          "DamageMultiplier": 2.5
+        },
+        {
+          "Condition": "PrimaryTargetInFloodedZone",
+          "BonusEffectId": "FULL_ZONE_CHAIN_ARC"
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TileStateId": "CHARGED",
+          "Duration": 1,
+          "Radius": 0
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 10,
+      "VfxTag": "lightning_chain",
+      "SfxCastTag": "spell/lightning/cast",
+      "SfxImpactTag": "spell/lightning/impact",
+      "CameraShakeIntensity": 0.5
+    },
+    {
+      "SpellId": "overload",
+      "DisplayName": "Overload",
+      "Description": "Releases a massive electrical discharge in a 2-tile radius, dealing 30 damage to all units. Wet units in the radius are Stunned. All Charged tiles within 3 tiles of the center discharge simultaneously for 12 arc damage each. Discharged tiles become Overloaded Tiles (+50% damage to next Lightning spell) for 1 turn.",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "AoeCircle",
+      "Range": 4,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": true,
+      "Element": "Lightning",
+      "BaseDamage": 30,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsWet",
+          "BonusEffectId": "STUNNED",
+          "Duration": 1
+        },
+        {
+          "Condition": "ChargedTilesWithin3Tiles",
+          "BonusEffectId": "CHARGED_TILE_DISCHARGE",
+          "BonusDamagePerTile": 12
+        },
+        {
+          "Condition": "TargetIsBurning",
+          "BonusEffectId": "FIRESTORM_BURST",
+          "BonusDamage": 20,
+          "BonusRadius": 1
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusEffectId": "SHATTER",
+          "DamageMultiplier": 2.5
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TileStateId": "OVERLOADED_TILE",
+          "Duration": 1,
+          "Radius": 2
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 15,
+      "VfxTag": "lightning_aoe",
+      "SfxCastTag": "spell/lightning/cast",
+      "SfxImpactTag": "spell/lightning/impact",
+      "CameraShakeIntensity": 0.8
+    },
+    {
+      "SpellId": "judgement_arc",
+      "DisplayName": "Judgement Arc",
+      "Description": "Calls down a sky-strike at extended 8-tile range, dealing 50 damage to the primary target. Creates a long-lasting Charged tile (3 turns). If the target is Wet or in a Flooded zone, chain arcs fire with double hop range (2 tiles) and 25 damage per hop, Stunning each chained unit. All Charged tiles within 5 tiles discharge simultaneously. Electromancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Projectile",
+      "Range": 8,
+      "AoeRadius": 1,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Lightning",
+      "BaseDamage": 50,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsWet",
+          "BonusEffectId": "JUDGEMENT_CHAIN_ARC",
+          "ChainArcDamage": 25,
+          "ChainHopRange": 2
+        },
+        {
+          "Condition": "ChargedTilesWithin5Tiles",
+          "BonusEffectId": "MASS_CHARGED_DISCHARGE",
+          "BonusDamagePerTile": 12
+        },
+        {
+          "Condition": "TargetIsBurning",
+          "BonusEffectId": "FIRESTORM_BURST",
+          "BonusDamage": 20,
+          "BonusRadius": 2
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusEffectId": "SHATTER",
+          "DamageMultiplier": 2.5
+        }
+      ],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "TileStateId": "CHARGED",
+          "Duration": 3,
+          "Radius": 0
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 15,
+      "VfxTag": "lightning_ultimate",
+      "SfxCastTag": "spell/lightning/cast",
+      "SfxImpactTag": "spell/lightning/impact",
+      "CameraShakeIntensity": 1.0
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "MancerId": "chronomancer",
+  "DisplayName": "Chronomancer",
+  "MaxHP": 80,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Time",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Tempo controller. Operates on everyone's AP budget — amplifying allies and suppressing enemies. Deals no meaningful damage. Wins by creating asymmetric action economy: allies act twice, enemies act with reduced AP and frozen cooldowns. Lowest HP in roster. Must never be in threat range.",
+  "StrongSynergyMancerIds": ["electromancer", "pyromancer", "necromancer", "psychomancer"],
+  "RecommendedFactionId": "verdant_pact",
+  "Spells": [
+    {
+      "SpellId": "haste",
+      "DisplayName": "Haste",
+      "Description": "Grants an ally the Haste status — their next activation gives +6 AP (total 12 AP for that turn). Cannot self-cast. If the target ally is Chilled, the +6 AP bonus is halved to +3 AP. If cast on a Silenced unit, the bonus AP applies to movement only.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "SingleTarget",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Time",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "HASTE",
+          "Duration": 1,
+          "Condition": "AllyOnly",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "time_buff",
+      "SfxCastTag": "spell/time/cast",
+      "SfxImpactTag": "spell/time/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "time_slow",
+      "DisplayName": "Time Slow",
+      "Description": "Applies Time Slow to an enemy for 2 turns: all their cooldown timers pause (do not decrement) for the duration, and they lose 2 AP on their next activation. Most valuable cast immediately after an enemy uses a Heavy or Ultimate spell — the 2-turn pause effectively extends their cooldown by 2 turns.",
+      "ApCost": 2,
+      "CooldownTurns": 2,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Time",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "TIME_SLOW",
+          "Duration": 2,
+          "Condition": "EnemyOnly",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "time_debuff",
+      "SfxCastTag": "spell/time/cast",
+      "SfxImpactTag": "spell/time/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "rewind",
+      "DisplayName": "Rewind",
+      "Description": "Reverts a single unit to their position and HP at the start of the previous turn. Cast on an ally: repositions and restores HP; strips all statuses from them. Cast on an enemy: repositions them backward and strips all buffs and statuses (HP not restored). Cooldowns are not reverted by Rewind. If the target tile is blocked, the positional component fails but status/HP effects still resolve. Also restores the target unit's temperature to its value at the start of the previous turn.",
+      "ApCost": 5,
+      "CooldownTurns": 4,
+      "Tier": "Heavy",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Time",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "REWIND",
+          "Duration": 0,
+          "Condition": "OnCast",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "time_rewind",
+      "SfxCastTag": "spell/time/cast",
+      "SfxImpactTag": "spell/time/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "stasis",
+      "DisplayName": "Stasis",
+      "Description": "Places a single unit in temporal suspension for 2 turns — they cannot act and cannot be targeted or affected by anything. Stasis cannot be removed early by any means. Units in Stasis are immune to all terrain effects. During Stasis, the unit's temperature does not change — natural decay and terrain-based accumulation are suspended. Can target ally or enemy.",
+      "ApCost": 4,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "SingleTarget",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Time",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "STASIS",
+          "Duration": 2,
+          "Condition": "OnCast",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "time_stasis",
+      "SfxCastTag": "spell/time/cast",
+      "SfxImpactTag": "spell/time/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "temporal_reversal",
+      "DisplayName": "Temporal Reversal",
+      "Description": "Simultaneously rewinds all allied units within 4 tiles — each is repositioned to their location at the start of the previous turn and restored to the HP they had at that point. All debuffs and negative statuses on rewound allies are stripped. Buffs are also stripped. Cooldowns are not restored. Cannot undo deaths. Chronomancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 4,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Time",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "EffectId": "MASS_REWIND",
+          "Duration": 0,
+          "Condition": "AlliesInAoeOnly",
+          "Stacks": 0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "time_ultimate",
+      "SfxCastTag": "spell/time/cast",
+      "SfxImpactTag": "spell/time/impact",
+      "CameraShakeIntensity": 0.6
+    }
+  ]
+}
