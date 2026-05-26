@@ -1,0 +1,302 @@
+{
+  "MancerId": "osteomancer",
+  "DisplayName": "Osteomancer",
+  "MaxHP": 120,
+  "MoveRange": 3,
+  "BaseArmor": 2,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Arcane",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Tank and structural engineer. Raises bone constructs to channel enemy movement, buffs allies with BONE_ARMOR, and debuffs enemies with BRITTLE for amplified physical damage. Core combo: BRITTLE + FROZEN for a x3.75 physical SHATTER. Wins through sustained board presence and positional control.",
+  "StrongSynergyMancerIds": ["cryomancer", "geomancer", "gravimancer", "toximancer"],
+  "RecommendedFactionId": "",
+  "Spells": [
+    {
+      "SpellId": "bone_shard",
+      "DisplayName": "Bone Shard",
+      "Description": "A physical bone projectile dealing 14 damage. Leaves OSSIFIED_GROUND on the impact tile. Deals 21 damage against BRITTLE targets (consuming one BRITTLE charge). Triggers SHATTER on FROZEN targets (x2.5; x3.75 if also BRITTLE).",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 14,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsBrittle",
+          "BonusDamage": 7,
+          "Description": "BRITTLE target takes 21 damage (x1.5); one BRITTLE charge consumed."
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 21,
+          "Description": "FROZEN target triggers SHATTER (x2.5 = 35 damage); FROZEN removed."
+        },
+        {
+          "Condition": "TargetIsBrittleAndFrozen",
+          "BonusDamage": 38,
+          "Description": "BRITTLE + FROZEN triggers SHATTER at x3.75 = 52 damage; both statuses consumed."
+        },
+        {
+          "Condition": "TargetOnOssifiedGround",
+          "BonusDamage": 4,
+          "Description": "Extra bone concentration deals +4 bonus damage."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "OssifiedGround",
+          "Duration": 4,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Ground",
+          "ToState": "OssifiedGround"
+        },
+        {
+          "FromState": "IceTile",
+          "ToState": "OssifiedIce"
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_projectile",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "calcify",
+      "DisplayName": "Calcify",
+      "Description": "Dual-purpose status spell. Targeting an ally grants BONE_ARMOR (15 HP physical shield, 4-turn max). Targeting an enemy applies BRITTLE (physical damage +50% for 2 hits) and CALCIFIED (movement -2, physical armor +15%, 2-turn duration).",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 4,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [
+        {
+          "Condition": "CasterOnOssifiedGround",
+          "Description": "Casting on self while on OSSIFIED_GROUND increases BONE_ARMOR shield to 20."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "BoneArmor",
+          "Duration": 4,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0,
+          "ConditionAllyOnly": true
+        },
+        {
+          "StatusType": "Brittle",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0,
+          "ConditionEnemyOnly": true
+        },
+        {
+          "StatusType": "Calcified",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0,
+          "ConditionEnemyOnly": true
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_status",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.0
+    },
+    {
+      "SpellId": "brittle_touch",
+      "DisplayName": "Brittle Touch",
+      "Description": "Melee bone-spike strike dealing 8 physical damage and applying BRITTLE for 2 hits (3 turns duration). On OSSIFIED_GROUND, BRITTLE lasts 3 hits instead of 2. Against a FROZEN target, triggers SHATTER immediately (8 x2.5 = 20 damage; FROZEN removed), then applies BRITTLE to the now-unfrozen unit.",
+      "ApCost": 1,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 1,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 12,
+          "Description": "FROZEN target triggers SHATTER (x2.5 = 20 damage); FROZEN removed; BRITTLE then applied."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Brittle",
+          "Duration": 3,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_melee",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "bone_spire",
+      "DisplayName": "Bone Spire",
+      "Description": "Raises a BONE_SPIRE construct (40 HP) on the target tile. Blocks movement and LOS. Adjacent units gain +1 physical armor. Any unit on the target tile at placement takes 6 damage and is displaced 1 tile away. Maximum 2 simultaneous constructs.",
+      "ApCost": 4,
+      "CooldownTurns": 2,
+      "Tier": "Heavy",
+      "TargetType": "Ground",
+      "Range": 3,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Arcane",
+      "BaseDamage": 6,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "BoneSpireConstruct",
+          "Duration": -1,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "ToxicTerrain",
+          "ToState": "ToxicBoneSpire",
+          "Notes": "Spire is infused with toxin; adjacent units take 1 POISONED stack per turn."
+        },
+        {
+          "FromState": "Wet",
+          "ToState": "Wet",
+          "Notes": "Spire placed on WET has reduced HP (30 instead of 40)."
+        },
+        {
+          "FromState": "Mud",
+          "ToState": "Mud",
+          "Notes": "Spire gains HP (50 instead of 40) but reduced LOS height (1-tile instead of 2)."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 1,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_construct",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.4
+    },
+    {
+      "SpellId": "bone_fortress",
+      "DisplayName": "Bone Fortress",
+      "Description": "Simultaneously raises BONE_SPIRE constructs (50 HP each) in all 4 cardinal directions 1 tile from the Osteomancer. Applies BONE_ARMOR (20 HP shield) to the Osteomancer and all allies within 2 tiles. Enemies within 2 tiles take 12 damage and are pushed 2 tiles away. Costs the entire activation; Osteomancer cannot move this turn. Temporarily exceeds construct cap; player chooses which to keep at end of turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Self",
+      "Range": 0,
+      "AoeRadius": 2,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": false,
+      "Element": "Arcane",
+      "BaseDamage": 12,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "BoneArmor",
+          "Duration": 4,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0,
+          "ConditionAllyOnly": true
+        },
+        {
+          "StatusType": "BoneFortressConstruct",
+          "Duration": -1,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": 2,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "arcane_fortress",
+      "SfxCastTag": "spell/arcane/cast",
+      "SfxImpactTag": "spell/arcane/impact",
+      "CameraShakeIntensity": 0.8
+    }
+  ]
+}

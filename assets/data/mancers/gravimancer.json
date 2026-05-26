@@ -1,0 +1,289 @@
+{
+  "MancerId": "gravimancer",
+  "DisplayName": "Gravimancer",
+  "MaxHP": 90,
+  "MoveRange": 4,
+  "BaseArmor": 1,
+  "BaseActionPoints": 6,
+  "BaseCost": 100,
+  "PrimaryElement": "Gravity",
+  "SecondaryElement": "Arcane",
+  "HasSecondaryResource": false,
+  "SecondaryResourceName": "",
+  "MaxSecondaryResource": 0,
+  "SecondaryResourceGenerationRuleId": "",
+  "TacticalIdentity": "Positional force-multiplier. Applies HEAVY status to amplify fall damage, pulls enemies toward hazards, and creates GRAVITY_WELL terrain fields that drag enemies toward a center point each turn. Wins by compressing enemy formations for allied AoE follow-up, or by engineering fatal fall damage through HEAVY + elevation + displacement combos.",
+  "StrongSynergyMancerIds": ["sonimancer", "cryomancer", "aeromancer", "electromancer"],
+  "RecommendedFactionId": "gilded_throne",
+  "Spells": [
+    {
+      "SpellId": "graviton_bolt",
+      "DisplayName": "Graviton Bolt",
+      "Description": "A gravitational projectile dealing 15 physical damage and applying HEAVY status (fall damage x2; 2-turn duration). On elevated tiles, the target is pinned (costs 1 additional AP to move down this turn). If the target is already HEAVY, deals 8 bonus compression damage instead of re-applying. Cancels WEIGHTLESS on contact (10 impact damage).",
+      "ApCost": 2,
+      "CooldownTurns": 0,
+      "Tier": "Quick",
+      "TargetType": "Projectile",
+      "Range": 5,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Gravity",
+      "BaseDamage": 15,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetAlreadyHeavy",
+          "BonusDamage": 8,
+          "Description": "HEAVY does not stack; deals 8 bonus compression damage instead."
+        },
+        {
+          "Condition": "TargetIsWeightless",
+          "BonusDamage": 10,
+          "Description": "WEIGHTLESS is cancelled by HEAVY; unit takes 10 impact damage from abrupt weight restoration."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Heavy",
+          "Duration": 2,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": false,
+        "Tiles": 0,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "gravity_projectile",
+      "SfxCastTag": "spell/gravity/cast",
+      "SfxImpactTag": "spell/gravity/impact",
+      "CameraShakeIntensity": 0.2
+    },
+    {
+      "SpellId": "pull",
+      "DisplayName": "Pull",
+      "Description": "Pulls the target unit up to 3 tiles toward a chosen destination point. No direct damage. Blocked path causes collision damage (6 HP per blocked tile x remaining pull distance). ROOTED units resist entirely. WEIGHTLESS units are pulled 6 tiles instead of 3. HEAVY units require 2 additional AP to pull the same distance.",
+      "ApCost": 2,
+      "CooldownTurns": 1,
+      "Tier": "Quick",
+      "TargetType": "SingleTarget",
+      "Range": 6,
+      "AoeRadius": 0,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Gravity",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [],
+      "TerrainChanges": [
+        {
+          "FromState": "Mud",
+          "ToState": "Quicksand",
+          "Notes": "Gravitational Crush on MUD only — Pull does not convert mud to quicksand."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": -3,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 6
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "gravity_pull",
+      "SfxCastTag": "spell/gravity/cast",
+      "SfxImpactTag": "spell/gravity/impact",
+      "CameraShakeIntensity": 0.1
+    },
+    {
+      "SpellId": "gravity_well",
+      "DisplayName": "Gravity Well",
+      "Description": "Creates a GRAVITY_WELL terrain field at the target tile (persists 3 turns). At the start of each enemy turn, all enemies within 3 tiles are pulled 1 tile toward the center. Units on the center tile take 8 Force damage per turn. WEIGHTLESS units are pulled 2 tiles per turn. HEAVY units are pulled only every other turn.",
+      "ApCost": 3,
+      "CooldownTurns": 2,
+      "Tier": "Standard",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 3,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Gravity",
+      "BaseDamage": 0,
+      "ConditionalBonuses": [],
+      "AppliedEffects": [
+        {
+          "StatusType": "GravityWell",
+          "Duration": 3,
+          "StacksApplied": 0,
+          "AppliesToTile": true,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Flooded",
+          "ToState": "Flooded",
+          "Notes": "Creates a gravity vortex in FLOODED zone; pull speed increases to 2 tiles per turn."
+        },
+        {
+          "FromState": "Steam",
+          "ToState": "Wet",
+          "Notes": "Steam compressed downward; cloud collapses to wet residue; 6 heat damage to units from condensing steam."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": -1,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 0
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "gravity_well",
+      "SfxCastTag": "spell/gravity/cast",
+      "SfxImpactTag": "spell/gravity/impact",
+      "CameraShakeIntensity": 0.3
+    },
+    {
+      "SpellId": "crush",
+      "DisplayName": "Crush",
+      "Description": "Extreme gravitational compression dealing 45 Force damage to the primary target and 12 splash to all adjacent units. Applies ROOTED (1 turn; cannot be cleared by wind). HEAVY targets take 60 damage instead. Elevated targets are forced off the elevation, taking fall damage. Triggers SHATTER on FROZEN targets (45x2.5 = 112; or 60x2.5 = 150 with HEAVY).",
+      "ApCost": 5,
+      "CooldownTurns": 3,
+      "Tier": "Heavy",
+      "TargetType": "SingleTarget",
+      "Range": 4,
+      "AoeRadius": 1,
+      "LineLength": 0,
+      "RequiresLineOfSight": true,
+      "CanTargetEmptyTile": false,
+      "Element": "Gravity",
+      "BaseDamage": 45,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsHeavy",
+          "BonusDamage": 15,
+          "Description": "HEAVY target takes 60 damage from gravity amplification."
+        },
+        {
+          "Condition": "TargetIsFrozen",
+          "BonusDamage": 67,
+          "Description": "FROZEN target triggers SHATTER (45 x2.5 = 112 damage); FROZEN removed."
+        },
+        {
+          "Condition": "TargetIsHeavyAndFrozen",
+          "BonusDamage": 105,
+          "Description": "HEAVY + FROZEN triggers SHATTER at 60 x2.5 = 150 damage."
+        },
+        {
+          "Condition": "TargetOnGravityWellCenter",
+          "BonusDamage": 15,
+          "Description": "Target at GRAVITY_WELL center tile takes +15 bonus compression damage."
+        },
+        {
+          "Condition": "TargetIsWeightless",
+          "BonusDamage": 20,
+          "Description": "WEIGHTLESS cancelled by gravity overload; unit takes 20 additional impact damage before Crush damage."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Rooted",
+          "Duration": 1,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [
+        {
+          "FromState": "Mud",
+          "ToState": "Quicksand",
+          "Notes": "Target in MUD is sunk further; tile becomes QUICKSAND — cannot move 1 additional turn; 3 AP to escape."
+        },
+        {
+          "FromState": "Permafrost",
+          "ToState": "Mud",
+          "Notes": "Gravitational pressure fractures frozen mud; PERMAFROST cracks open and thaws to MUD."
+        }
+      ],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": -1,
+        "AffectsAllInArea": false,
+        "CollisionDamagePerTile": 8,
+        "Notes": "Dismounts target from elevated positions; fall damage applies per elevation level."
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 10,
+      "VfxTag": "gravity_crush",
+      "SfxCastTag": "spell/gravity/cast",
+      "SfxImpactTag": "spell/gravity/impact",
+      "CameraShakeIntensity": 0.9
+    },
+    {
+      "SpellId": "gravitational_collapse",
+      "DisplayName": "Gravitational Collapse",
+      "Description": "Pulls every unit (ally and enemy) within 5 tiles of the chosen center simultaneously to that tile. Each unit takes 8 damage per tile traveled (min 8, max 40). All units at the center take an additional 10 collision damage. Units arriving at center are SLOWED (-1 move, 1 turn). HEAVY units take double travel damage. WEIGHTLESS units take half travel damage. Collision damage on FROZEN units triggers SHATTER. Costs the entire activation; Gravimancer cannot move this turn.",
+      "ApCost": 6,
+      "CooldownTurns": 5,
+      "Tier": "Ultimate",
+      "TargetType": "Ground",
+      "Range": 5,
+      "AoeRadius": 5,
+      "LineLength": 0,
+      "RequiresLineOfSight": false,
+      "CanTargetEmptyTile": true,
+      "Element": "Gravity",
+      "BaseDamage": 8,
+      "ConditionalBonuses": [
+        {
+          "Condition": "TargetIsHeavy",
+          "BonusDamage": 0,
+          "Description": "HEAVY units take double travel damage (8 HP x tiles x 2)."
+        },
+        {
+          "Condition": "TargetIsWeightless",
+          "BonusDamage": 0,
+          "Description": "WEIGHTLESS units take half travel damage (8 HP x tiles x 0.5)."
+        }
+      ],
+      "AppliedEffects": [
+        {
+          "StatusType": "Slowed",
+          "Duration": 1,
+          "StacksApplied": 0,
+          "AppliesToTile": false,
+          "ApplicationChance": 1.0
+        }
+      ],
+      "TerrainChanges": [],
+      "Displacement": {
+        "HasDisplacement": true,
+        "Tiles": -5,
+        "AffectsAllInArea": true,
+        "CollisionDamagePerTile": 8
+      },
+      "SummonUnitTag": "",
+      "MaxSummonCount": 0,
+      "TemperatureDelta": 0,
+      "VfxTag": "gravity_collapse",
+      "SfxCastTag": "spell/gravity/cast",
+      "SfxImpactTag": "spell/gravity/impact",
+      "CameraShakeIntensity": 1.0
+    }
+  ]
+}
