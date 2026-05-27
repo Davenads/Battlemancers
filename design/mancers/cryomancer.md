@@ -55,9 +55,14 @@ The Cryomancer's four base spells are designed to cover a progression of cold ap
 | **Temperature Effects** | **−20 temperature** to the hit unit. A neutral unit (0) drops to −20 COLD — immediately in the ice damage bonus range (+10% to ice spells). Two Frost Bolts in one activation (4 AP): −40 total, deep SUPERCOOLED (−31 threshold crossed), triggering SLOWED + BRITTLE modifier. The CHILLED-to-FROZEN upgrade still resolves on the second Frost Bolt hit regardless of the temperature number, but the temperature shift independently applies SUPERCOOLED penalties before the FROZEN status is checked. |
 | **Special Interactions** | See terrain interaction table in Section 4. If the target is already `CHILLED`, the Frost Bolt upgrades the status: the CHILLED unit immediately receives `FROZEN` instead (FROZEN: skip entire turn + SHATTER vulnerability — incoming physical/sonic damage ×2.5). This CHILLED-to-FROZEN upgrade is the Cryomancer's primary single-target control pathway; two consecutive Frost Bolts at a cost of 4 AP lock a unit for a full turn. |
 
-**Design note:** Frost Bolt is the Cryomancer's workhorse and its most AP-efficient tool. At 2 AP with no cooldown, it can be cast three times in a single activation (with no movement). The low damage (12) is intentional — this spell is not meant to kill; it is meant to CHILL. The double-cast FROZEN upgrade (CHILLED target hit again by any Ice spell = FROZEN) enables efficient single-target lockdown without requiring the heavier Ice Lance. The ICE_TILE it creates persists briefly but creates slippery terrain consequences: units moving onto ICE_TILE may slide past their intended destination (1 tile of involuntary continuation in the direction of movement unless they spend 1 additional AP to brake). This can push moving units into hazard tiles, off elevated edges, or into the range of follow-up attacks.
+**Design note:** Frost Bolt is the Cryomancer's workhorse and its most AP-efficient tool. At 2 AP with no cooldown, it can be cast three times in a single activation (with no movement). The low damage (12) is intentional — this spell is not meant to kill; it is meant to CHILL. The double-cast FROZEN upgrade (CHILLED target hit again by any Ice spell = FROZEN) enables efficient single-target lockdown without requiring the heavier Ice Lance. The ICE_TILE it creates persists briefly but creates slippery terrain consequences: units moved onto ICE_TILE involuntarily (knockback, push, pull) always slide 1 additional tile in the displacement direction — guaranteed; voluntary movement onto ICE_TILE costs +1 AP per tile to traverse. This can push moving units into hazard tiles, off elevated edges, or into the range of follow-up attacks.
 
-**Slippery tile mechanic:** When a unit attempts to move onto or through an `ICE_TILE`, roll a slip check. On slip: the unit continues 1 additional tile in their movement direction involuntarily. The additional tile cannot be cancelled and may trigger fall damage (off elevated terrain), collision damage (into a wall), or terrain state exposure (into `ON_FIRE`, `TOXIC_TERRAIN`, etc.). The Cryomancer can pre-position ICE_TILEs as invisible traps for predictable enemy movement paths.
+**Slippery tile mechanic:** `ICE_TILE` creates two deterministic movement effects — no dice rolls involved.
+
+- **Voluntary movement:** each ICE_TILE in a unit's path costs +1 AP to traverse (the unit brakes against the ice surface). The unit stops at its intended destination if AP is available.
+- **Forced displacement** (knockback, gust push, gravity pull, Charge ability, or any involuntary movement effect): the unit slides 1 additional tile past the displacement endpoint in the same direction, guaranteed. No AP check — the slide always occurs and cannot be cancelled. The additional tile may trigger fall damage (off elevated terrain), collision damage (into a wall), or terrain state exposure (into `ON_FIRE`, `TOXIC_TERRAIN`, etc.).
+
+The Cryomancer positions ICE_TILEs along predictable knockback and push vectors, not along voluntary movement paths. The skill expression is reading displacement trajectories, not hoping for a probability to fire.
 
 **Spell answers YES to (design rule check):**
 1. Applies terrain state (ICE_TILE) — YES
@@ -178,12 +183,12 @@ The following describes what happens when any Cryomancer spell strikes a tile in
 
 | Existing Terrain State | What Happens When Ice Spell Hits | Tile Becomes | Unit on Tile | Secondary Effect |
 |---|---|---|---|---|
-| **Normal (GROUND)** | Cold air and ice shards coat the surface | `ICE_TILE` (1–2 turn duration based on spell used) | Takes spell damage + `CHILLED` | ICE_TILE creates slip hazard; units moving through may slide 1 extra tile involuntarily |
+| **Normal (GROUND)** | Cold air and ice shards coat the surface | `ICE_TILE` (1–2 turn duration based on spell used) | Takes spell damage + `CHILLED` | ICE_TILE movement effects: voluntary movement costs +1 AP per tile; forced displacement extends +1 tile through ICE_TILE (guaranteed) |
 | **WET** | Moisture flash-freezes on contact | `ICE_TILE` (2-turn duration; water freezes solid) | Takes spell damage + `FROZEN` immediately (no CHILLED prerequisite — wet units freeze instantly) | Adjacent WET units take 8 cold splash damage from freeze propagation |
 | **FLOODED** | Large water mass freezes en masse | `ICE_TILE` (3-turn duration; permanent if adjacent Cryomancer ability reinforces) | Takes spell damage + `FROZEN` directly (FLOODED → immediate FROZEN) | If 3+ connected FLOODED tiles are hit, freeze cascades to all connected FLOODED tiles simultaneously — the Hydromancer + Cryomancer mass-freeze combo |
 | **ON_FIRE** | Cold quenches fire; temperature clash | `WET` (residue — cold kills fire, moisture remains; cannot become ICE_TILE directly due to residual heat) | Takes spell damage + BURNING extinguished + `CHILLED` | The fire is eliminated but no ice tile forms; the WET residue can be re-frozen on the following turn |
-| **ICE_TILE (already frozen)** | Deeper freeze reinforcement | `ICE_TILE` (duration extended by 2 turns) | Takes spell damage + if unit was `CHILLED`, upgrades to `FROZEN` | No slip check needed — unit is on solid ice already; FROZEN upgrade is the primary outcome |
-| **TOXIC_TERRAIN** | Cold preserves poison state | `ICE_TILE` overlaid on TOXIC_TERRAIN (both states active: cold surface with poisoned substrate) | Takes spell damage + `CHILLED` + `POISONED` (1 stack — toxic is preserved under ice) | Units entering the tile later receive both the slip check and a POISONED stack; combined terrain state |
+| **ICE_TILE (already frozen)** | Deeper freeze reinforcement | `ICE_TILE` (duration extended by 2 turns) | Takes spell damage + if unit was `CHILLED`, upgrades to `FROZEN` | No additional movement penalty from stacking ICE_TILE; FROZEN upgrade is the primary outcome |
+| **TOXIC_TERRAIN** | Cold preserves poison state | `ICE_TILE` overlaid on TOXIC_TERRAIN (both states active: cold surface with poisoned substrate) | Takes spell damage + `CHILLED` + `POISONED` (1 stack — toxic is preserved under ice) | Units entering the tile later incur the ICE_TILE movement cost penalty (+1 AP voluntary / +1 slide forced) and receive a POISONED stack; combined terrain state |
 | **CHARGED** | Cold on electrical surface creates conductive ice | `ICE_TILE` retaining `CHARGED` state (`FREEZE_CONDUCTOR`) | Takes spell damage + if hit by Ice Lance: unit is `FROZEN` AND the tile retains charge | Next Lightning spell hitting the FREEZE_CONDUCTOR tile triggers enhanced chain arc (+50% chain range, per Ice Lance entry) |
 | **MUD** | Cold freezes mud solid | `PERMAFROST` (permanent frozen mud; movement cost +3; impassable terrain) | Takes spell damage + `CHILLED` | PERMAFROST does not expire naturally — requires Fire spell (3+ hits) to thaw; creates durable movement barriers |
 | **OBSIDIAN** | Cold cannot affect obsidian | `OBSIDIAN` (unchanged) | Takes spell damage; no terrain state change | Obsidian is thermally inert; Cryomancer cannot freeze or interact with Geomancer-hardened tiles |
@@ -205,12 +210,17 @@ The **freeze-shatter combo** is the Cryomancer's core kill-confirmation mechanic
 
 **Slippery Terrain Documentation:**
 
-`ICE_TILE` created by all Cryomancer spells creates the following movement hazard: any unit (friendly or enemy) that moves onto or through an `ICE_TILE` must make a slip check. On slip, the unit continues 1 additional tile in their current movement direction involuntarily. The Cryomancer player should pre-position `ICE_TILE` on tiles adjacent to:
-- Elevated drop-offs (involuntary slide = fall damage)
-- `ON_FIRE` tiles (involuntary slide into burning ground)
-- `TOXIC_TERRAIN` tiles (involuntary slide into poison ground)
-- Wall collisions (slide into wall = collision damage equal to remaining forced-movement tiles × 4 HP)
-- Another unit (slide into unit = collision; both units take 6 HP)
+`ICE_TILE` created by all Cryomancer spells creates two deterministic movement effects:
+
+- **Voluntary movement:** +1 AP per ICE_TILE traversed. The unit brakes and stops at its intended destination if AP is available. No slide.
+- **Forced displacement** (knockback, push, pull, Charge, any involuntary effect): the unit slides 1 additional tile past the displacement endpoint in the displacement direction. Guaranteed — no roll, no AP check. Cannot be cancelled mid-slide.
+
+The Cryomancer player should pre-position `ICE_TILE` along **knockback and push vectors** so that forced displacement events extend into hazards:
+- Elevated drop-offs (slide = fall damage)
+- `ON_FIRE` tiles (slide into burning ground)
+- `TOXIC_TERRAIN` tiles (slide into poison ground)
+- Walls (collision damage: remaining forced-movement tiles × 4 HP)
+- Another unit (collision: both units take 6 HP)
 
 The Cryomancer's `ICE_TILE` pattern is a predictive tool: if the Cryomancer knows where enemies will move next turn, pre-placed ice on the approach path punishes that movement without requiring further Cryomancer AP on the follow-up turn.
 
@@ -218,7 +228,7 @@ The Cryomancer's `ICE_TILE` pattern is a predictive tool: if the Cryomancer know
 
 | State | Benefit |
 |---|---|
-| `ICE_TILE` tiles adjacent to Cryomancer | Cryomancer ignores ICE_TILE slip checks — it moves on ice without any movement penalty or slip risk (cold immunity to its own terrain) |
+| `ICE_TILE` tiles adjacent to Cryomancer | Cryomancer is immune to all ICE_TILE movement effects — no +1 AP voluntary cost, and forced displacement extensions are negated when the Cryomancer crosses ICE_TILE. Cold immunity to its own terrain. |
 | `WET` tiles | Instant-FROZEN when hit by Ice Lance — highly efficient single-target lockdown with no CHILLED prerequisite |
 | `FLOODED` zones | Mass-freeze potential with Blizzard Field; the highest-value terrain state the Cryomancer can interact with |
 | `PERMAFROST` tiles (created by Glacial Spike on MUD) | Permanently restricted movement — the Cryomancer converts Geomancer MUD zones into lasting obstacles |
@@ -251,7 +261,7 @@ Spell variants replace a base spell entirely with a more powerful or specialized
 
 #### Variant B: Glacial Prison (replaces Ice Lance) — +25 pts
 
-**Description:** Ice Lance is replaced by Glacial Prison, which deals the same 22 damage and applies FROZEN, but additionally creates a 1-tile ICE_TILE cage around the FROZEN unit — all 8 adjacent tiles become `ICE_TILE` (1-turn duration). The cage effect traps the frozen unit's allies: any unit adjacent to the frozen target who attempts to move through the ICE_TILE cage makes a slip check, and the ICE_TILE cage costs +1 AP to traverse. AP cost is 4 AP; cooldown is 2 turns.
+**Description:** Ice Lance is replaced by Glacial Prison, which deals the same 22 damage and applies FROZEN, but additionally creates a 1-tile ICE_TILE cage around the FROZEN unit — all 8 adjacent tiles become `ICE_TILE` (1-turn duration). The cage effect traps the frozen unit's allies: any ally voluntarily moving through the ICE_TILE cage pays +1 AP per tile; any ally displaced into the cage by a knockback or push effect extends 1 additional tile through it (guaranteed). AP cost is 4 AP; cooldown is 2 turns.
 
 **Trade-off:** Harder lockdown (the frozen unit is isolated from allied support) at a higher AP cost. Best used against a high-value Mancer to isolate it from its supporting units during the shatter window.
 
@@ -364,7 +374,7 @@ Grave Husks regenerate 1 HP/turn in POISONED, CORRUPTED, or BURNING terrain. Cry
 
 The Ashen Covenant does benefit from a different interaction: Wailing Shades are phase-through ranged units that ignore physical cover. If the Cryomancer creates an ICE_TILE field that obscures LOS through its visual overlay, Wailing Shades still target through it without penalty. More importantly: Wailing Shades' Silence aura (enemy on-death effects silenced within 1 tile) prevents enemies from triggering on-death effects when adjacent to them. A FROZEN unit that would trigger an on-death explosion (DEATH_MARK from Necromancer) or on-death buff when killed by a shatter hit can have that death effect suppressed by adjacent Wailing Shades — giving the Ashen Covenant a niche way to exploit frozen kills without triggering retaliation.
 
-**Specific note:** Abyssal Revenants (T2 Chaff) move at normal speed (no movement penalty). `ICE_TILE` slip checks apply regardless of unit type — Revenants are not immune to slip. However, since the Cryomancer creates ICE_TILE with predictable geometry, the Cryomancer player can position ice zones to create slip hazards only on enemy movement paths, keeping ally Revenants on non-ice tiles.
+**Specific note:** Abyssal Revenants (T2 Chaff) move at normal speed (no movement penalty). `ICE_TILE` movement effects (voluntary +1 AP cost; forced displacement extension) apply to Revenants normally. However, since the Cryomancer creates ICE_TILE with predictable geometry, the Cryomancer player can position ice zones along enemy displacement vectors only, keeping ally Revenants on non-ice movement paths.
 
 ---
 
@@ -428,10 +438,10 @@ Against an 85–100 HP Mancer (typical base range), a single SHATTER from Geoman
 **Mancers involved:** Cryomancer + Aeromancer or Geomancer (or any unit with displacement abilities)
 
 **Setup:** Cryomancer creates an ICE_TILE field adjacent to a drop-off (elevated terrain edge), a pit, an ON_FIRE zone, or a wall. The ICE_TILE field is positioned along a predictable enemy movement path.
-**Execution:** An enemy unit moves toward the Cryomancer's position and enters the ICE_TILE field. Slip check triggers — the unit slides 1 additional tile past its target in movement direction. The slide lands on the hazard (drop = fall damage; pit = trapped; fire = BURNING; wall = collision).
-**Amplification:** Aeromancer pushes a unit onto the ICE_TILE field (2-tile gust push). The push movement enters the ICE_TILE, triggering a slip check during the forced displacement. The pushed unit now slides a total of 3 tiles from their original position — predictable, devastating, and entirely passive once the ice is placed.
+**Execution:** Aeromancer (or any displacement source — Gravimancer pull, knockback spell) pushes an enemy unit through the ICE_TILE field. Forced displacement through ICE_TILE always extends 1 additional tile past the displacement endpoint in the same direction — guaranteed, no roll. A 2-tile gust push that crosses an ICE_TILE displaces the target 3 tiles total (2 from gust + 1 guaranteed ICE_TILE extension). The slide lands on the hazard at the endpoint (drop = fall damage; pit = trapped; fire = BURNING; wall = collision). An enemy voluntarily moving into the ICE_TILE field pays +1 AP per tile but does not slide — the combo requires a displacement trigger.
+**Amplification:** The 1-tile extension is guaranteed whenever forced displacement crosses an ICE_TILE, regardless of displacement source. The Aeromancer + Cryomancer version converts a standard 2-tile push into a guaranteed 3-tile displacement, entirely readable by the Cryomancer player who controls where the ice is placed.
 
-**Tactical note:** This is the highest skill-expression combo in the Cryomancer's kit — it requires reading enemy movement paths 2–3 turns ahead, positioning ice accurately, and having a partner displacement tool to guarantee the push lands on ice. When it works, it deals large positional damage (fall, collision, terrain DoT) at zero additional AP cost from the Cryomancer.
+**Tactical note:** This is the highest skill-expression combo in the Cryomancer's kit — it requires reading enemy positions 2–3 turns ahead, positioning ice accurately along likely displacement vectors, and having a partner displacement tool to guarantee the push enters the ice. When it executes, it deals large positional damage (fall, collision, terrain DoT) at zero additional AP cost from the Cryomancer. The outcome is fully deterministic once the displacement fires.
 
 ---
 
@@ -441,9 +451,9 @@ Against an 85–100 HP Mancer (typical base range), a single SHATTER from Geoman
 
 | Mancer | Counter Mechanism |
 |---|---|
-| **Pyromancer** | Ember Shot on any FROZEN unit immediately melts the freeze (ICE + FIRE = WET; FROZEN removed; SHATTER window negated). A Pyromancer on the opposing team invalidates the Cryomancer's entire kill-confirmation strategy — every freeze the Cryomancer applies is one Ember Shot away from dissolution. The Pyromancer also converts ICE_TILE terrain to WET (residue), eliminating the slip hazard field. Hard counter. |
+| **Pyromancer** | Ember Shot on any FROZEN unit immediately melts the freeze (ICE + FIRE = WET; FROZEN removed; SHATTER window negated). A Pyromancer on the opposing team invalidates the Cryomancer's entire kill-confirmation strategy — every freeze the Cryomancer applies is one Ember Shot away from dissolution. The Pyromancer also converts ICE_TILE terrain to WET (residue), eliminating the ICE_TILE movement hazard field. Hard counter. |
 | **Thermomancer** | OVERHEATED status (4 HP/turn + fire dmg +50%) applied to a FROZEN unit cancels FROZEN and applies BURNING instead (thermal forcing). A Thermomancer can undo freezes while simultaneously applying its own DoT, and the heat gradient abilities counter cold zones by raising tile temperature above the Cryomancer's ice threshold. |
-| **Aeromancer** | UPDRAFT zones grant WEIGHTLESS to allies inside — WEIGHTLESS units are immune to ground terrain effects including ICE_TILE slip checks and CHILLED from standing in Blizzard Field zones. The Cryomancer's terrain control is ground-dependent; Aeromancer lifts the opponent's team out of that dependency. |
+| **Aeromancer** | UPDRAFT zones grant WEIGHTLESS to allies inside — WEIGHTLESS units are immune to ground terrain effects including ICE_TILE movement costs and displacement extensions, and CHILLED from standing in Blizzard Field zones. The Cryomancer's terrain control is ground-dependent; Aeromancer lifts the opponent's team out of that dependency. |
 
 ### Warband Compositions That Prey on Cryomancer
 

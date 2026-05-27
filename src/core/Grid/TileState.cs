@@ -35,8 +35,11 @@ namespace Battlemancers.Core.Grid
         Burning = 2,
 
         /// <summary>
-        /// Tile is covered in ice. Movement has a slip chance; tile is conductive.
-        /// Shatters on Lightning impact for heavy AoE damage.
+        /// Tile is covered in ice. Two deterministic movement effects apply:
+        /// (1) Voluntary movement: +1 AP cost per ICE_TILE traversed.
+        /// (2) Forced displacement (knockback, push, pull, Charge): extends by 1 extra tile
+        ///     past the displacement endpoint in the same direction — guaranteed, no roll.
+        /// Tile is conductive. Shatters on Lightning impact for heavy AoE damage.
         /// Created by: Cryomancer spells on Ground or Flooded tiles.
         /// Melts on Fire hit, becoming Wet.
         /// </summary>

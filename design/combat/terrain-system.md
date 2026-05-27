@@ -58,7 +58,7 @@ Terrain tiles can hold one `PRIMARY_STATE` and one `SECONDARY_STATE` at a time. 
 |---|---|---|---|---|
 | `ON_FIRE` | Pyromancer spells, explosion on flammable tile | 5 HP/turn to units on tile | Until extinguished | Yes — spreads to adjacent GROUND/GRASS each turn |
 | `FLOODED` | Hydromancer flood spells, water tile adjacent overflow | Movement cost +1; conductive | Until dried/frozen | Slow — 1 tile/2 turns to adjacent |
-| `ICE_TILE` | Cryomancer spells on GROUND/FLOODED | Slip chance on movement; conductive | Until melted | No |
+| `ICE_TILE` | Cryomancer spells on GROUND/FLOODED | Voluntary movement costs +1 AP per tile; forced displacement (knockback/push/pull) extends +1 tile (guaranteed); conductive | Until melted | No |
 | `MUD` | Water + Earth (Hydromancer + Geomancer) | Movement cost +2 | 4 turns | No |
 | `TOXIC_TERRAIN` | Toximancer, Floramancer, corpse explosion | POISONED on enter | 3 turns | No |
 | `CHARGED` | Electromancer | Lightning strike on unit entering | 1 use per tile | No |

@@ -153,11 +153,13 @@ namespace Battlemancers.Data
         public string[] canSpreadInto;
 
         /// <summary>
-        /// Probability (0-1) that spread occurs to each eligible neighbor per turn.
-        /// 1.0 = always spreads to all eligible neighbors. 0.5 = 50% chance per neighbor.
-        /// Kept at 1.0 for most states to maintain determinism; randomized spread should be avoided.
+        /// Reserved field — must always be 1.0.
+        /// Battlemancers uses fully deterministic simulation; probabilistic terrain spread is not supported.
+        /// Terrain states always spread to all eligible neighbors each turn (geometry controls spread, not dice).
+        /// If spread should be limited, use <see cref="maxSpreadPerTurn"/> instead of reducing this value.
+        /// Setting this below 1.0 in JSON has no gameplay effect and will log a data warning at load time.
         /// </summary>
-        [Tooltip("Spread probability per eligible neighbor per turn. Keep at 1.0 for deterministic play.")]
+        [Tooltip("Reserved. Must be 1.0. Deterministic spread only — control spread rate via maxSpreadPerTurn instead.")]
         [Range(0f, 1f)] public float spreadChance = 1.0f;
 
         /// <summary>

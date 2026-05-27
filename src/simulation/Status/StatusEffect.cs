@@ -59,7 +59,12 @@ namespace Battlemancers.Simulation.Status
         Stunned,
 
         /// <summary>
-        /// Unit is panicking. Movement and attack targeting become random.
+        /// Unit is panicking. Movement is deterministic flee behavior: unit moves its full
+        /// move range away from the nearest visible enemy (toward the nearest map edge if no
+        /// enemy is visible). Attack is deterministic: unit attacks the nearest unit within
+        /// range regardless of allegiance, using its lowest-AP-cost ability. If no unit is
+        /// in range, the attack is skipped. No random rolls — outcomes are fully derived
+        /// from board state.
         /// Cannot stack; must expire before a second application takes effect.
         /// No per-tick damage.
         /// </summary>

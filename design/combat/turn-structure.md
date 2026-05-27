@@ -50,7 +50,7 @@ POST-COMBAT
 | Necromancer | 3 |
 | Geomancer | 3 |
 
-**Tiebreakers:** On equal initiative, player's Mancer acts before AI enemy; if PvP, random tiebreak at round start.
+**Tiebreakers:** On equal initiative, player's Mancer acts before AI enemy; if PvP, tiebreak by board position — the unit with the lowest combined tile coordinate (x + y) acts first. Ties on x+y are broken by lowest x. This is fully deterministic from map state and requires no random roll.
 
 **Chronomancer effects on initiative:**
 - `HASTE` on a unit: that unit acts as if initiative +5 this round (moves up in order)
@@ -84,7 +84,7 @@ On a unit's turn, they have 6 AP to spend. AP can be spent in any order.
 - `SILENCED`: cannot cast spells, but can move
 - `FROZEN`: skip entire turn (like STUNNED); additionally receive SHATTER vulnerability
 - `CHARMED`: controlled by opponent for this turn
-- `CONFUSED`: must cast but targeting is randomized within range
+- `CONFUSED`: must cast but targets the nearest visible unit within range regardless of allegiance (fully deterministic from board state)
 
 ### Passing
 - A unit can "end turn" and pass remaining AP at any time
@@ -131,7 +131,7 @@ After all units have taken their turns, terrain resolves in order:
 
 **No hard round limit** in standard mode (play until victory condition met).
 
-**Soft pressure mechanic:** Starting from round 8, terrain begins to degrade passively — one random tile per turn gains `ON_FIRE` or `TOXIC_TERRAIN` state. This prevents ultra-defensive stalling and keeps late-game tense.
+**Soft pressure mechanic:** Starting from round 8, terrain degradation escalates — each existing `ON_FIRE` or `TOXIC_TERRAIN` tile spreads to all eligible adjacent tiles each turn (instead of its standard 1-tile-per-2-turns spread rate). If no such states exist on the field when round 8 begins, this escalation has no effect until combat creates one. This prevents passive stalling by rapidly expanding contested fire zones and poison fields, while keeping late-game outcomes entirely tied to player actions earlier in the match. No random tile selection — degradation is a direct consequence of terrain already present on the board.
 
 ---
 

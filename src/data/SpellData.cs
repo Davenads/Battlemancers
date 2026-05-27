@@ -400,10 +400,13 @@ namespace Battlemancers.Data
         public bool appliesToTile = false;
 
         /// <summary>
-        /// Chance (0.0-1.0) that this effect applies. 1.0 = always applies.
-        /// Note: Battlemancers minimizes randomness; most effects should be 1.0.
+        /// Reserved field — must always be 1.0.
+        /// Battlemancers uses fully deterministic simulation; probabilistic effect application
+        /// is not supported. SpellResolver ignores values below 1.0 and always applies effects.
+        /// If you need conditional application, use a threshold or status-check condition instead.
+        /// Setting this below 1.0 in JSON has no gameplay effect and will log a data warning at load time.
         /// </summary>
-        [Tooltip("Application probability 0-1. Keep at 1.0 for deterministic play.")]
+        [Tooltip("Reserved. Must be 1.0. Probabilistic application is not supported — set conditions in spell logic instead.")]
         [Range(0f, 1f)] public float applicationChance = 1.0f;
     }
 

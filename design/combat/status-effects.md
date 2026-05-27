@@ -16,7 +16,7 @@ Status effects are categorized as either **Unit Statuses** (applied to a Mancer 
 | `SILENCED` | Sonimancer, Psychomancer | Cannot cast spells; can move | 1 turn | Expires, Chronomancer rewind | Movement still allowed |
 | `STASIS` | Chronomancer | Cannot act OR be affected; invulnerable | 2 turns | Expires only | Strategic not punish: use to save an ally |
 | `CHARMED` | Psychomancer | Controlled by opponent for this turn | 1 turn | Expires | Rare; opponent uses your spells |
-| `CONFUSED` | Psychomancer | Targeting randomized within range | 2 turns | Expires, Photomancer purify | Still uses AP/spells; unpredictable |
+| `CONFUSED` | Psychomancer | Targets the nearest visible unit within range regardless of allegiance (friend or foe) | 2 turns | Expires, Photomancer purify | Fully deterministic from board state; skilled opponents position to exploit friendly-fire risk |
 
 ### Damage-Over-Time Statuses
 
@@ -47,7 +47,7 @@ Status effects are categorized as either **Unit Statuses** (applied to a Mancer 
 | Status | Applied By | Effect | Max Stacks | On Max Stacks |
 |---|---|---|---|---|
 | `RESONANCE_CHARGE` | Sonimancer | +dmg per stack when sonic spell hits | 3 | Auto-STUN + sonic burst (SHATTER on FROZEN) |
-| `MORALE_DAMAGE` | Psychomancer | Psychological pressure; at 0 morale → PANICKED | Scaled (0-100 pool) | Auto-PANICKED (random movement + attack) |
+| `MORALE_DAMAGE` | Psychomancer | Psychological pressure; at 0 morale → PANICKED | Scaled (0-100 pool) | Auto-PANICKED: unit flees from nearest enemy (full move range, toward map edge if no enemy visible); attacks nearest unit in range regardless of allegiance using lowest-AP-cost ability. Fully deterministic from board state. |
 
 ### Buff Statuses
 
@@ -82,7 +82,7 @@ Key interactions between unit statuses when multiple apply simultaneously:
 | `STASIS` | anything | Nothing affects STASIS unit until it expires (fully immune state) |
 | `WEIGHTLESS` | `HEAVY` | Cancel each other; unit returns to normal weight |
 | `HEAVY` | `Gravity Well` | HEAVY units resist pull; Gravimancer needs higher AP cost to move them |
-| `BLINDED` | `CONFUSED` | Both apply; stacking worst-case for target (random aim + close range only) |
+| `BLINDED` | `CONFUSED` | Both apply; stacking worst-case for target: CONFUSED nearest-unit targeting restricted to BLINDED's reduced range (1 tile), guaranteeing friendly-fire at close range |
 | `RESONANCE_CHARGE` (max 3) | next sonic dmg | STUN + burst damage (and SHATTER if also FROZEN) |
 | `DEATH_MARK` | unit dies | Explosion resolved immediately on death tile; AoE scales with max HP |
 
