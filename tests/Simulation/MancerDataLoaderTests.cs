@@ -1,73 +1,81 @@
-// TODO: MancerDataLoader.cs does not yet exist in the codebase at the time these tests were written.
-// The data-loader agent (agent/data-loader) is responsible for implementing
-// Battlemancers.Data.MancerDataLoader in src/data/MancerDataLoader.cs.
-//
-// Once that implementation exists, un-comment the tests below and add the correct
-// using directive for the namespace that contains MancerDataLoader.
-//
-// Expected API contract (inferred from design docs and WarbandSave patterns):
-//
-//   public static class MancerDataLoader
-//   {
-//       // Loads all MancerDefinition objects from JSON files in the given directory.
-//       // Returns an empty dictionary (not null) on an empty or missing directory.
-//       // Skips malformed files and continues loading the rest.
-//       public static Dictionary<string, MancerDefinition> LoadAll(string directoryPath);
-//   }
-//
-//   public class MancerDefinition
-//   {
-//       public string mancerId;
-//       public string displayName;
-//       // ... additional fields per mancer data spec
-//   }
-//
-// Suggested test data directory: src/data/testfixtures/mancers/
-// (create this directory with minimal JSON fixtures to run the tests below)
-
+using System;
+using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
+using Battlemancers.Core.Data;
 
 namespace Battlemancers.Tests.Simulation
 {
     /// <summary>
-    /// Stub test fixture for MancerDataLoader.
-    ///
-    /// MancerDataLoader.cs does not yet exist; these tests are placeholders that describe
-    /// the expected contract. Implement MancerDataLoader (src/data/MancerDataLoader.cs)
-    /// and the MancerDefinition data class, then replace the Assert.Ignore calls below
-    /// with real assertions.
-    ///
-    /// All tests in this fixture are skipped until the implementation is available.
+    /// Tests for MancerDataLoader — verifies JSON loading from directory,
+    /// graceful handling of empty/missing directories, malformed file skipping,
+    /// and last-write-wins behaviour on duplicate MancerIds.
     /// </summary>
     [TestFixture]
     public class MancerDataLoaderTests
     {
-        // TODO: Replace with the actual path to the test JSON fixture directory.
-        // This must be an absolute or relative path that exists on disk when the tests run.
-        private const string ValidFixtureDirectory  = "src/data/testfixtures/mancers";
-        private const string EmptyDirectory         = "src/data/testfixtures/mancers_empty";
-        private const string MissingDirectory       = "src/data/testfixtures/mancers_does_not_exist";
-        private const string MalformedDirectory     = "src/data/testfixtures/mancers_malformed";
+        // =========================================================================
+        // Per-test temp directory management
+        // =========================================================================
+
+        private string _tempDir;
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Each test gets its own isolated temp directory so fixture files never bleed across tests.
+            _tempDir = Path.Combine(Path.GetTempPath(), $"MancerDataLoaderTests_{Guid.NewGuid():N}");
+            Directory.CreateDirectory(_tempDir);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (Directory.Exists(_tempDir))
+                Directory.Delete(_tempDir, recursive: true);
+        }
 
         // =========================================================================
-        // LoadAll — valid directory
+        // Helpers
+        // =========================================================================
+
+        /// <summary>Writes a minimal valid Mancer JSON file into the temp directory.</summary>
+        private void WriteValidJson(string fileName, string mancerId, string displayName = "Test Mancer")
+        {
+            string json = $@"{{
+  ""MancerId"": ""{mancerId}"",
+  ""DisplayName"": ""{displayName}"",
+  ""MaxHP"": 80,
+  ""MoveRange"": 3,
+  ""BaseCost"": 100,
+  ""Spells"": []
+}}";
+            File.WriteAllText(Path.Combine(_tempDir, fileName), json);
+        }
+
+        // =========================================================================
+        // LoadAll — valid directory with multiple mancer files
         // =========================================================================
 
         [Test]
-        [Ignore("MancerDataLoader not yet implemented — waiting for data-loader agent.")]
         public void LoadAll_ValidDirectory_ReturnsAllMancers()
         {
-            // TODO: Arrange — populate ValidFixtureDirectory with at least 3 .json files,
-            // each containing a valid MancerDefinition (e.g., pyromancer.json, hydromancer.json).
-            //
-            // Act:
-            //   var result = MancerDataLoader.LoadAll(ValidFixtureDirectory);
-            //
-            // Assert:
-            //   Assert.That(result, Is.Not.Null, "LoadAll must never return null.");
-            //   Assert.That(result.Count, Is.EqualTo(3), "Expected 3 Mancer definitions loaded.");
-            //   Assert.That(result.ContainsKey("pyromancer"), Is.True, "pyromancer must be present.");
-            Assert.Ignore("MancerDataLoader not yet implemented.");
+            // Arrange — write 3 valid mancer JSON files to the temp directory.
+            WriteValidJson("pyromancer.json",  "pyromancer",  "Pyromancer");
+            WriteValidJson("hydromancer.json", "hydromancer", "Hydromancer");
+            WriteValidJson("cryomancer.json",  "cryomancer",  "Cryomancer");
+
+            var loader = new MancerDataLoader(_tempDir);
+
+            // Act
+            Dictionary<string, MancerRuntimeData> result = loader.LoadAll();
+
+            // Assert
+            Assert.That(result, Is.Not.Null, "LoadAll must never return null.");
+            Assert.That(result.Count, Is.EqualTo(3), "Expected 3 Mancer definitions loaded.");
+            Assert.That(result.ContainsKey("pyromancer"),  Is.True, "pyromancer must be present.");
+            Assert.That(result.ContainsKey("hydromancer"), Is.True, "hydromancer must be present.");
+            Assert.That(result.ContainsKey("cryomancer"),  Is.True, "cryomancer must be present.");
         }
 
         // =========================================================================
@@ -75,18 +83,17 @@ namespace Battlemancers.Tests.Simulation
         // =========================================================================
 
         [Test]
-        [Ignore("MancerDataLoader not yet implemented — waiting for data-loader agent.")]
         public void LoadAll_EmptyDirectory_ReturnsEmptyDictionary()
         {
-            // TODO: Arrange — ensure EmptyDirectory exists on disk but contains no .json files.
-            //
-            // Act:
-            //   var result = MancerDataLoader.LoadAll(EmptyDirectory);
-            //
-            // Assert:
-            //   Assert.That(result, Is.Not.Null, "LoadAll must return an empty dictionary, not null.");
-            //   Assert.That(result.Count, Is.EqualTo(0), "Empty directory must yield 0 entries.");
-            Assert.Ignore("MancerDataLoader not yet implemented.");
+            // Arrange — _tempDir exists but contains no .json files.
+            var loader = new MancerDataLoader(_tempDir);
+
+            // Act
+            Dictionary<string, MancerRuntimeData> result = loader.LoadAll();
+
+            // Assert
+            Assert.That(result, Is.Not.Null, "LoadAll must return an empty dictionary, not null.");
+            Assert.That(result.Count, Is.EqualTo(0), "Empty directory must yield 0 entries.");
         }
 
         // =========================================================================
@@ -94,64 +101,75 @@ namespace Battlemancers.Tests.Simulation
         // =========================================================================
 
         [Test]
-        [Ignore("MancerDataLoader not yet implemented — waiting for data-loader agent.")]
         public void LoadAll_MissingDirectory_ReturnsEmptyDictionaryWithoutCrashing()
         {
-            // TODO: Verify MissingDirectory does NOT exist on disk before running.
-            //
-            // Act:
-            //   Dictionary<string, MancerDefinition> result = null;
-            //   Assert.DoesNotThrow(() => result = MancerDataLoader.LoadAll(MissingDirectory),
-            //       "LoadAll must not throw when the directory does not exist.");
-            //
-            // Assert:
-            //   Assert.That(result, Is.Not.Null, "LoadAll must return an empty dictionary for a missing directory.");
-            //   Assert.That(result.Count, Is.EqualTo(0));
-            Assert.Ignore("MancerDataLoader not yet implemented.");
+            // Arrange — point loader at a path that does not exist.
+            string missingDir = Path.Combine(_tempDir, "does_not_exist");
+            Assert.That(Directory.Exists(missingDir), Is.False,
+                "Pre-condition: the directory must not exist before the test.");
+
+            var loader = new MancerDataLoader(missingDir);
+
+            // Act + Assert (no exception thrown)
+            Dictionary<string, MancerRuntimeData> result = null;
+            Assert.DoesNotThrow(() => result = loader.LoadAll(),
+                "LoadAll must not throw when the directory does not exist.");
+
+            Assert.That(result, Is.Not.Null,
+                "LoadAll must return an empty dictionary for a missing directory.");
+            Assert.That(result.Count, Is.EqualTo(0),
+                "A missing directory must yield 0 entries.");
         }
 
         // =========================================================================
-        // LoadAll — malformed JSON
+        // LoadAll — malformed JSON is skipped; valid files still load
         // =========================================================================
 
         [Test]
-        [Ignore("MancerDataLoader not yet implemented — waiting for data-loader agent.")]
         public void LoadAll_MalformedJson_SkipsFileAndContinues()
         {
-            // TODO: Arrange — MalformedDirectory must contain:
-            //   - valid_mancer.json  (a good pyromancer definition)
-            //   - broken.json        (invalid JSON, e.g. "{ mancerId: }")
-            //
-            // Act:
-            //   Dictionary<string, MancerDefinition> result = null;
-            //   Assert.DoesNotThrow(() => result = MancerDataLoader.LoadAll(MalformedDirectory),
-            //       "LoadAll must not throw on malformed JSON files — it should skip and continue.");
-            //
-            // Assert:
-            //   Assert.That(result, Is.Not.Null);
-            //   Assert.That(result.Count, Is.EqualTo(1),
-            //       "Only the valid file should be loaded; the malformed file must be skipped.");
-            //   Assert.That(result.ContainsKey("pyromancer"), Is.True);
-            Assert.Ignore("MancerDataLoader not yet implemented.");
+            // Arrange — one valid file and one broken file in the same directory.
+            WriteValidJson("pyromancer.json", "pyromancer", "Pyromancer");
+            File.WriteAllText(Path.Combine(_tempDir, "broken.json"), "{ mancerId: }"); // invalid JSON
+
+            var loader = new MancerDataLoader(_tempDir);
+
+            // Act + Assert (no exception thrown)
+            Dictionary<string, MancerRuntimeData> result = null;
+            Assert.DoesNotThrow(() => result = loader.LoadAll(),
+                "LoadAll must not throw on malformed JSON files — it should skip and continue.");
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1),
+                "Only the valid file should be loaded; the malformed file must be skipped.");
+            Assert.That(result.ContainsKey("pyromancer"), Is.True,
+                "The valid pyromancer entry must be present despite the broken file.");
         }
 
         // =========================================================================
-        // LoadAll — key collision / duplicate mancerIds
+        // LoadAll — duplicate MancerId (last write wins)
         // =========================================================================
 
         [Test]
-        [Ignore("MancerDataLoader not yet implemented — waiting for data-loader agent.")]
-        public void LoadAll_DuplicateMancerId_LastWriteWinsOrThrowsConsistently()
+        public void LoadAll_DuplicateMancerId_LastWriteWins()
         {
-            // TODO: Decide and document whether duplicate mancerIds cause an exception or last-write-wins.
-            // Then implement a fixture directory with two files defining the same mancerId.
-            //
-            // Two possible assertions (choose one based on implementation contract):
-            //   Option A (last write wins):
-            //     Assert.That(result.Count, Is.EqualTo(1));
-            //   Option B (throws):
-            //     Assert.Throws<InvalidOperationException>(() => MancerDataLoader.LoadAll(dir));
-            Assert.Ignore("MancerDataLoader not yet implemented.");
+            // Arrange — two files that both declare MancerId = "pyromancer".
+            // The loader uses result[data.MancerId] = data so the second file parsed
+            // overwrites the first; the dictionary ends up with exactly one entry.
+            WriteValidJson("pyromancer_a.json", "pyromancer", "Pyromancer Alpha");
+            WriteValidJson("pyromancer_b.json", "pyromancer", "Pyromancer Beta");
+
+            var loader = new MancerDataLoader(_tempDir);
+
+            // Act
+            Dictionary<string, MancerRuntimeData> result = loader.LoadAll();
+
+            // Assert — duplicate keys collapse to one entry (last write wins).
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(1),
+                "Two files with the same MancerId should result in exactly one dictionary entry.");
+            Assert.That(result.ContainsKey("pyromancer"), Is.True,
+                "The surviving entry must still be keyed under 'pyromancer'.");
         }
     }
 }
