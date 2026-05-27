@@ -11,17 +11,21 @@ namespace Battlemancers.Core.Simulation
     ///
     /// Each turn follows this sequence:
     /// <list type="number">
-    ///   <item>Both players submit activation plans via SubmitPlan().</item>
+    ///   <item>Both players submit activation plans via SubmitPlan() — simultaneously and secretly.</item>
     ///   <item>Once both plans are in (AllPlansSubmitted returns true), the caller invokes ResolveTurn().</item>
-    ///   <item>ResolveTurn sorts all commands into initiative order and executes them, collecting events.</item>
+    ///   <item>ResolveTurn sorts all commands by resolution order and executes them, collecting events.</item>
     ///   <item>End-of-turn processing (cooldown ticks, unit resets) runs; TurnNumber advances.</item>
     ///   <item>TurnResolvedEvent is published and returned with all other events.</item>
     ///   <item>If a win condition is met, MatchEndedEvent is included in the returned events.</item>
     /// </list>
     ///
-    /// Initiative order: Mancers → Ranged → Chaff.
-    /// Ties within the same unit type are broken by GridPosition: lower X resolves first,
-    /// then lower Y (top-left of the grid resolves before bottom-right).
+    /// Resolution order: Mancers (priority 0) → Ranged (priority 1) → Chaff (priority 2).
+    /// Within the same unit type, commands resolve by board position: lowest (x+y) sum first,
+    /// then lowest x on tie. This is fully deterministic from the board state — no random rolls.
+    ///
+    /// HASTE/TIME_SLOW resolution-window ordering: when those StatusTypes are added to the enum,
+    /// insert an additional sort key after type priority and before position: HASTE = resolves first
+    /// within type window (key –1), TIME_SLOW = resolves last (key +1), normal = key 0.
     ///
     /// Turn limit: 50 turns. If neither player has eliminated the other's Mancers by turn 50,
     /// the match ends in a draw (MatchEndReason.TurnLimitReached, WinnerId = null).
@@ -179,30 +183,34 @@ namespace Battlemancers.Core.Simulation
                 allCommands.AddRange(plan);
             }
 
-            // Step 2: Sort by initiative order.
-            // Primary key: unit type priority (Mancer=0, Ranged=1, Chaff=2).
-            // Secondary key: actor's GridPosition X (lower = resolves first).
-            // Tertiary key: actor's GridPosition Y (lower = resolves first).
+            // Step 2: Sort by resolution order.
+            // Primary key:   unit type priority (Mancer=0, Ranged=1, Chaff=2).
+            // Secondary key: (x+y) board position sum — lower sum resolves first within same type.
+            // Tertiary key:  x coordinate — lower x resolves first when x+y sums are equal.
+            // Note: when HASTE/TIME_SLOW StatusTypes are added, insert a key between primary and
+            // secondary: HASTE = –1 (resolves first in window), TIME_SLOW = +1 (resolves last), normal = 0.
             allCommands.Sort((a, b) =>
             {
                 UnitState actorA = _state.GetUnit(a.ActorId);
                 UnitState actorB = _state.GetUnit(b.ActorId);
 
                 // Dead or deregistered units' commands go last (edge case: unit died mid-turn).
-                int priorityA = actorA != null ? GetInitiativePriority(actorA.Type) : int.MaxValue;
-                int priorityB = actorB != null ? GetInitiativePriority(actorB.Type) : int.MaxValue;
+                int priorityA = actorA != null ? GetResolutionPriority(actorA.Type) : int.MaxValue;
+                int priorityB = actorB != null ? GetResolutionPriority(actorB.Type) : int.MaxValue;
 
                 int cmp = priorityA.CompareTo(priorityB);
                 if (cmp != 0) return cmp;
 
-                // Same unit type — break tie by X position (top-left first).
+                // Same unit type — break tie by board position (x+y sum, then x).
                 if (actorA != null && actorB != null)
                 {
-                    cmp = actorA.Position.X.CompareTo(actorB.Position.X);
+                    int sumA = actorA.Position.X + actorA.Position.Y;
+                    int sumB = actorB.Position.X + actorB.Position.Y;
+                    cmp = sumA.CompareTo(sumB);
                     if (cmp != 0) return cmp;
 
-                    // Same X — break by Y position.
-                    return actorA.Position.Y.CompareTo(actorB.Position.Y);
+                    // Same x+y sum — break by x coordinate.
+                    return actorA.Position.X.CompareTo(actorB.Position.X);
                 }
 
                 return 0;
@@ -348,11 +356,11 @@ namespace Battlemancers.Core.Simulation
         // ---------------------------------------------------------------------------
 
         /// <summary>
-        /// Returns the initiative priority value for a given unit type.
-        /// Lower values resolve earlier in the turn.
+        /// Returns the resolution priority value for a given unit type.
+        /// Lower values resolve earlier within a turn's resolution phase.
         /// Mancers (0) → Ranged (1) → Chaff (2).
         /// </summary>
-        private static int GetInitiativePriority(UnitType type)
+        private static int GetResolutionPriority(UnitType type)
         {
             return type switch
             {

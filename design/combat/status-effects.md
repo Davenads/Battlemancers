@@ -15,7 +15,7 @@ Status effects are categorized as either **Unit Statuses** (applied to a Mancer 
 | `ROOTED` | Floramancer, Osteomancer spike | Cannot move; can still cast | 1-2 turns | Aeromancer wind, Geomancer | Does not prevent spellcasting |
 | `SILENCED` | Sonimancer, Psychomancer | Cannot cast spells; can move | 1 turn | Expires, Chronomancer rewind | Movement still allowed |
 | `STASIS` | Chronomancer | Cannot act OR be affected; invulnerable | 2 turns | Expires only | Strategic not punish: use to save an ally |
-| `CHARMED` | Psychomancer | Controlled by opponent for this turn | 1 turn | Expires | Rare; opponent uses your spells |
+| `CHARMED` | Psychomancer | Unit attacks the nearest ally (own team) using its highest-base-damage available spell; if no ally is in range, moves toward the nearest ally instead | 1 turn | Expires | Fully deterministic from board state; thematically distinct from CONFUSED (which targets nearest any unit) — CHARMED specifically betrays the unit's own team |
 | `CONFUSED` | Psychomancer | Targets the nearest visible unit within range regardless of allegiance (friend or foe) | 2 turns | Expires, Photomancer purify | Fully deterministic from board state; skilled opponents position to exploit friendly-fire risk |
 
 ### Damage-Over-Time Statuses
@@ -78,7 +78,7 @@ Key interactions between unit statuses when multiple apply simultaneously:
 | `OVERHEATED` | `BURNING` | Combined heat DoT: +3 HP/turn bonus damage (stacks additively) |
 | `OVERCOOLED` | `CHILLED` | CHILLED replaced by OVERCOOLED (the stronger state) |
 | `OVERCOOLED` | `FROZEN spell` | Immediate FROZEN skip (no CHILLED progression needed) |
-| `CHARMED` | `SILENCED` | SILENCED takes priority over CHARMED: charmed unit cannot cast but also won't |
+| `CHARMED` | `SILENCED` | Both apply: CHARMED compulsion toward allies is retained, but SILENCED suppresses spellcasting. Result: unit moves toward nearest ally instead of casting. No spell fires. |
 | `STASIS` | anything | Nothing affects STASIS unit until it expires (fully immune state) |
 | `WEIGHTLESS` | `HEAVY` | Cancel each other; unit returns to normal weight |
 | `HEAVY` | `Gravity Well` | HEAVY units resist pull; Gravimancer needs higher AP cost to move them |
