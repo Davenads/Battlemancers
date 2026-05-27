@@ -672,7 +672,15 @@ These rules are mandatory for all agents:
 ---
 
 ### Wave 5 — Unity Presentation Layer
-*Planned — spawn after Wave 4 simulation-integration merges to master*
-- `unity-presentation`: GridRenderer, UnitViewController, BattleSceneController — Unity MonoBehaviour layer reading from SimulationEventBus
-- Planning Phase UI: 100-pt budget tracker, unit assignment, plan submission (hotseat prototype)
-- Warband selection → BattleScene handoff
+
+#### Agent: `unity-presentation`
+**Worktree:** `C:/Projects/BattlemancersAgents/unity-presentation`
+**Branch:** `agent/unity-presentation`
+**Status:** COMPLETE — merged to master at `10d2f6e`
+
+**Owns (created):**
+- `src/core/Presentation/BattleSceneController.cs` — top-level battle orchestrator; owns TurnManager, validates 100-pt budget, drives resolution coroutine, exposes RoundCompleted/PlanRejected events
+- `src/core/Presentation/GridRenderer.cs` — instantiates tile GameObjects per SimulationState.Board cell, color-maps all 15 TileState values via MaterialPropertyBlock
+- `src/core/Presentation/UnitViewController.cs` — tracks unit GameObjects by ID, lerp move (0.3s), scale-to-zero death (0.25s), status tints via MaterialPropertyBlock
+- `src/core/Presentation/SimulationEventDispatcher.cs` — bridges SimulationEventBus (pure C#) to Unity Update loop via ConcurrentQueue; fires 9 typed C# events
+- `src/ui/Battle/PlanningPhaseUI.cs` — full hotseat two-player planning flow, budget display, unit list, Lock/Clear buttons, resolving overlay, Next Turn button
