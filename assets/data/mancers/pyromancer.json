@@ -1,327 +1,204 @@
 {
-  "MancerId": "pyromancer",
-  "DisplayName": "Pyromancer",
-  "MaxHP": 85,
-  "MoveRange": 3,
-  "BaseArmor": 1,
-  "BaseActionPoints": 6,
-  "BaseCost": 100,
-  "PrimaryElement": "Fire",
-  "SecondaryElement": "Arcane",
-  "HasSecondaryResource": false,
-  "SecondaryResourceName": "",
-  "MaxSecondaryResource": 0,
-  "SecondaryResourceGenerationRuleId": "",
-  "TacticalIdentity": "Aggressive area-denial specialist who wins by converting the battlefield into a burning gauntlet. Seeds ON_FIRE terrain that persists and spreads, applies BURNING DoT, and acts as the combo opener for Electromancer, Toximancer, and Geomancer detonation chains. Requires constant activation to build fire economy. Low HP demands protected positioning.",
-  "StrongSynergyMancerIds": ["electromancer", "toximancer", "geomancer", "thermomancer"],
-  "RecommendedFactionId": "",
-  "Spells": [
+  "mancerId": "pyromancer",
+  "displayName": "Pyromancer",
+  "tacticalIdentity": "DoT specialist, area denial, and spreading terrain fire. Seeds ON_FIRE terrain that persists and spreads, applies BURNING status, and acts as the combo opener for Electromancer and Thermomancer synergies. Low HP demands protected positioning.",
+  "primaryElement": "Fire",
+  "secondaryElement": "Arcane",
+  "maxHP": 85,
+  "moveRange": 3,
+  "baseArmor": 1,
+  "baseActionPoints": 6,
+  "baseCost": 100,
+  "hasSecondaryResource": false,
+  "secondaryResourceName": "",
+  "maxSecondaryResource": 0,
+  "secondaryResourceGenerationRuleId": "",
+  "strongSynergyMancerIds": ["electromancer", "toximancer", "thermomancer"],
+  "recommendedFactionId": "",
+  "vfxTag": "vfx_pyromancer",
+  "voiceTag": "voice_pyromancer",
+  "ambientIdleSfxTag": "sfx_pyromancer_idle",
+  "designNotes": "Primary fire-damage Mancer. Best paired with Thermomancer for OVERHEAT amplification.",
+  "baseSpells": [
     {
-      "SpellId": "ember_shot",
-      "DisplayName": "Ember Shot",
-      "Description": "A fire projectile that travels in a line and can hit intervening units. Applies BURNING to the target and leaves an ON_FIRE tile underfoot that persists and spreads each turn. Low cost and no cooldown enable double-cast in a single activation.",
-      "ApCost": 2,
-      "CooldownTurns": 0,
-      "Tier": "Quick",
-      "TargetType": "Projectile",
-      "Range": 6,
-      "AoeRadius": 0,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": false,
-      "Element": "Fire",
-      "BaseDamage": 18,
-      "ConditionalBonuses": [
+      "spellId": "ember_shot",
+      "displayName": "Ember Shot",
+      "description": "A fire projectile that travels in a line and can hit intervening units. Applies BURNING to the target and leaves an ON_FIRE tile on impact.",
+      "apCost": 2,
+      "cooldownTurns": 0,
+      "tier": "Quick",
+      "targetType": "Projectile",
+      "range": 6,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Fire",
+      "baseDamage": 18,
+      "temperatureDelta": 15,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "ConditionDescription": "+10% fire damage vs. WARM targets (temperature +1 to +30)",
-          "TriggerState": "Warm",
-          "BonusDamage": 2,
-          "IsMultiplicative": true
+          "statusType": "Burning",
+          "duration": 3,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "StatusType": "Burning",
-          "Duration": 3,
-          "StacksApplied": 1,
-          "AppliesToTile": false,
-          "ApplicationChance": 1.0
-        },
-        {
-          "StatusType": "OnFire",
-          "Duration": -1,
-          "StacksApplied": 1,
-          "AppliesToTile": true,
-          "ApplicationChance": 1.0
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "TriggerState": "Ground",
-          "ResultState": "OnFire"
-        },
-        {
-          "TriggerState": "Wet",
-          "ResultState": "SteamCloud"
-        },
-        {
-          "TriggerState": "OnFire",
-          "ResultState": "OnFire"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 15,
-      "VfxTag": "fire_projectile",
-      "SfxCastTag": "spell/fire/cast",
-      "SfxImpactTag": "spell/fire/impact",
-      "CameraShakeIntensity": 0.2
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "fire_projectile",
+      "sfxCastTag": "spell/fire/cast",
+      "sfxImpactTag": "spell/fire/impact",
+      "cameraShakeIntensity": 0.2,
+      "designNotes": "Workhorse damage spell. No cooldown; double-cast in one activation."
     },
     {
-      "SpellId": "scorched_earth",
-      "DisplayName": "Scorched Earth",
-      "Description": "A ground-targeted radial fire blast that converts a 2-tile radius to ON_FIRE terrain. Primary use is area denial and combo setup — the fire zone persists and spreads. FLOODED tiles convert to STEAM_CLOUD instead. Units on affected tiles receive BURNING.",
-      "ApCost": 3,
-      "CooldownTurns": 1,
-      "Tier": "Standard",
-      "TargetType": "Ground",
-      "Range": 5,
-      "AoeRadius": 2,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": true,
-      "Element": "Fire",
-      "BaseDamage": 12,
-      "ConditionalBonuses": [],
-      "AppliedEffects": [
+      "spellId": "scorched_earth",
+      "displayName": "Scorched Earth",
+      "description": "A ground-targeted radial fire blast that converts a 2-tile radius to ON_FIRE terrain. Primary use is area denial and combo setup.",
+      "apCost": 3,
+      "cooldownTurns": 1,
+      "tier": "Standard",
+      "targetType": "AoeCircle",
+      "range": 5,
+      "aoeRadius": 2,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": true,
+      "element": "Fire",
+      "baseDamage": 12,
+      "temperatureDelta": 20,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "StatusType": "Burning",
-          "Duration": 3,
-          "StacksApplied": 1,
-          "AppliesToTile": false,
-          "ApplicationChance": 1.0
-        },
-        {
-          "StatusType": "OnFire",
-          "Duration": -1,
-          "StacksApplied": 1,
-          "AppliesToTile": true,
-          "ApplicationChance": 1.0
+          "statusType": "Burning",
+          "duration": 3,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "TerrainChanges": [
-        {
-          "TriggerState": "Ground",
-          "ResultState": "OnFire"
-        },
-        {
-          "TriggerState": "Flooded",
-          "ResultState": "SteamCloud"
-        },
-        {
-          "TriggerState": "ToxicTerrain",
-          "ResultState": "ToxicFire"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 20,
-      "VfxTag": "fire_aoe",
-      "SfxCastTag": "spell/fire/cast",
-      "SfxImpactTag": "spell/fire/impact",
-      "CameraShakeIntensity": 0.5
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "fire_aoe",
+      "sfxCastTag": "spell/fire/cast",
+      "sfxImpactTag": "spell/fire/impact",
+      "cameraShakeIntensity": 0.5,
+      "designNotes": "Area denial. Seeds ON_FIRE terrain across a zone."
     },
     {
-      "SpellId": "conflagration_wave",
-      "DisplayName": "Conflagration Wave",
-      "Description": "A directional fire cone that deals damage to all units caught within it, applies BURNING, and fans existing ON_FIRE tiles forward in the chosen direction. Ice tiles in the cone trigger steam burst reactions. A terrain-sculpting tool that rewards pre-seeded fire zones.",
-      "ApCost": 3,
-      "CooldownTurns": 2,
-      "Tier": "Standard",
-      "TargetType": "Cone",
-      "Range": 4,
-      "AoeRadius": 0,
-      "LineLength": 4,
-      "RequiresLineOfSight": false,
-      "CanTargetEmptyTile": true,
-      "Element": "Fire",
-      "BaseDamage": 20,
-      "ConditionalBonuses": [],
-      "AppliedEffects": [
+      "spellId": "conflagration_wave",
+      "displayName": "Conflagration Wave",
+      "description": "A directional fire cone that deals damage to all units caught within it and applies BURNING.",
+      "apCost": 3,
+      "cooldownTurns": 2,
+      "tier": "Standard",
+      "targetType": "Cone",
+      "range": 4,
+      "aoeRadius": 0,
+      "lineLength": 4,
+      "requiresLineOfSight": false,
+      "canTargetEmptyTile": true,
+      "element": "Fire",
+      "baseDamage": 20,
+      "temperatureDelta": 25,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "StatusType": "Burning",
-          "Duration": 3,
-          "StacksApplied": 1,
-          "AppliesToTile": false,
-          "ApplicationChance": 1.0
-        },
-        {
-          "StatusType": "OnFire",
-          "Duration": -1,
-          "StacksApplied": 1,
-          "AppliesToTile": true,
-          "ApplicationChance": 1.0
+          "statusType": "Burning",
+          "duration": 3,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "TerrainChanges": [
-        {
-          "TriggerState": "Ground",
-          "ResultState": "OnFire"
-        },
-        {
-          "TriggerState": "IceTile",
-          "ResultState": "Flooded"
-        },
-        {
-          "TriggerState": "Overgrowth",
-          "ResultState": "OnFire"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 25,
-      "VfxTag": "fire_cone",
-      "SfxCastTag": "spell/fire/cast",
-      "SfxImpactTag": "spell/fire/impact",
-      "CameraShakeIntensity": 0.4
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "fire_cone",
+      "sfxCastTag": "spell/fire/cast",
+      "sfxImpactTag": "spell/fire/impact",
+      "cameraShakeIntensity": 0.4,
+      "designNotes": "Cone AoE for clustered targets."
     },
     {
-      "SpellId": "pillar_of_flame",
-      "DisplayName": "Pillar of Flame",
-      "Description": "Concentrated fire strike on a single ground tile. Deals 55 damage to the primary target and 25 to adjacent units. Creates permanent ON_FIRE terrain at the impact tile and deforms the ground into a PIT. At 5 AP it demands near-full commitment, but the permanent terrain deformation and OVERHEATED setup path make it the Pyromancer's kill-confirmation tool.",
-      "ApCost": 5,
-      "CooldownTurns": 3,
-      "Tier": "Heavy",
-      "TargetType": "Ground",
-      "Range": 4,
-      "AoeRadius": 1,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": true,
-      "Element": "Fire",
-      "BaseDamage": 55,
-      "ConditionalBonuses": [
+      "spellId": "pillar_of_flame",
+      "displayName": "Pillar of Flame",
+      "description": "Concentrated fire strike on a single ground tile. Deals 55 damage to the primary target and adjacent units in a 1-tile radius. Creates ON_FIRE terrain at impact.",
+      "apCost": 5,
+      "cooldownTurns": 3,
+      "tier": "Heavy",
+      "targetType": "AoeCircle",
+      "range": 4,
+      "aoeRadius": 1,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": true,
+      "element": "Fire",
+      "baseDamage": 55,
+      "temperatureDelta": 35,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "ConditionDescription": "Reduced damage vs. FLOODED primary tile (-30% — water partially absorbs)",
-          "TriggerState": "Flooded",
-          "BonusDamage": -17,
-          "IsMultiplicative": false
+          "statusType": "Burning",
+          "duration": 3,
+          "stacksApplied": 2,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "StatusType": "Burning",
-          "Duration": 3,
-          "StacksApplied": 1,
-          "AppliesToTile": false,
-          "ApplicationChance": 1.0
-        },
-        {
-          "StatusType": "OnFire",
-          "Duration": -1,
-          "StacksApplied": 1,
-          "AppliesToTile": true,
-          "ApplicationChance": 1.0
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "TriggerState": "Ground",
-          "ResultState": "Pit"
-        },
-        {
-          "TriggerState": "Wet",
-          "ResultState": "SteamCloud"
-        },
-        {
-          "TriggerState": "Flooded",
-          "ResultState": "SteamCloud"
-        },
-        {
-          "TriggerState": "IceTile",
-          "ResultState": "Flooded"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 35,
-      "VfxTag": "fire_pillar",
-      "SfxCastTag": "spell/fire/cast",
-      "SfxImpactTag": "spell/fire/impact",
-      "CameraShakeIntensity": 1.0
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "fire_pillar",
+      "sfxCastTag": "spell/fire/cast",
+      "sfxImpactTag": "spell/fire/impact",
+      "cameraShakeIntensity": 1.0,
+      "designNotes": "Signature ultimate. 55 base damage. Crystalomancer Node amplifier."
     },
     {
-      "SpellId": "ember_volley",
-      "DisplayName": "Ember Volley",
-      "Description": "A rapid burst of small embers scattered across a wide arc in front of the Pyromancer. Deals modest damage to all units in a short cone and applies BURNING. Primarily used when multiple enemies are grouped at close range and Conflagration Wave is on cooldown.",
-      "ApCost": 2,
-      "CooldownTurns": 1,
-      "Tier": "Quick",
-      "TargetType": "Cone",
-      "Range": 3,
-      "AoeRadius": 0,
-      "LineLength": 3,
-      "RequiresLineOfSight": false,
-      "CanTargetEmptyTile": true,
-      "Element": "Fire",
-      "BaseDamage": 10,
-      "ConditionalBonuses": [],
-      "AppliedEffects": [
+      "spellId": "combustion_brand",
+      "displayName": "Combustion Brand",
+      "description": "Brands an allied unit with volatile fire energy, converting their attacks into a vector for flame spread. Ally attacks apply BURNING on hit for 2 turns. Reactive fire burst triggers when the ally takes damage.",
+      "apCost": 3,
+      "cooldownTurns": 3,
+      "tier": "Standard",
+      "targetType": "SingleTarget",
+      "range": 3,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Fire",
+      "baseDamage": 0,
+      "temperatureDelta": 0,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "StatusType": "Burning",
-          "Duration": 2,
-          "StacksApplied": 1,
-          "AppliesToTile": false,
-          "ApplicationChance": 0.75
+          "statusType": "CombustionBrand",
+          "duration": 2,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "TerrainChanges": [
-        {
-          "TriggerState": "Ground",
-          "ResultState": "OnFire"
-        },
-        {
-          "TriggerState": "Overgrowth",
-          "ResultState": "OnFire"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 10,
-      "VfxTag": "fire_cone",
-      "SfxCastTag": "spell/fire/cast",
-      "SfxImpactTag": "spell/fire/impact",
-      "CameraShakeIntensity": 0.2
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "fire_augment",
+      "sfxCastTag": "spell/fire/cast",
+      "sfxImpactTag": "spell/fire/impact",
+      "cameraShakeIntensity": 0.1,
+      "designNotes": "Augmentation spell. Turns allied Chaff into BURNING spreaders. Reactive burst punishes melee engagement against the branded unit."
     }
   ]
 }
