@@ -442,4 +442,25 @@ THERMAL SHOCK kills — enemies who take THERMAL SHOCK burst and are subsequentl
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Heat Exchange
+
+**AP Cost:** 2 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Opens a thermal conduit between the Thermomancer and an allied unit, sharing and locking temperature state while enabling active temperature redirect.
+
+**Effects (2 turns):**
+- The ally's temperature is set to the Thermomancer's current temperature level (whatever the Thermomancer is currently at -- high heat or deep cold)
+- For 2 turns, the ally's temperature is locked at that level -- temperature-altering effects from enemy spells cannot move it
+- While the conduit is active, the Thermomancer may redirect incoming temperature effects (BURNING, FROZEN) that would affect the Thermomancer to the ally instead
+- Maximum heat bonus: if temperature is locked at maximum HEAT -- ally deals +2 fire damage on all attacks
+- Maximum cold bonus: if temperature is locked at maximum COLD -- ally gains +2 defense and applies SLOWED to any unit that strikes them
+
+**Tactical intent:** Temperature-state sharing and active redirect. The Thermomancer charges their own temperature to an extreme, then shares that state to bestow a meaningful combat bonus on an ally -- converting the Thermomancer's personal temperature resource into a buff delivery. The redirect is the aggressive use: incoming fire or ice effects aimed at the Thermomancer are rerouted to the ally, turning them into a heat or cold sink. The two separate max-state bonuses give genuine flexibility in which extreme to chase.
+
+**Notable interactions:** Thermomancer redirects BURNING to a max-COLD locked ally -- BURNING attempts to raise temperature; the temperature lock resists; element matrix triggers Extinguish + Flash Freeze on the ally's tile. The ally neutralizes a fire spell and freezes the ground beneath them without additional AP. A Pyromancer on the same team pre-heats the Thermomancer to max HEAT, which is then shared with a melee Chaff unit for +2 fire damage output from a unit that normally deals no elemental damage.
+
 *End of Thermomancer design document.*

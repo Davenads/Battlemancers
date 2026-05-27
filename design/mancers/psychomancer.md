@@ -421,4 +421,24 @@ Against enemy units in an Ashen Covenant warband run by the opponent: if the opp
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Will Surge
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+The Psychomancer floods an allied unit's psyche with weaponized aggression, stripping emotional inhibitors and driving them into a controlled frenzy.
+
+**Effects (2 turns):**
+- Ally enters BERSERK -- +2 damage on all attacks, immune to PANIC and CHARM
+- While BERSERK, the ally cannot voluntarily disengage from melee -- if adjacent to an enemy, they must use an attack action before spending movement to move away (costs 1 AP to forcibly disengage instead)
+- Gilded Throne faction: Iron Discipline overrides the disengagement lock -- the +2 damage and PANIC/CHARM immunity apply, but the ally retains free movement (military discipline controls the surge)
+- Verdant Pact and Ashen Covenant receive the full effect including the engagement lock
+
+**Tactical intent:** Power with behavioral cost. The +2 damage makes the unit a genuine threat; PANIC/CHARM immunity counters the Psychomancer's own enemy toolkit in mirror scenarios. The engagement lock is the meaningful constraint -- a berserked unit adjacent to multiple enemies must fight through them, not disengage. This creates positioning risk opponents can exploit by surrounding the berserked unit. The Gilded Throne interaction is deliberately faction-rewarding: Iron Discipline partially neutralizes a mental override, fitting the lore and making faction composition matter in augmentation planning.
+
+**Notable interactions:** Will Surge + Faunamancer Pack Bond on the same unit: the BERSERK unit triggers a reaction attack every time the bonded companion attacks, and the engagement lock guarantees the berserked unit is reliably in melee range for Pack Bond procs every turn. Psychomancer applying Will Surge to an Osteomancer Bone Lattice recipient: the BERSERK +2 damage also applies to the bone shard burst if the lattice shatters, making the explosion more dangerous to nearby enemies.
+
 *End of Psychomancer design document.*

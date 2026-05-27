@@ -379,4 +379,24 @@ The Photomancer and Ashen Covenant Necromancer have an adversarial design relati
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Radiant Sight
+
+**AP Cost:** 2 | **Range:** 5 tiles | **Targeting:** Single allied unit | **Cooldown:** 2 turns
+
+Infuses an ally's vision with concentrated light energy, granting tactical omniscience at the cost of concealment.
+
+**Effects (2 turns):**
+- Ally ignores all line-of-sight restrictions -- they can target and attack through elevated terrain, smoke, steam clouds, and fog-of-war zones
+- Ally's attacks against hidden or stealthed units deal +3 damage (light strips concealment)
+- Allied units within 1 tile of the recipient also benefit from obstacle-penetrating vision (the radiance spreads outward)
+- The recipient emits visible light -- they cannot be hidden, stealthed, or benefit from concealment mechanics while the buff is active
+
+**Tactical intent:** Vision control is a decisive advantage in a LoS-heavy tactical game. Making one unit an omniscient attacker forces enemies to rethink cover-based positioning and concealment strategies. The visibility trade-off is real -- the ally is a lit landmark on the board, trivially locatable by all enemies, with no access to stealth or ambush positioning. The adjacency aura encourages formation clustering around the recipient. Short cooldown (2) lets the Photomancer maintain a vision corridor on rotation, denying fog-of-war to an entire zone of the map for extended stretches.
+
+**Notable interactions:** Radiant Sight recipient attacking through a Steam Cloud -- the attack resolves normally while the Steam Cloud still BLINDS and BURNS enemies inside it. One-way glass: the buffed ally fires through the cloud unimpeded while enemies in the cloud cannot see out. Countered by Sonimancer Silence (cannot cast Radiant Sight) or Psychomancer Charm (forced to illuminate an enemy unit instead).
+
 *End of Photomancer design document.*

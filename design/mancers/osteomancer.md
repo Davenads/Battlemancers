@@ -453,3 +453,25 @@ Ossified Ground (terrain state left by Bone Shard impacts and destroyed Bone Spi
 Units that are HOT (+31 to +60 temperature) are SLOWED — their activation efficiency is reduced. A HOT unit with BONE_ARMOR active is partially insulated against the physical consequences of their reduced mobility: they cannot move as far (SLOWED), but the BONE_ARMOR absorbs physical hits while they reposition. BONE_ARMOR does not reduce the SLOWED movement penalty, but it does mean that a HOT SLOWED unit taking physical hits while they work through the SLOWED state does not also suffer unmitigated physical damage.
 
 **Strategic use:** Osteomancer as support for Pyromancer. The Pyromancer creates fire zones that drive enemy temperature toward OVERHEATED — but the Osteomancer's allies crossing those same zones also accumulate temperature. Applying BONE_ARMOR (via Calcify) to Pyromancer-allied units advancing through HOT terrain gives them physical damage protection while the HOT status wears off via temperature decay. The allies can push through the HOT zone with armor intact, absorbing the inevitable physical hits from enemies while the environment handles the DoT side of the engagement.
+
+---
+
+## 10. Augmentation Spell
+
+### Bone Lattice
+
+**AP Cost:** 3 | **Range:** 2 tiles | **Targeting:** Single allied unit | **Cooldown:** 4 turns
+
+Extrudes animated bone matter through an ally's body, reinforcing their frame and extending natural weapons -- with an explosive failure state that punishes enemies who cluster.
+
+**Effects (3 turns):**
+- Ally gains 3 Bone Armor points -- each absorbs 1 damage before HP is affected
+- Ally's melee attacks deal +1 damage (bone spurs on limbs and joints)
+- Shatter threshold: if the ally takes 4 or more damage in a single hit (calculated after Bone Armor absorbs), the lattice shatters -- releasing bone shards in a 2-tile radius dealing 2 damage to all units (including allies) and applying BLEEDING to all units hit (BLEEDING blocks HP regeneration for 2 turns)
+- Bone Armor expires at end of turn 3 without detonation
+
+**Tactical intent:** Defensive buff with an explosive failure state that punishes clustered formations. The Bone Armor + shatter threshold creates a deliberate calculation for enemies: small attacks chip away the armor slowly; a single heavy strike shatters it and damages everyone nearby. This forces enemy teams to spread before committing a heavy attack on the Bone Lattice unit. Bone shards hitting allies is an intentional design feature -- do not cluster around a Bone Lattice unit without knowing the threshold risk. BLEEDING specifically counters Hydromancer regen on any unit the shards hit.
+
+**Notable interactions:** Sonimancer Resonance Lock bypasses Bone Armor entirely (resonance passes through solid matter) -- hard counter that ignores the defensive buff and can independently trigger the shatter through AoE resonance damage. If the Bone Lattice ally is under Psychomancer Will Surge when the lattice shatters, the BERSERK +2 damage applies to the bone shard release -- shards deal 4 damage instead of 2.
+
+*End of Osteomancer design document.*

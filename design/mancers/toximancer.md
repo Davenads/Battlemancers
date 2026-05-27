@@ -422,3 +422,25 @@ The CONTAMINATION mechanic (POISONED units triggering stack spread via WET terra
 | -1 to -30 COLD | No special poison interaction |
 | -31 to -60 SUPERCOOLED | Preserved Venom: POISONED stacks do not tick down |
 | ≤ -61 FROZEN SOLID | FROZEN status applies; POISONED persists through FROZEN per standard rules (stacks preserved until FROZEN ends) |
+
+---
+
+## 10. Augmentation Spell
+
+### Venom Infusion
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Injects calibrated venom into an allied unit's bloodstream -- lethal to others, tolerated by the host -- turning their attacks into a poison delivery system.
+
+**Effects (2 turns):**
+- Ally's attacks apply 1 POISON stack to targets on hit
+- Ally is immune to POISONED status for the duration (venom tolerance built during infusion)
+- Stack synergy: if the ally attacks a target already carrying POISON stacks applied by the Toximancer's own spells, those stacks are doubled on that hit (synergistic contamination -- the venoms combine chemically)
+- After the buff expires, the ally takes 1 unavoidable damage (residual toxin -- always occurs)
+
+**Tactical intent:** Offensive combo-enabler rewarding correct sequencing. The intended play: Toximancer poisons a target from range using its own kit -> sends a Venom Infused ally into melee -> the ally's hit doubles the existing stacks. The stack doubling applies only to the Toximancer's own poison (not Floramancer pollen, not contaminated terrain poison) -- it is a personal chemical brand, not a universal amplifier. The 1-damage exit cost communicates clearly: nothing involving toxins is ever free. The poison immunity prevents the infusion from accidentally poisoning the ally recipient.
+
+**Notable interactions:** On a target that is both POISONED and WET: the element matrix entry Infected Water already exists. Venom Infusion's doubled stacks on that target amplify the base DoT before the Infected Water effect applies -- compounding multiple damage sources simultaneously. Toximancer + Floramancer: Floramancer applies pollen POISON, Toximancer's Venom Infused ally hits the target -- but the doubling does NOT trigger (pollen is Floramancer's poison, not Toximancer's). Teams must communicate whose poison is on the target.
+
+*End of Toximancer design document.*

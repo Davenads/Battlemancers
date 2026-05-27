@@ -302,3 +302,25 @@ This is the game's primary advertised cross-Mancer combo and the main reason the
 **Steam Cloud misfire:** Running Hydromancer + Pyromancer and failing to coordinate positioning can trigger a Blind Boil over the Hydromancer's own chaff, blinding allied units and negating the ranged advantage the team invested in. Blind Boil is a powerful combo but requires the Hydromancer's player to not have allied units inside the flood zone when the Pyromancer fires.
 
 **Silenced or Stunned Hydromancer:** The Hydromancer has no reactive or self-defensive spells. A Silenced Hydromancer cannot cast Mending Current, Aqua Lance, or Tidal Surge. If the team's healing source is Silenced at a critical moment and an ally is at low HP, the loss of the heal can cascade into a losing attrition position. Sonimancer Silence and Psychomancer Silence are the primary threats. Gilded Throne's Iron Discipline partially mitigates this by protecting infantry from morale debuffs, but the Hydromancer itself is a Mancer and is not protected by Iron Discipline.
+
+---
+
+## 9. Augmentation Spell
+
+### Tidal Blessing
+
+**AP Cost:** 2 | **Range:** 4 tiles | **Targeting:** Single allied unit | **Cooldown:** 2 turns
+
+Suffuses an allied unit with flowing water energy, immediately applying WET and reshaping how they move and interact with the board.
+
+**Effects:**
+- Immediately applies WET to the ally; WET is sustained for the full 2-turn duration and is not consumed by LIGHTNING hits (chain stun still applies normally through the WET)
+- Ally regenerates 2 HP per turn
+- Ally gains +1 movement range
+- Ally's melee attacks push the target back 1 tile (water pressure on impact)
+
+**Tactical intent:** The Hydromancer's identity is flow — the buff flows into the ally and reshapes how they move and engage. The persistent WET is the double-edged core: it enables Electromancer chain-stun through the blessed ally, making this a deliberate combo-setup tool for coordinated teams. The minor push on melee attacks rewards aggressive positioning and disrupts enemy formation integrity. Short cooldown (2) makes this a routine support tool rather than a once-per-engagement resource.
+
+**Notable interactions:** An ally standing on a FROZEN tile while WET from Tidal Blessing slowly thaws the tile as they move, leaving MUD behind. The regen stacks additively with Floramancer Verdant Embrace regen on the same ally for compounding recovery. An allied Electromancer who deliberately chains through the WET ally into enemies creates planned collateral — coordinate before locking activation plans.
+
+*End of Hydromancer design document.*

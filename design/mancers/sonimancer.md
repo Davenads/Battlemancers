@@ -405,4 +405,24 @@ Metals and dense materials resonate differently when heat-stressed. If a target 
 **Sonic Obliteration and mass thermal resonance:**
 When Sonic Obliteration fires in all 4 directions simultaneously, any RESONATING tiles it hits trigger the Thermal Resonance rule: each detonated RESONATING tile generates +10 temperature to all units in that resonating area. In a properly prepared board with RESONATING tiles seeded in multiple directions (via Resonance Cone on prior turns, especially with Resonance Master passive extending duration to 3 turns), the mass resonance detonation from Sonic Obliteration creates a **heat wave across the entire zone** — every unit standing on pre-seeded RESONATING tiles in the blast area receives +10 temperature simultaneously. In a formation where 3 RESONATING tile clusters are detonated at once, every enemy unit in those zones is pushed +10 temperature in a single activation. Combined with pre-existing HOT status (+31 to +60), this can push targets over the OVERHEATED threshold in one Sonic Obliteration cast.
 
+---
+
+## 10. Augmentation Spell
+
+### Resonance Lock
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Tunes an ally's movements and weapon impacts to destructive resonant frequencies, making them an anti-armor threat and a SILENCE-denial anchor.
+
+**Effects (2 turns):**
+- Ally's attacks apply a RESONANCE stack to the target (maximum 3 stacks per target)
+- At 3 RESONANCE stacks: the target is SHATTERED -- stunned for 1 turn and takes 3 damage (shockwave from full resonance)
+- Ally's attacks ignore BARRIER and Bone/Crystal Armor effects entirely (resonance bypasses solid matter)
+- Allied units within 1 tile of the Resonance Locked unit cannot be SILENCED (vibration disrupts silence-field formation)
+
+**Tactical intent:** Anti-armor offensive augment. The BARRIER and Bone/Crystal Armor bypass specifically dismantles Crystalomancer and Osteomancer defensive setups -- the Sonimancer's natural counter relationship extended to an ally. RESONANCE stack buildup to 3 = SHATTER creates a visible countdown threat: enemies must deal with the resonating ally before the third hit, or accept a guaranteed stun and burst. The adjacency SILENCE immunity is high-value in compositions facing Psychomancer or Sonimancer opponents who lock down support units.
+
+**Notable interactions:** Hard counter to Osteomancer Bone Lattice (ignores Bone Armor entirely, can still trigger the shatter threshold through the bypass). Similarly negates Crystalomancer Prismatic Shell -- resonance passes through the lattice and the stored charge is irrelevant because the shell provides no damage reduction to resonance damage. A SHATTERED unit (from 3 stacks) that is CHARGED receives the element matrix result for CHARGED + SHATTER: Overload detonation on that tile.
+
 *End of Sonimancer design document.*

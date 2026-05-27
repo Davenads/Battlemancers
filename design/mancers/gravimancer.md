@@ -382,4 +382,24 @@ Grave Husks advance through any terrain without fear of DoT (they regen in BURNI
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Gravitational Anchor
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Focuses a concentrated gravitational field on an allied unit, making them a point of immovable mass that warps the movement economy of the surrounding area.
+
+**Effects (2 turns):**
+- Ally cannot be moved by any effect -- push, pull, teleport, knockback, and all displacement effects have no impact on their position
+- Ally generates a gravity well in a 2-tile radius -- enemy movement through or into the radius costs +1 movement point per tile
+- Ally's attacks deal +1 damage (gravitational compression amplifies physical force)
+- Self-gravity tax: the ally's own movement costs 1 extra AP to initiate (the field resists their own departure) -- spend 1 AP to break from anchor, then move normally for the remainder of that turn
+
+**Tactical intent:** Zone control through mass. The anchored ally warps enemy movement around them -- approaching costs more, routing through the anchor's zone is economically punishing. The self-tax is the intended constraint: the buff rewards standing and fighting where you are, not repositioning. If repositioning is needed, the 1 AP cost is a meaningful commitment that opens tactical reads for the opponent. Pairs best with Chaff units who have defined firing positions and do not need mobility -- a cheap anchored unit with a gravity well locks down an entire flank.
+
+**Notable interactions:** Gravitational Anchor + Geomancer walls: enemies trying to circumnavigate the anchor's gravity well encounter walls, eliminating alternate routes and creating a full flank trap. Anchor on a Crystalomancer Prismatic Shell recipient: the anchored unit absorbs damage (charging the shell) while enemies pay extra to disengage -- maximizing the charge accumulation window before the shell release.
+
 *End of Gravimancer design document.*

@@ -381,4 +381,23 @@ Ashen Covenant benefits most from Necromancer pairing (Remnant tokens). The Chro
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Timestep
+
+**AP Cost:** 4 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 4 turns
+
+Wraps an ally in a localized temporal field, granting them a second pass at their planned action with full resolution power.
+
+**Effects (this turn):**
+- The ally resolves their action twice -- the second resolution occurs at the end of the current resolution phase, after all other units have acted
+- If the second action is invalid when it resolves (target moved out of range, target has died, target tile changed state), the action is cancelled and 2 AP is refunded to the Chronomancer on their next turn
+- Temporal fatigue: the affected ally cannot be the target of Timestep again for 3 turns
+
+**Tactical intent:** Timestep is the Chronomancer's ultimate expression -- actions happen twice. The high AP cost (4) and long cooldown (4) mean this is a once-per-engagement resource, not a rotation tool. The delayed second resolution is the critical design constraint: it fires at end-of-phase, meaning enemies who survived the first hit have a window to respond before the echo arrives. Skilled opponents react in that window; passive opponents eat both. The AP refund on invalid second action prevents complete waste on blind doubles. Temporal fatigue on the recipient prevents repeated abuse of the same power unit.
+
+**Notable interactions:** Timestep on an Echomancer-Phantom-Imprinted ally generates three hits from one unit in one turn: original action -> Timestep second action -> Phantom echo of the original. Design-legal, extremely situational, requires both Mancers coordinating on the same ally. If used on an ally mid-BERSERK (Psychomancer Will Surge), the BERSERK engagement lock applies to both actions -- the ally must attack in melee twice before moving.
+
 *End of Chronomancer design document.*

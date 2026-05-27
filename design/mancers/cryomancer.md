@@ -455,4 +455,24 @@ Against an 85–100 HP Mancer (typical base range), a single SHATTER from Geoman
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Frostweave Armor
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Crystallizes atmospheric moisture around an ally into layered frost plating, making them a mobile cold-radiating hazard.
+
+**Effects:**
+- Ally gains 2 Frost Armor points — each absorbs 1 damage before HP is affected
+- Ally applies SLOWED to any enemy they strike or move adjacent to (cold radiating from the armor)
+- Shatter condition: if the ally takes FIRE damage of any amount while the armor is active, it shatters — dealing 2 damage to the ally and releasing a cold burst in a 2-tile radius applying SLOWED to all units in range (including allies)
+- Armor expires at end of turn 3 if not shattered
+
+**Tactical intent:** Defensive augment with a volatile failure state. The SLOWED aura makes the ally a mobile debuffer — enemies who engage in melee are penalized regardless of outcome. The fire-shatter creates a deliberate counter: Pyromancer reads the armor and ignites the ally to punish clustered friendlies. This teaches formation discipline — do not stack multiple allied units adjacent to a Frostweave Armor recipient. The armor expires cleanly at turn 3, so timing the buff around known fire threats is genuine skill expression.
+
+**Notable interactions:** If the ally is standing on a WET tile when the armor shatters from fire, the cold burst reacts with the WET surface — flash-freezing the tile and adjacent WET tiles (WET + ICE interaction), creating instant FROZEN terrain around the ally. A Pyromancer triggering a shatter on a WET tile simultaneously generates a Steam Cloud (fire hit) AND a Cryomancer ice freeze — both effects resolve on the same location.
+
 *End of Cryomancer design document.*

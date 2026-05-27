@@ -359,4 +359,25 @@ VINES and natural terrain have no temperature penalty, so a Cryomancer's frozen-
 
 The Floramancer's VINES on ICE_TILE have a pre-seed trap value as well — SPORES placed on frozen tiles lie dormant (no POISONED applied while ICE_TILE is active) but activate when the ice thaws. A Floramancer can plant SPORES on ice tiles and wait — when the Cryomancer thaws or melts the ice (or the ice expires naturally), the dormant SPORES cloud activates, applying POISONED stacks to any unit standing on what was, a moment ago, safe frozen ground.
 
+---
+
+## 10. Augmentation Spell
+
+### Verdant Embrace
+
+**AP Cost:** 2 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Channels rapid plant growth through an allied unit, weaving vines through their physiology — rooting them in place and turning their position into a living denial zone.
+
+**Effects (3 turns):**
+- Ally is ROOT-tethered on their current tile — immune to all displacement (pushes, pulls, knockbacks)
+- Ally regenerates 2 HP per turn (plant nutrients cycling through them)
+- Each turn, 1 adjacent tile becomes a GROWTH tile (vines spread outward; direction chosen by the active player)
+- GROWTH tiles apply SLOWED to enemies who enter them; allied units on GROWTH tiles gain +1 HP regen per turn
+- The ally may spend 1 AP to shed the vines early, ending the buff but leaving all created GROWTH tiles in place on the board
+
+**Tactical intent:** Defensive anchor with organic area denial that grows over time. The ROOT tether prevents displacement — countering Aeromancer, Gravimancer, and Hydromancer push/pull — but it is entirely a choice: the ally selected this position. GROWTH tile spread means standing still for 3 turns creates a 3-tile vine zone, making the unit progressively harder to approach. The shed mechanic is design-critical — it prevents the buff from becoming a trap if circumstances change. Shedding after 2 turns and leaving 2 GROWTH tiles behind is a valid play: take mobility back, keep the denial zone.
+
+**Notable interactions:** GROWTH tiles + Floramancer's own pollen/poison spells create a compounding zone — enemies are SLOWED traversing the vines and receiving DoT simultaneously. Tidal Blessing (Hydromancer) regen stacks additively with Verdant Embrace regen on the same ally (2 + 2 = 4 HP per turn), forcing opponents to prioritize eliminating the buffed unit before attrition wins.
+
 *End of Floramancer design document.*

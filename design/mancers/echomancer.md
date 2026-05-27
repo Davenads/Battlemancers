@@ -419,4 +419,24 @@ When an Afterimage is destroyed (its 10 HP pool is depleted, triggering the 12 H
 
 This is a minor mechanic with primarily flavor impact, but it adds physical coherence to the Afterimage system: the decoys are extensions of the Echomancer, and when the Echomancer is at thermal extremes, that is reflected in the way the decoys detonate.
 
+---
+
+## 10. Augmentation Spell
+
+### Phantom Imprint
+
+**AP Cost:** 3 | **Range:** 4 tiles | **Targeting:** Single allied unit | **Cooldown:** 4 turns
+
+Imprints the Echomancer's echo-weave onto an ally, marking their next action for automatic repetition at reduced power.
+
+**Effects (next turn):**
+- The ally's next spell or attack resolves normally, then -- 1 initiative phase later, at end of the current resolution phase -- an echo of that same action repeats automatically at 50% effectiveness (half damage, half duration on status effects applied, rounded down)
+- The echo pursues the same target: if the target has moved, the echo follows; if the target has died, the echo redirects to the nearest valid enemy within the original spell's targeting range
+- Healing effects cannot be echoed (temporal echo cannot restore what was never spent)
+- The imprint expires unused at end of the following turn
+
+**Tactical intent:** Delayed free double-strike at reduced power. The initiative delay on the echo (end-of-phase) means enemies who survive the first hit have a window to react before the echo arrives. Skilled opponents reduce the echo's value; passive opponents eat both. Status effects at 50% duration round down -- a 2-turn effect echoes as 1 turn; a 1-turn effect does not echo at all -- making Imprint most powerful on high-damage or long-duration spells. The redirect on target death prevents AP waste in chaotic resolution phases.
+
+**Notable interactions:** Phantom Imprint on a Chronomancer Timestep target: original action -> Timestep second action -> Phantom echo = three total hits from one unit in one phase. Phantom Imprint on a Toximancer Venom Infused ally: the echo also carries POISON stacks, which can trigger the Toximancer's stack-doubling synergy a second time on a pre-poisoned target in the same phase.
+
 *End of Echomancer design document.*

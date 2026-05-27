@@ -542,4 +542,25 @@ An enemy at -40 SUPERCOOLED (SLOWED + BRITTLE modifier, +50% physical damage tak
 
 **Anti-synergy ruling:** Do not use Electromancer spells on an enemy a Cryomancer is actively freezing, unless the intent is specifically to halt their temperature descent at SUPERCOOLED/COLD rather than drive them to FROZEN SOLID. If a Cryomancer has pushed an enemy to -50 and is planning to finish the freeze next turn, an Electromancer Chain Lightning for +10 temperature moves the target from -50 to -40 — still SUPERCOOLED, damage done, but the freeze progress is set back one effective Cryomancer cast. Communicate freeze targets with allied Cryomancers before using lightning on cold enemies.
 
+---
+
+## 11. Augmentation Spell
+
+### Galvanic Charge
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Channels a sustained electrical current into an ally, turning them into a live conductor with multi-target attack reach and punishing melee contact.
+
+**Effects (2 turns):**
+- Ally gains CHARGED status
+- Ally's attacks chain -- the strike automatically arcs to every enemy within 1 tile of the primary target, dealing half damage (rounded down, minimum 1) to each chained target
+- Any enemy that damages the ally in melee is STUNNED for 1 turn (contact shock -- triggers on condition, guaranteed)
+- WET tile amplification: while the ally stands on a WET tile, the chain arc range extends from 1 tile to 2 tiles around the primary target
+- Ally takes 1 damage at the start of each of their turns (controlled overload)
+
+**Tactical intent:** The stun is guaranteed but defensive -- the ally is a live wire enemies cannot safely touch in melee. Any unit that engages the ally in close combat eats a guaranteed STUN. The chain arc fills the offensive role: in clustered enemy formations, every attack becomes a multi-target hit with no RNG. WET tile amplification maintains the Hydromancer coordination reward -- wet the approach path, charge the ally, 2-tile chains punish tight formations. The self-damage creates a ticking clock: the buff should be used immediately, not held in reserve.
+
+**Notable interactions:** CHARGED status on the ally means FIRE spells targeting them trigger Arc Explosion (element matrix) -- exercise caution with Pyromancer allied spells in proximity. CHARGED ally standing on WET hit by enemy LIGHTNING: chain stun applies to the ally normally (Galvanic Charge does not grant LIGHTNING immunity). Ally with Galvanic Charge active + Faunamancer Pack Bond companion: the companion's reaction attack fires after the contact stun triggers, hitting a stunned target that cannot retaliate.
+
 *End of Electromancer design document.*

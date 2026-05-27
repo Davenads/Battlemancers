@@ -435,4 +435,24 @@ Geomancer can wall off BURNING terrain to prevent enemies from entering it (bloc
 
 The same logic applies in reverse: a Stone Wall blocking access to Cryomancer ice fields prevents enemies from cooling themselves by retreating to cold ground. The Geomancer's terrain architecture dictates which thermal zones are accessible to which units — a form of temperature control through geometry rather than elemental application.
 
+---
+
+## 10. Augmentation Spell
+
+### Earthen Mantle
+
+**AP Cost:** 3 | **Range:** 2 tiles | **Targeting:** Single allied unit | **Cooldown:** 4 turns
+
+Raises stone and compacted earth through the ground, encasing an ally's lower body in living stone -- making them an immovable fortress and terrain-shaping weapon.
+
+**Effects (3 turns):**
+- Ally is immune to all displacement -- pushes, pulls, teleports, and knockbacks have no effect on their position
+- Ally's tile is treated as +1 elevation for line-of-sight purposes (the stone raises their effective height)
+- Ally's movement range is halved (round down) -- stone is heavy
+- Once per turn as a free action, the ally can shatter one adjacent wall tile, converting it to passable rubble (2 movement cost, provides light cover)
+
+**Tactical intent:** Anti-displacement fortress mode for a single ally. Directly counters Aeromancer, Gravimancer, and Hydromancer push/pull kits -- the mantled ally simply does not move when forced. The LoS elevation advantage simulates high ground without changing terrain. The movement penalty is real and intended: this buff plants a unit, it does not enhance mobility. The wall-shatter free action is the strategic wrinkle -- the Geomancer can pre-wall an area, drop Earthen Mantle on an ally, and the ally bulldozes through those same walls on subsequent turns, reshaping the Geomancer's own terrain investment.
+
+**Notable interactions:** On MUD tiles, the movement penalty compounds (MUD costs 2 per tile plus halved move range). On elevated terrain with clear sightlines, a mantled ranged unit becomes a near-immovable high-ground firing platform. Earthen Mantle + Gravimancer Gravitational Anchor on adjacent allies creates a locked formation that warps the entire flank's movement economy for enemies.
+
 *End of Geomancer design document.*

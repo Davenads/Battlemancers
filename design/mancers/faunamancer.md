@@ -437,3 +437,24 @@ Beasts are organic creatures and are fully subject to temperature effects from t
 - **Scout Wolf (+5 starting temp) on BURNING terrain:** The Wolf starts warm and BURNING terrain applies +5 temperature per turn of contact. Starting at +5, the Wolf needs 56 temperature points to reach OVERHEATED. Three turns standing on a BURNING tile chain (3 × ~17 temp/turn) can push the Wolf into the OVERHEATED band — at which point it takes BURNING DoT (5 HP/turn) in addition to any fire terrain damage. A Scout Wolf in fire for 3 turns without being commanded off the tile is near-dead via DoT. Always command beasts off BURNING terrain immediately.
 - **Siege Boar (+10 starting temp):** Similar risk but higher HP makes it more survivable. The Boar can tolerate 2-3 turns on BURNING terrain before OVERHEATED DoT becomes critical, giving the Faunamancer a narrow window to use fire-zone positioning strategically.
 - **Verdant Serpent (-5 starting temp):** The cold-blooded Serpent is at -5 and absorbs heat from BURNING terrain like any unit, but it takes longer to reach OVERHEATED (starting 66 points away). The Serpent is the most fire-safe beast for brief incursions into burning zones.
+
+---
+
+## 11. Augmentation Spell
+
+### Pack Bond
+
+**AP Cost:** 2 | **Range:** 4 tiles | **Targeting:** Single allied unit | **Cooldown:** 2 turns
+
+Establishes an instinctual predator link between an allied unit and one of the Faunamancer's active companion units, creating a coordinated dual-threat pair.
+
+**Effects (3 turns):**
+- When either bonded unit attacks, the other may perform a free reaction attack against the same target if in range (each unit is limited to one reaction attack per turn)
+- Both bonded units gain +1 damage against any enemy who has attacked either of them this match
+- Bond break: if one bonded unit is killed, the survivor immediately enters FRENZY for 1 turn — +3 damage, the reaction mechanic is lost, and the unit cannot be targeted by CHARM for the duration of the frenzy
+
+**Tactical intent:** Dual-threat pressure that rewards tight positioning. Reaction attacks force enemies to evaluate both units simultaneously when choosing targets — engaging either bonded unit invites retaliation from the other. The shared vengeance bonus rewards sustained combat against the same opponents. Bond break FRENZY is the mechanical and narrative climax: losing a pack member hurts, but the survivor erupts in retaliatory aggression. This also prevents the obvious counterplay of killing the companion to cleanly remove the bond — the cost of doing so is a frenzied survivor. Low cooldown (2) makes Pack Bond the Faunamancer's constant rotation support tool.
+
+**Notable interactions:** Pack Bond on a unit with Electromancer Galvanic Charge active: the companion's reaction attack fires after the charged unit's contact stun triggers, hitting a stunned target that cannot retaliate. Bond a companion with a Necromancer Deathmark recipient: if the marked ally kills via a reaction attack, Deathmark triggers and the Necromancer raises the corpse immediately at no AP cost.
+
+*End of Faunamancer design document.*

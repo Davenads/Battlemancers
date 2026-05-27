@@ -448,4 +448,25 @@ If an ally Cryomancer is actively working to freeze an enemy down to FROZEN SOLI
 
 The exception: if the Aeromancer is using Gust Strike at -5 on a unit at -25 (COLD, approaching SUPERCOOLED at -31), and the team wants to accelerate the SUPERCOOLED threshold for the BRITTLE modifier, the -5 is intentional and the Cryomancer combo is being set up cooperatively.
 
+---
+
+## 10. Augmentation Spell
+
+### Updraft
+
+**AP Cost:** 2 | **Range:** 5 tiles | **Targeting:** Single allied unit | **Cooldown:** 2 turns
+
+Channels a focused column of rising air beneath an allied unit, granting one explosive burst of speed, elevation, and extended reach.
+
+**Effects (this turn only):**
+- Ally's movement range increases by 3
+- Ally can move over impassable terrain tiles this turn (air-carried -- they pass over without landing on them)
+- Ally's next attack or spell gains +2 range (launched by the updraft's force)
+- If the ally passes through or over a BURNING tile during movement, they take no fire damage (elevated above the flames for the duration of movement)
+- Effect expires fully at end of the ally's turn -- they land on their final position normally
+
+**Tactical intent:** Pure tactical mobility amplifier. The +3 movement plus impassable-terrain fly-over creates dramatic repositioning plays -- closing gaps, escaping encirclements, reaching elevated positions the enemy considered safe. The +2 range bonus on the ally's next action rewards planning the endpoint. The BURNING pass-through creates direct Pyromancer synergy: Pyromancer denies ground with fire, Aeromancer carries an ally through it to flanking positions on the other side. Short cooldown (2) makes this a reliable sequencing tool every other turn.
+
+**Notable interactions:** If the ally has a cone or line-based spell, the +2 range extends it dramatically. A Sonimancer sound cone launched from an Updraft-boosted position can catch clusters the Sonimancer could not normally reach. The fly-over mechanic handles horizontal blocked terrain only -- it cannot carry a unit off a cliff edge or grant vertical elevation change.
+
 *End of Aeromancer design document.*

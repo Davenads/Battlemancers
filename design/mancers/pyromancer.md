@@ -477,5 +477,24 @@ The one functional synergy is the Toximancer flavor: Glade Archer poison stacks 
 
 ---
 
+---
+
+## 9. Augmentation Spell
+
+### Combustion Brand
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Brands an allied unit with volatile fire energy, converting their attacks into a vector for flame spread and making them dangerous to engage directly.
+
+**Effects:**
+- Ally's attacks apply 1 BURNING stack to targets on hit for 2 turns
+- When the ally takes damage from any source, they release a minor fire burst — 1 damage to all adjacent tiles and units, applying BURNING to affected tiles
+- While branded, WET cannot be applied to the ally; if WET was already active, it is removed and a Steam Cloud generates on the ally's tile
+
+**Tactical intent:** Turns any allied unit into a walking BURNING spreader — particularly effective on Chaff who close to melee clusters. The damage-reactive burst punishes enemies who engage the branded unit in close combat. The WET immunity cuts both ways: the ally is protected from Electromancer chain-stun setup but also cannot benefit from Hydromancer's WET-based regen. Pyromancer fans the BURNING tiles created by the ally, generating a feedback loop of terrain denial that rewards tight activation sequencing.
+
+**Notable interactions:** If the branded ally stands on a CHARGED tile when the reactive burst fires, the element matrix triggers an Arc Explosion around them. Requires setup but is extremely punishing in a tight formation.
+
 *End of Pyromancer design document.*
 *Format version: 1.0 — canonical template for all 19 Mancer docs.*

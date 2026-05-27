@@ -421,4 +421,24 @@ In a Crystal Cascade, each node in the chain transmits its stored temperature al
 
 This combo is documented as **"The Thermal Cascade."** Against enemies already in WARM state (+1 to +30), a +30 temperature spike from the Thermal Cascade pushes them directly to OVERHEATED (+61), triggering BURNING DoT (5 HP/turn) and opening them to THERMAL SHOCK vulnerability on the following turn.
 
+---
+
+## 10. Augmentation Spell
+
+### Prismatic Shell
+
+**AP Cost:** 3 | **Range:** 3 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Grows a prismatic crystal lattice around an ally that absorbs incoming damage and stores it as coherent light energy for a targeted release.
+
+**Effects (up to 4 turns):**
+- Ally begins with a PRISMATIC CHARGE counter at 0; each time the ally takes damage from any source, the counter increases by 1 (maximum 3)
+- At any point, either the ally or the Crystalomancer (as a free action on the Crystalomancer's own turn) can release the stored charge
+- Release: a light beam fires from the ally's position in a chosen direction, dealing 2 x PRISMATIC CHARGE damage (2, 4, or 6) and applying CHARGED to the first unit struck
+- Decay: if the ally takes no damage for 2 consecutive turns, the shell dissipates unused -- stored energy bleeds off harmlessly
+
+**Tactical intent:** Reactive damage conversion that rewards absorbing hits deliberately. The more the ally absorbs, the larger the eventual release -- but they must genuinely take damage to charge it. The decay mechanic prevents turtling: the ally cannot charge up safely behind cover; they must invite damage or the shell is wasted. The Crystalomancer's ability to trigger the release (not just the ally) enables coordinated timing -- set up a fully charged ally, wait for the ideal firing line, release as a free action from across the board. Maximum release (6 damage) applies CHARGED to the target, enabling Electromancer chain-stun follow-up.
+
+**Notable interactions:** If the ally takes LIGHTNING damage while CHARGED (from an enemy Electromancer), the element matrix triggers Overload (AoE explosion); Prismatic Shell then stores the damage from that explosion -- potentially jumping to high charge from one enemy mistake. CHARGED applied to the release target opens a chain-stun window for an allied Electromancer on the same activation phase.
+
 *End of Crystalomancer design document.*

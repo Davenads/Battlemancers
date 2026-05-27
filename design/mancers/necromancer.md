@@ -445,4 +445,24 @@ Cinder Wraiths are raised from Charred Remains — units that died in ON_FIRE te
 | Death Mark | -10 to marked unit |
 | Necrotic Eruption | -15 to all living units in AoE |
 
+---
+
+## 10. Augmentation Spell
+
+### Deathmark
+
+**AP Cost:** 2 | **Range:** 4 tiles | **Targeting:** Single allied unit | **Cooldown:** 3 turns
+
+Brands an allied unit with a necrotic kill-mark, creating a compounding reward loop tied to the Necromancer's corpse economy.
+
+**Effects (up to 3 turns or until triggered):**
+- When the marked ally kills an enemy unit, the Necromancer immediately raises that corpse as a Remnant at no AP cost
+- The marked ally heals 4 HP on the killing blow (death energy returned to the host)
+- If the marked ally dies while the mark is active, they automatically become a Remnant -- no Necromancer action or AP expenditure required
+- Only one Deathmark can be active at a time
+
+**Tactical intent:** Deathmark extends the Necromancer's corpse economy forward in time -- betting on a specific ally to deliver a kill and reaping compounding returns. The auto-Remnant on ally death is the most strategically rich mechanic: deliberately marking a low-HP unit and sending them into a trade becomes a valid play. You accept losing the unit; you gain a Remnant without spending resources. The 4 HP heal on kill rewards correct identification of which ally will close the engagement. Only one active mark prevents trivially marking the entire force.
+
+**Notable interactions:** Ashen Covenant synergy is potent -- Grave Husks already generate Necromancer fuel on death via Deathless Ranks. A marked Grave Husk who kills before dying gives Deathmark Remnant AND the faction passive reward simultaneously. In a Necromancer mirror match: if the marked ally kills an enemy Remnant, that Remnant is re-raised for the marking Necromancer -- corpse theft.
+
 *End of Necromancer design document.*
