@@ -664,10 +664,10 @@ These rules are mandatory for all agents:
 | spell-resolver | 3 | COMPLETE | agent/spell-resolver | Merged to master |
 | warband-validator | 3 | COMPLETE | agent/warband-validator | Merged to master |
 | map-system | 3 | COMPLETE | agent/map-system | Merged to master; 4 preset maps |
-| simulation-integration | 4 | IN PROGRESS | agent/simulation-integration | |
-| json-data | 4 | IN PROGRESS | agent/json-data | |
-| status-system-tests | 4 | IN PROGRESS | agent/status-system-tests | |
-| orchestration-update | 4 | IN PROGRESS | agent/orchestration-update | |
+| simulation-integration | 4 | COMPLETE | agent/simulation-integration | Merged to master; StatusEffectResolver, 10 integration tests |
+| json-data | 4 | COMPLETE | agent/json-data | Merged to master; all 19 Mancer JSON files, schema fixed |
+| status-system-tests | 4 | COMPLETE | agent/status-system-tests | Merged to master; 15 StatusManager + 9 TemperatureManager tests |
+| orchestration-update | 4 | COMPLETE | agent/orchestration-update | Merged to master; Wave 4 specs + Wave 5 placeholder |
 
 ---
 
