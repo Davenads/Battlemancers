@@ -74,6 +74,21 @@ git push origin agent/mancers-group-a agent/mancers-group-b
 git push origin agent/element-resolver agent/status-system agent/pathfinding agent/test-framework
 ```
 
+### Wave 4 Worktree Setup
+
+```bash
+# Wave 4 worktrees — run from C:/Projects/Battlemancers
+git branch agent/simulation-integration
+git branch agent/json-data
+git branch agent/status-system-tests
+git branch agent/orchestration-update
+
+git worktree add ../BattlemancersAgents/simulation-integration agent/simulation-integration
+git worktree add ../BattlemancersAgents/json-data agent/json-data
+git worktree add ../BattlemancersAgents/status-system-tests agent/status-system-tests
+git worktree add ../BattlemancersAgents/orchestration-update agent/orchestration-update
+```
+
 ---
 
 ## Agent Roster
@@ -415,6 +430,95 @@ Each test class should include:
 
 ---
 
+### Wave 4 — Simultaneous Turn Loop + Data Layer
+
+Wave 4 agents are spawned once the orchestrator has merged all Wave 3 branches into `master`.
+
+---
+
+#### Agent: `simulation-integration`
+**Worktree:** `C:/Projects/BattlemancersAgents/simulation-integration`
+**Branch:** `agent/simulation-integration`
+
+**Owns (modifies):**
+- `src/simulation/Status/StatusEffect.cs` — adds HASTE, TIME_SLOW to StatusType enum
+- `src/core/Simulation/Commands/MoveCommand.cs` — ICE_TILE AP cost and displacement extension
+- `src/core/Simulation/TurnManager.cs` — HASTE/TIME_SLOW sort priority, STUNNED/FROZEN/ROOTED/SILENCED execution gates, CONFUSED/PANICKED/CHARMED target overrides
+
+**Owns (creates):**
+- `src/simulation/Effects/StatusEffectResolver.cs` — static resolver for CONFUSED, PANICKED, CHARMED behavioral overrides
+- `tests/Simulation/SimulationIntegrationTests.cs` — full turn loop integration tests
+
+**Dependencies:** All Wave 1, 2, 3 output (TurnManager, StatusManager, SimulationState, MoveCommand)
+
+**Task:** Wire all simulation pieces into a complete turn resolution pipeline. Implements all deterministic status effect behavioral overrides at command execution time:
+- STUNNED / FROZEN: skip actor's entire command set for the turn
+- ROOTED: cancel MoveCommand, allow SpellCommand
+- SILENCED: cancel SpellCommand, allow MoveCommand
+- CONFUSED: override spell target to nearest visible unit regardless of allegiance
+- PANICKED: override movement to flee direction; override attack to nearest unit regardless of allegiance using lowest-AP-cost spell
+- CHARMED: override spell to attack nearest ally (own team) with highest-damage spell; if no ally in range, override movement toward nearest ally
+- HASTE: unit resolves first within its type group in the turn order
+- TIME_SLOW: unit resolves last within its type group in the turn order
+- ICE_TILE voluntary movement: +1 AP per FROZEN tile traversed
+- ICE_TILE forced displacement: guaranteed +1 tile extension past destination in displacement direction
+
+**Context files to read first:**
+- `design/combat/status-effects.md`
+- `design/combat/turn-structure.md`
+- `design/combat/terrain-system.md`
+- `src/core/Simulation/TurnManager.cs`
+- `src/simulation/Status/StatusEffect.cs`
+
+---
+
+#### Agent: `json-data`
+**Worktree:** `C:/Projects/BattlemancersAgents/json-data`
+**Branch:** `agent/json-data`
+
+**Owns (creates):**
+- `assets/data/mancers/*.json` — one file per Mancer archetype (all 19)
+
+**Dependencies:** `src/data/SpellData.cs`, `src/data/MancerData.cs` (field names must match exactly)
+
+**Task:** Create runtime JSON data files for all 19 Mancer archetypes. Each file contains the Mancer's base stats and full spell kit (including augmentation spells added in each mancer's doc). JSON field names must exactly match C# property names (System.Text.Json default policy). Every spell entry must include `temperatureDelta` (int) and `applicationChance: 1.0`.
+
+**Context files to read first:**
+- All 19 mancer design docs in `design/mancers/`
+- `src/data/SpellData.cs` and `src/data/MancerData.cs`
+- `assets/data/schema-notes.md`
+
+---
+
+#### Agent: `status-system-tests`
+**Worktree:** `C:/Projects/BattlemancersAgents/status-system-tests`
+**Branch:** `agent/status-system-tests`
+
+**Owns (creates):**
+- `tests/Simulation/StatusManagerTests.cs`
+- `tests/Simulation/TemperatureManagerTests.cs`
+
+**Dependencies:** `src/simulation/Status/StatusManager.cs`, `src/simulation/Status/StatusEffect.cs`, TemperatureManager (wherever it lives)
+
+**Task:** Expand test coverage for all stacking rules, threshold crossings, dual-status interactions (BLINDED+CONFUSED, CHARMED+SILENCED, ROOTED+SILENCED), and temperature accumulation behavior. Minimum 10 tests per file. All tests are headless NUnit with no Unity dependency.
+
+**Context files to read first:**
+- `design/combat/status-effects.md`
+- All existing test files in `tests/`
+
+---
+
+#### Agent: `orchestration-update`
+**Worktree:** `C:/Projects/BattlemancersAgents/orchestration-update`
+**Branch:** `agent/orchestration-update`
+
+**Owns (modifies):**
+- `design/agent-orchestration.md`
+
+**Task:** Update the orchestration doc with Wave 4 agent specs, Wave 4 worktree setup commands, and status table entries. Also add a Wave 5 placeholder section for the multiplayer/networking layer.
+
+---
+
 ## Task Specification Format
 
 When the orchestrator spawns a subagent, provide this exact format:
@@ -532,6 +636,10 @@ These rules are mandatory for all agents:
 | status-system | `src/simulation/Status/*.cs` |
 | pathfinding | `src/core/Pathfinding/*.cs` |
 | test-framework | `tests/**` |
+| simulation-integration | `src/simulation/Effects/StatusEffectResolver.cs`, modifies `src/core/Simulation/TurnManager.cs`, `src/core/Simulation/Commands/MoveCommand.cs`, `src/simulation/Status/StatusEffect.cs`, `tests/Simulation/SimulationIntegrationTests.cs` |
+| json-data | `assets/data/mancers/*.json` |
+| status-system-tests | `tests/Simulation/StatusManagerTests.cs`, `tests/Simulation/TemperatureManagerTests.cs` |
+| orchestration-update | `design/agent-orchestration.md` |
 
 ---
 
@@ -556,3 +664,15 @@ These rules are mandatory for all agents:
 | spell-resolver | 3 | COMPLETE | agent/spell-resolver | Merged to master |
 | warband-validator | 3 | COMPLETE | agent/warband-validator | Merged to master |
 | map-system | 3 | COMPLETE | agent/map-system | Merged to master; 4 preset maps |
+| simulation-integration | 4 | IN PROGRESS | agent/simulation-integration | |
+| json-data | 4 | IN PROGRESS | agent/json-data | |
+| status-system-tests | 4 | IN PROGRESS | agent/status-system-tests | |
+| orchestration-update | 4 | IN PROGRESS | agent/orchestration-update | |
+
+---
+
+### Wave 5 — Unity Presentation Layer
+*Planned — spawn after Wave 4 simulation-integration merges to master*
+- `unity-presentation`: GridRenderer, UnitViewController, BattleSceneController — Unity MonoBehaviour layer reading from SimulationEventBus
+- Planning Phase UI: 100-pt budget tracker, unit assignment, plan submission (hotseat prototype)
+- Warband selection → BattleScene handoff
