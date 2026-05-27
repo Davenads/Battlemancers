@@ -120,7 +120,7 @@
     {
       "spellId": "crush",
       "displayName": "Crush",
-      "description": "Directs gravitational force to compress a single target, dealing 45 damage. Target is STUNNED for 1 turn and forced to the ground (removes elevation advantage). Heats target due to compression. Cannot affect constructs (Bone Spires, Crystal Nodes).",
+      "description": "Directs gravitational force to compress a single target, dealing 40 damage. Target is STUNNED for 1 turn and forced to the ground (removes elevation advantage). Heats target due to compression. Cannot affect constructs (Bone Spires, Crystal Nodes).",
       "apCost": 5,
       "cooldownTurns": 3,
       "tier": "Heavy",
@@ -131,7 +131,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Gravity",
-      "baseDamage": 45,
+      "baseDamage": 40,
       "temperatureDelta": 10,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -151,7 +151,7 @@
       "sfxCastTag": "spell/gravity/cast",
       "sfxImpactTag": "spell/gravity/impact",
       "cameraShakeIntensity": 1.0,
-      "designNotes": "Signature heavy. 45 damage + STUN + elevation removal. Removes Geomancer Raise Terrain advantage."
+      "designNotes": "Signature heavy. 40 damage + STUN + elevation removal. Removes Geomancer Raise Terrain advantage."
     },
     {
       "spellId": "gravitational_anchor",

@@ -23,7 +23,7 @@
     {
       "spellId": "light_beam",
       "displayName": "Light Beam",
-      "description": "A piercing beam of concentrated light dealing 20 damage. Can pass through allied units without effect. Applies BLINDED to the target for 1 turn.",
+      "description": "A piercing beam of concentrated light dealing 14 damage. Can pass through allied units without effect. Applies BLINDED to the target for 1 turn.",
       "apCost": 2,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Light",
-      "baseDamage": 20,
+      "baseDamage": 14,
       "temperatureDelta": 5,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -54,7 +54,7 @@
       "sfxCastTag": "spell/light/cast",
       "sfxImpactTag": "spell/light/impact",
       "cameraShakeIntensity": 0.2,
-      "designNotes": "Highest-damage Quick spell in the roster. 7-tile range enables safe sniping."
+      "designNotes": "Long-range damage + BLINDED application. 7-tile range enables safe sniping from outside most return-fire range."
     },
     {
       "spellId": "solar_flash",

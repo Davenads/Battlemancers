@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Earth",
-      "baseDamage": 25,
+      "baseDamage": 17,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -115,7 +115,7 @@
     {
       "spellId": "earthen_smash",
       "displayName": "Earthen Smash",
-      "description": "Slams the ground with concentrated earth force in a 2-tile radius, dealing 20 damage and creating MUD terrain.",
+      "description": "Slams the ground with concentrated earth force in a 2-tile radius, dealing 28 damage and creating MUD terrain.",
       "apCost": 4,
       "cooldownTurns": 2,
       "tier": "Heavy",
@@ -126,7 +126,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": true,
       "element": "Earth",
-      "baseDamage": 20,
+      "baseDamage": 28,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [

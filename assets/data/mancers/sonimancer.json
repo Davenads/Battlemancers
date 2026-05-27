@@ -4,7 +4,7 @@
   "tacticalIdentity": "Short-range cone burst specialist. All four base spells are cones — the Sonimancer must close to melee adjacency to use the full toolkit. Deals the highest raw DPS per AP of any Mancer at melee range, but has the shortest base range on the roster. Shatters bone constructs and FROZEN units via sonic impact.",
   "primaryElement": "Sound",
   "secondaryElement": "Arcane",
-  "maxHP": 85,
+  "maxHP": 90,
   "moveRange": 3,
   "baseArmor": 1,
   "baseActionPoints": 6,
@@ -23,7 +23,7 @@
     {
       "spellId": "sonic_pulse",
       "displayName": "Sonic Pulse",
-      "description": "A quick directional sonic burst in a short cone (range 3). Deals 10 Sound damage and applies DEAFENED (1 turn: -2 to all spell ranges). Minimal AP cost enables double-cast.",
+      "description": "A quick directional sonic burst in a short cone (range 3). Deals 4 Sound damage and applies DEAFENED (1 turn: -2 to all spell ranges). Minimal AP cost enables multiple casts — cone AoE means total damage scales with targets hit.",
       "apCost": 1,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": false,
       "canTargetEmptyTile": true,
       "element": "Sound",
-      "baseDamage": 10,
+      "baseDamage": 4,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [

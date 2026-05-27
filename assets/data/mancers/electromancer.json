@@ -23,7 +23,7 @@
     {
       "spellId": "arc_bolt",
       "displayName": "Arc Bolt",
-      "description": "Fires a lightning bolt at a single target for 18 damage. The target tile becomes CHARGED for 1 turn. If the target is WET, the arc chains to adjacent WET units.",
+      "description": "Fires a lightning bolt at a single target for 13 damage. The target tile becomes CHARGED for 1 turn. If the target is WET, the arc chains to adjacent WET units.",
       "apCost": 2,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Lightning",
-      "baseDamage": 18,
+      "baseDamage": 13,
       "temperatureDelta": 10,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -95,7 +95,7 @@
     {
       "spellId": "chain_lightning",
       "displayName": "Chain Lightning",
-      "description": "Fires a high-powered bolt dealing 25 damage. If the primary target is WET, a chain arc propagates through the entire connected WET network. Each chained unit takes 18 arc damage and is STUNNED for 1 turn.",
+      "description": "Fires a high-powered bolt dealing 20 damage. If the primary target is WET, a chain arc propagates through the entire connected WET network. Each chained unit takes 12 arc damage and is STUNNED for 1 turn.",
       "apCost": 3,
       "cooldownTurns": 1,
       "tier": "Standard",
@@ -106,7 +106,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Lightning",
-      "baseDamage": 25,
+      "baseDamage": 20,
       "temperatureDelta": 10,
       "conditionalBonuses": [],
       "appliedEffects": [

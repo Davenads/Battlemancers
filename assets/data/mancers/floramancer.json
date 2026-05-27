@@ -4,7 +4,7 @@
   "tacticalIdentity": "Zone control and root specialist. Entangles enemies with vines, seeds SPORES terrain that applies poison stacks, and creates OVERGROWTH barriers that channel movement. Wins by converting the battlefield into a garden of hazards that punish any approach.",
   "primaryElement": "Wind",
   "secondaryElement": "Arcane",
-  "maxHP": 80,
+  "maxHP": 85,
   "moveRange": 4,
   "baseArmor": 1,
   "baseActionPoints": 6,
@@ -23,7 +23,7 @@
     {
       "spellId": "vine_surge",
       "displayName": "Vine Surge",
-      "description": "Erupts vines from the ground at a target tile, ROOTING the unit on that tile for 1 turn and dealing 6 damage. The impact tile becomes OVERGROWTH terrain.",
+      "description": "Erupts vines from the ground at a target tile, ROOTING the unit on that tile for 1 turn and dealing 8 damage. The impact tile becomes OVERGROWTH terrain.",
       "apCost": 2,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": true,
       "element": "Wind",
-      "baseDamage": 6,
+      "baseDamage": 8,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -59,7 +59,7 @@
     {
       "spellId": "pollen_burst",
       "displayName": "Pollen Burst",
-      "description": "Releases a toxic pollen cloud in a 2-tile radius. Units in the area take 4 damage and receive 1 POISONED stack. Tiles become SPORES terrain.",
+      "description": "Releases a toxic pollen cloud in a 2-tile radius. Units in the area take 7 damage and receive 1 POISONED stack. Tiles become SPORES terrain.",
       "apCost": 2,
       "cooldownTurns": 1,
       "tier": "Quick",
@@ -70,7 +70,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": true,
       "element": "Wind",
-      "baseDamage": 4,
+      "baseDamage": 7,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [

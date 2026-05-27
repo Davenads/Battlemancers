@@ -23,7 +23,7 @@
     {
       "spellId": "necrotic_bolt",
       "displayName": "Necrotic Bolt",
-      "description": "Fires a bolt of necrotic energy for 16 damage. Applies DEATH_MARK to the target — on their death, triggers an AoE explosion.",
+      "description": "Fires a bolt of necrotic energy for 12 damage. Applies DEATH_MARK to the target — on their death, triggers an AoE explosion.",
       "apCost": 2,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Necrotic",
-      "baseDamage": 16,
+      "baseDamage": 12,
       "temperatureDelta": -5,
       "conditionalBonuses": [],
       "appliedEffects": [

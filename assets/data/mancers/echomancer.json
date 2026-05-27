@@ -23,7 +23,7 @@
     {
       "spellId": "arcane_dart",
       "displayName": "Arcane Dart",
-      "description": "A quick arcane projectile dealing 10 damage. The most efficient direct-damage option in the kit — used as a filler when Echo is on cooldown.",
+      "description": "A quick arcane projectile dealing 5 damage. Used as a filler when Echo is on cooldown — primary value is enabling Echo repetition chains.",
       "apCost": 1,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Arcane",
-      "baseDamage": 10,
+      "baseDamage": 5,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [],
@@ -102,7 +102,7 @@
       "sfxCastTag": "spell/arcane/cast",
       "sfxImpactTag": "spell/arcane/impact",
       "cameraShakeIntensity": 0.2,
-      "designNotes": "Core identity spell. Echoes inherit the element and temperatureDelta of the echoed spell at 60% intensity. Timing is everything — echo a Pillar of Flame for 33 AoE damage."
+      "designNotes": "Core identity spell. Echoes inherit the element and temperatureDelta of the echoed spell at 60% intensity. Timing is everything — echo a Pillar of Flame for 24 AoE damage."
     },
     {
       "spellId": "phase_step",

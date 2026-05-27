@@ -56,7 +56,7 @@
     {
       "spellId": "cyclone_blast",
       "displayName": "Cyclone Blast",
-      "description": "A spinning vortex of air that deals 14 damage and pushes all units in a 2-tile radius outward from the center.",
+      "description": "A spinning vortex of air that deals 24 damage and pushes all units in a 2-tile radius outward from the center.",
       "apCost": 4,
       "cooldownTurns": 2,
       "tier": "Heavy",
@@ -67,7 +67,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": true,
       "element": "Wind",
-      "baseDamage": 14,
+      "baseDamage": 24,
       "temperatureDelta": -5,
       "conditionalBonuses": [],
       "appliedEffects": [],

@@ -23,7 +23,7 @@
     {
       "spellId": "bone_shard",
       "displayName": "Bone Shard",
-      "description": "A physical bone projectile dealing 14 damage. The impact tile becomes OSSIFIED_GROUND (movement cost 1.5; +1 armor to adjacent units). Against BRITTLE targets: 21 damage (x1.5). Against FROZEN targets: SHATTER triggers for 35 damage (x2.5). Against BRITTLE+FROZEN: 52 damage (x3.75).",
+      "description": "A physical bone projectile dealing 16 damage. The impact tile becomes OSSIFIED_GROUND (movement cost 1.5; +1 armor to adjacent units). Against BRITTLE targets: 24 damage (x1.5). Against FROZEN targets: SHATTER triggers for 40 damage (x2.5). Against BRITTLE+FROZEN: 60 damage (x3.75).",
       "apCost": 2,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Wind",
-      "baseDamage": 14,
+      "baseDamage": 16,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [],

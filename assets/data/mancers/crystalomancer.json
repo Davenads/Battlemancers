@@ -4,7 +4,7 @@
   "tacticalIdentity": "Network architect. Places Crystal Node, Crystal Prism, and Crystal Wall constructs that store energy, redirect beams, and block movement. Energy Release repeats any stored spell at 70% power from the Node's position. Synergizes with the entire allied roster — any elemental spell fired into a Node becomes a second AoE strike.",
   "primaryElement": "Crystal",
   "secondaryElement": "Arcane",
-  "maxHP": 85,
+  "maxHP": 90,
   "moveRange": 4,
   "baseArmor": 1,
   "baseActionPoints": 6,
@@ -23,7 +23,7 @@
     {
       "spellId": "crystal_shard",
       "displayName": "Crystal Shard",
-      "description": "A crystal projectile dealing 12 physical damage at 1 AP. Bounces off Crystal Prisms in its path at 90 degrees toward the nearest valid target, allowing LoS-bypass attacks once the network is established.",
+      "description": "A crystal projectile dealing 5 physical damage at 1 AP. Bounces off Crystal Prisms in its path at 90 degrees toward the nearest valid target, allowing LoS-bypass attacks once the network is established.",
       "apCost": 1,
       "cooldownTurns": 0,
       "tier": "Quick",
@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Crystal",
-      "baseDamage": 12,
+      "baseDamage": 5,
       "temperatureDelta": 0,
       "conditionalBonuses": [],
       "appliedEffects": [],
@@ -102,7 +102,7 @@
       "sfxCastTag": "spell/crystal/cast",
       "sfxImpactTag": "spell/crystal/impact",
       "cameraShakeIntensity": 0.5,
-      "designNotes": "Primary value proposition. 3 AP repeats ally's most powerful spell at 70% power as a 2-tile AoE. Pillar of Flame stored = 38 AoE damage on release."
+      "designNotes": "Primary value proposition. 3 AP repeats ally's most powerful spell at 70% power as a 2-tile AoE. Pillar of Flame stored = 28 AoE damage on release."
     },
     {
       "spellId": "crystal_cascade",

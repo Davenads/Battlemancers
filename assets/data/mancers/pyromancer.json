@@ -34,7 +34,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": false,
       "element": "Fire",
-      "baseDamage": 18,
+      "baseDamage": 13,
       "temperatureDelta": 15,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -131,7 +131,7 @@
     {
       "spellId": "pillar_of_flame",
       "displayName": "Pillar of Flame",
-      "description": "Concentrated fire strike on a single ground tile. Deals 55 damage to the primary target and adjacent units in a 1-tile radius. Creates ON_FIRE terrain at impact.",
+      "description": "Concentrated fire strike on a single ground tile. Deals 40 damage to the primary target and adjacent units in a 1-tile radius. Creates ON_FIRE terrain at impact.",
       "apCost": 5,
       "cooldownTurns": 3,
       "tier": "Heavy",
@@ -142,7 +142,7 @@
       "requiresLineOfSight": true,
       "canTargetEmptyTile": true,
       "element": "Fire",
-      "baseDamage": 55,
+      "baseDamage": 40,
       "temperatureDelta": 35,
       "conditionalBonuses": [],
       "appliedEffects": [
@@ -162,7 +162,7 @@
       "sfxCastTag": "spell/fire/cast",
       "sfxImpactTag": "spell/fire/impact",
       "cameraShakeIntensity": 1.0,
-      "designNotes": "Signature ultimate. 55 base damage. Crystalomancer Node amplifier."
+      "designNotes": "Signature ultimate. 40 base damage. Crystalomancer Node amplifier."
     },
     {
       "spellId": "combustion_brand",
