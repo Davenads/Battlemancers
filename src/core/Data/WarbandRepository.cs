@@ -14,6 +14,9 @@ namespace Battlemancers.Core.Data
     {
         private const string FileName = "warbands.json";
 
+        /// <summary>Maximum number of warbands that can be saved. Enforced on new-entry saves.</summary>
+        public const int MaxWarbands = 20;
+
         private readonly string _saveDirectory;
         private readonly Action<string> _logger;
         private List<WarbandData> _warbands;
@@ -78,6 +81,9 @@ namespace Battlemancers.Core.Data
                 _warbands[idx] = warband;
             else
             {
+                if (_warbands.Count >= MaxWarbands)
+                    throw new InvalidOperationException(
+                        $"Cannot save warband '{warband.Name}': the maximum of {MaxWarbands} warbands has been reached.");
                 warband.CreatedAt = DateTime.UtcNow;
                 _warbands.Add(warband);
             }
