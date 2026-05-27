@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Battlemancers.Core.Simulation.Commands;
 using Battlemancers.Core.Simulation.Events;
+using Battlemancers.Simulation.Effects;
+using Battlemancers.Simulation.Status;
 
 namespace Battlemancers.Core.Simulation
 {
@@ -20,12 +22,19 @@ namespace Battlemancers.Core.Simulation
     /// </list>
     ///
     /// Resolution order: Mancers (priority 0) → Ranged (priority 1) → Chaff (priority 2).
-    /// Within the same unit type, commands resolve by board position: lowest (x+y) sum first,
-    /// then lowest x on tie. This is fully deterministic from the board state — no random rolls.
+    /// Within the same unit type, HASTE units resolve first (sub-key –1), TIME_SLOW units resolve
+    /// last (sub-key +1), and normal units resolve by board position: lowest (x+y) sum first,
+    /// then lowest x on tie. This is fully deterministic from board state — no random rolls.
     ///
-    /// HASTE/TIME_SLOW resolution-window ordering: when those StatusTypes are added to the enum,
-    /// insert an additional sort key after type priority and before position: HASTE = resolves first
-    /// within type window (key –1), TIME_SLOW = resolves last (key +1), normal = key 0.
+    /// Status overrides during execution (applied per-actor before each command runs):
+    /// <list type="bullet">
+    ///   <item>STUNNED or FROZEN: entire command set for this actor is skipped.</item>
+    ///   <item>ROOTED: MoveCommands are cancelled; SpellCommands execute.</item>
+    ///   <item>SILENCED: SpellCommands are cancelled; MoveCommands execute.</item>
+    ///   <item>CONFUSED: SpellCommand target is overridden to nearest visible unit regardless of allegiance.</item>
+    ///   <item>PANICKED: MoveCommand overrides to flee; SpellCommand targets nearest unit regardless of allegiance.</item>
+    ///   <item>CHARMED: SpellCommand targets nearest ally with highest-base-damage spell; MoveCommand moves toward ally if no ally in range.</item>
+    /// </list>
     ///
     /// Turn limit: 50 turns. If neither player has eliminated the other's Mancers by turn 50,
     /// the match ends in a draw (MatchEndReason.TurnLimitReached, WinnerId = null).
@@ -36,12 +45,28 @@ namespace Battlemancers.Core.Simulation
     {
         private const int TurnLimit = 50;
 
+        // Sub-priority keys for HASTE/TIME_SLOW within the same unit-type window.
+        private const int HasteSubPriority = -1;
+        private const int NormalSubPriority = 0;
+        private const int TimeSlowSubPriority = 1;
+
         private readonly SimulationState _state;
         private readonly TemperatureManager _temperatureManager;
 
         // Maps playerId → the commands that player submitted this turn.
         // Cleared at the end of ResolveTurn so the next turn starts clean.
         private readonly Dictionary<string, Command[]> _pendingPlans;
+
+        /// <summary>
+        /// Creates a new TurnManager bound to the given simulation state.
+        /// A default TemperatureManager (with a default StatusManager) is created internally.
+        /// </summary>
+        /// <param name="state">The simulation state this manager will drive.</param>
+        /// <exception cref="ArgumentNullException">Thrown if state is null.</exception>
+        public TurnManager(SimulationState state)
+            : this(state, new TemperatureManager(new StatusManager()))
+        {
+        }
 
         /// <summary>
         /// Creates a new TurnManager bound to the given simulation state.
@@ -150,9 +175,8 @@ namespace Battlemancers.Core.Simulation
         /// Execution order:
         /// <list type="number">
         ///   <item>All commands from all players are collected into a flat list.</item>
-        ///   <item>Sorted by initiative: Mancers first (priority 0), Ranged second (1), Chaff last (2).</item>
-        ///   <item>Within the same priority, units with lower X resolve first; ties broken by lower Y.</item>
-        ///   <item>Commands execute in order; each returns events that accumulate into the result list.</item>
+        ///   <item>Sorted by resolution order: type priority, then HASTE/TIME_SLOW sub-priority, then board position.</item>
+        ///   <item>Commands execute in order; status overrides are applied per actor before each command executes.</item>
         ///   <item>Cooldowns tick on all living units; unit per-turn state is reset.</item>
         ///   <item>Win condition is checked; if the match ends, MatchEndedEvent is appended.</item>
         ///   <item>Pending plans are cleared; TurnNumber increments.</item>
@@ -184,11 +208,11 @@ namespace Battlemancers.Core.Simulation
             }
 
             // Step 2: Sort by resolution order.
-            // Primary key:   unit type priority (Mancer=0, Ranged=1, Chaff=2).
-            // Secondary key: (x+y) board position sum — lower sum resolves first within same type.
-            // Tertiary key:  x coordinate — lower x resolves first when x+y sums are equal.
-            // Note: when HASTE/TIME_SLOW StatusTypes are added, insert a key between primary and
-            // secondary: HASTE = –1 (resolves first in window), TIME_SLOW = +1 (resolves last), normal = 0.
+            // Primary key:     unit type priority (Mancer=0, Ranged=1, Chaff=2).
+            // Secondary key:   HASTE/TIME_SLOW sub-priority (HASTE=−1, normal=0, TIME_SLOW=+1).
+            //                  Within HASTE group and within TIME_SLOW group, still sort by position.
+            // Tertiary key:    (x+y) board position sum — lower sum resolves first within same type+sub-priority.
+            // Quaternary key:  x coordinate — lower x resolves first when x+y sums are equal.
             allCommands.Sort((a, b) =>
             {
                 UnitState actorA = _state.GetUnit(a.ActorId);
@@ -201,9 +225,15 @@ namespace Battlemancers.Core.Simulation
                 int cmp = priorityA.CompareTo(priorityB);
                 if (cmp != 0) return cmp;
 
-                // Same unit type — break tie by board position (x+y sum, then x).
+                // Same unit type — apply HASTE/TIME_SLOW sub-priority.
                 if (actorA != null && actorB != null)
                 {
+                    int subA = GetHasteSubPriority(actorA);
+                    int subB = GetHasteSubPriority(actorB);
+                    cmp = subA.CompareTo(subB);
+                    if (cmp != 0) return cmp;
+
+                    // Same sub-priority — break tie by board position (x+y sum, then x).
                     int sumA = actorA.Position.X + actorA.Position.Y;
                     int sumB = actorB.Position.X + actorB.Position.Y;
                     cmp = sumA.CompareTo(sumB);
@@ -216,63 +246,251 @@ namespace Battlemancers.Core.Simulation
                 return 0;
             });
 
-            // Step 3: Execute commands in sorted order.
-            int actionsResolved = 0;
+            // Step 3: Group commands by actor so we can apply per-actor status overrides.
+            // We must preserve the resolution order of actors (as determined by the sort above).
+            // Build an ordered list of distinct actors, and a map of their commands.
+            var actorOrder = new List<string>();
+            var commandsByActor = new Dictionary<string, List<Command>>();
             foreach (Command cmd in allCommands)
             {
-                // Skip commands whose actor has died during this turn's resolution.
-                UnitState actor = _state.GetUnit(cmd.ActorId);
+                if (!commandsByActor.ContainsKey(cmd.ActorId))
+                {
+                    actorOrder.Add(cmd.ActorId);
+                    commandsByActor[cmd.ActorId] = new List<Command>();
+                }
+                commandsByActor[cmd.ActorId].Add(cmd);
+            }
+
+            // Step 4: Execute commands in actor resolution order, applying status overrides per actor.
+            int actionsResolved = 0;
+
+            foreach (string actorId in actorOrder)
+            {
+                // Skip actors who died during this turn's resolution.
+                UnitState actor = _state.GetUnit(actorId);
                 if (actor == null || !actor.IsAlive)
                     continue;
 
-                SimulationEvent[] cmdEvents = cmd.Execute(_state);
-                if (cmdEvents != null)
-                    allEvents.AddRange(cmdEvents);
-
-                actionsResolved++;
+                // Apply status overrides and execute all commands for this actor.
+                List<SimulationEvent> overrideEvents = ApplyStatusOverrides(
+                    actor, commandsByActor[actorId], ref actionsResolved);
+                allEvents.AddRange(overrideEvents);
             }
 
-            // Step 4: End-of-turn processing — tick cooldowns on all living units.
-            // (Terrain state ticking is a stub here; the TerrainSystem in Wave 2 handles it.)
+            // Step 5: End-of-turn processing — tick cooldowns on all living units.
             foreach (UnitState unit in _state.GetLivingUnits())
             {
                 unit.TickCooldowns();
             }
 
             // Apply terrain-based temperature passives and tick Heatstroke penalties.
-            // (ApplyTerrainTemperatureEffects internally calls TickHeatstrokePenalties.)
             _temperatureManager.ApplyTerrainTemperatureEffects(_state);
 
-            // Step 5: Check win condition before advancing turn counter.
+            // Step 6: Check win condition before advancing turn counter.
             bool matchEnded = CheckWinCondition(out string winnerId);
 
-            // Step 6: Clear pending plans and advance the turn.
+            // Step 7: Clear pending plans and advance the turn.
             _pendingPlans.Clear();
             _state.AdvanceTurn();
             _state.ResetUnitsForNewTurn();
             _state.Phase = TurnPhase.Planning;
 
-            // Step 7: Append win/draw event if the match is over.
+            // Step 8: Append win/draw event if the match is over.
             if (matchEnded)
             {
                 MatchEndReason reason = winnerId != null
                     ? MatchEndReason.AllEnemyMancersEliminated
                     : MatchEndReason.Draw;
 
-                // If we exceeded the turn limit (TurnNumber after advance > TurnLimit), mark as TurnLimitReached.
-                // We check the pre-advance turn number stored via the turn we just resolved.
                 if (_state.TurnNumber - 1 >= TurnLimit && winnerId == null)
                     reason = MatchEndReason.TurnLimitReached;
 
                 allEvents.Add(new MatchEndedEvent(_state.TurnNumber - 1, winnerId, reason));
             }
 
-            // Step 8: Build and publish the TurnResolvedEvent.
+            // Step 9: Build and publish the TurnResolvedEvent.
             var resolvedEvent = new TurnResolvedEvent(_state.TurnNumber - 1, actionsResolved);
             allEvents.Add(resolvedEvent);
             SimulationEventBus.Publish(resolvedEvent);
 
             return allEvents.ToArray();
+        }
+
+        // ---------------------------------------------------------------------------
+        // Status override resolution
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Applies status-based overrides to all commands for a single actor and executes them.
+        /// Returns the events generated. Increments <paramref name="actionsResolved"/> for each
+        /// command that actually executes (not skipped).
+        ///
+        /// Override priority (first matching status wins for skip decisions):
+        /// STUNNED / FROZEN → skip all commands.
+        /// ROOTED → cancel MoveCommands; execute SpellCommands.
+        /// SILENCED → cancel SpellCommands; execute MoveCommands.
+        /// CONFUSED → execute SpellCommands with overridden target (nearest visible unit).
+        /// PANICKED → override MoveCommand (flee) and SpellCommand (attack nearest).
+        /// CHARMED → override SpellCommand (attack nearest ally); override MoveCommand if no ally in range.
+        /// </summary>
+        private List<SimulationEvent> ApplyStatusOverrides(
+            UnitState actor,
+            List<Command> actorCommands,
+            ref int actionsResolved)
+        {
+            var events = new List<SimulationEvent>();
+
+            // STUNNED or FROZEN: skip entire command set.
+            if (HasStatus(actor, StatusType.Stunned) || HasStatus(actor, StatusType.Frozen))
+            {
+                SimulationEventBus.Publish(new UnitStatusAppliedEvent(
+                    _state.TurnNumber, actor.Id,
+                    HasStatus(actor, StatusType.Stunned) ? "Stunned" : "Frozen",
+                    duration: 0, stackCount: 1));
+                // No commands execute; return empty events.
+                return events;
+            }
+
+            bool isRooted = HasStatus(actor, StatusType.Rooted);
+            bool isSilenced = HasStatus(actor, StatusType.Silenced);
+            bool isConfused = HasStatus(actor, StatusType.Confused);
+            bool isPanicked = HasStatus(actor, StatusType.Panicked);
+            bool isCharmed = HasStatus(actor, StatusType.Charmed);
+
+            // Determine if CHARMED+SILENCED interaction applies: unit moves toward ally, no spell.
+            bool charmedAndSilenced = isCharmed && isSilenced;
+
+            foreach (Command cmd in actorCommands)
+            {
+                // Re-check actor alive status (another command might have killed them — though
+                // the actor is being processed now, this is defensive).
+                UnitState liveActor = _state.GetUnit(actor.Id);
+                if (liveActor == null || !liveActor.IsAlive)
+                    break;
+
+                bool isMove = cmd is MoveCommand;
+                bool isSpell = cmd is SpellCommand;
+
+                // --- ROOTED: cancel MoveCommands ---
+                if (isRooted && isMove)
+                    continue; // skip this move
+
+                // --- SILENCED: cancel SpellCommands ---
+                if (isSilenced && isSpell)
+                    continue; // skip this spell
+
+                // --- CHARMED+SILENCED: move toward ally, skip spell ---
+                // (SILENCED already cancels spells above; here we override the move.)
+                if (charmedAndSilenced && isMove)
+                {
+                    Grid.GridPosition charmedMoveTarget = StatusEffectResolver.ResolveCharmedMove(
+                        actor.Id, actor.MoveRange, _state);
+                    var overrideMove = new MoveCommand(actor.Id, cmd.ActivationCost, charmedMoveTarget);
+                    SimulationEvent[] cmdEvents = overrideMove.Execute(_state);
+                    if (cmdEvents != null) events.AddRange(cmdEvents);
+                    actionsResolved++;
+                    continue;
+                }
+
+                // --- CHARMED: override SpellCommand to attack nearest ally ---
+                if (isCharmed && isSpell)
+                {
+                    SpellCommand originalSpell = (SpellCommand)cmd;
+                    string charmedTarget = StatusEffectResolver.ResolveCharmedTarget(actor.Id, _state);
+                    if (charmedTarget == null)
+                    {
+                        // No ally in range — override MoveCommand instead (handled separately below).
+                        // Skip the spell.
+                        continue;
+                    }
+                    UnitState targetUnit = _state.GetUnit(charmedTarget);
+                    if (targetUnit != null && targetUnit.IsAlive)
+                    {
+                        var overrideSpell = new SpellCommand(
+                            actor.Id, cmd.ActivationCost, originalSpell.SpellId, targetUnit.Position);
+                        SimulationEvent[] cmdEvents = overrideSpell.Execute(_state);
+                        if (cmdEvents != null) events.AddRange(cmdEvents);
+                        actionsResolved++;
+                    }
+                    continue;
+                }
+
+                // --- CHARMED: override MoveCommand to move toward nearest ally when no ally in spell range ---
+                if (isCharmed && isMove)
+                {
+                    // Only override move when there's no ally in range (charmed spell target null).
+                    string charmedSpellTarget = StatusEffectResolver.ResolveCharmedTarget(actor.Id, _state);
+                    if (charmedSpellTarget == null)
+                    {
+                        Grid.GridPosition charmedMoveDest = StatusEffectResolver.ResolveCharmedMove(
+                            actor.Id, actor.MoveRange, _state);
+                        var overrideMove = new MoveCommand(actor.Id, cmd.ActivationCost, charmedMoveDest);
+                        SimulationEvent[] cmdEventsC = overrideMove.Execute(_state);
+                        if (cmdEventsC != null) events.AddRange(cmdEventsC);
+                        actionsResolved++;
+                    }
+                    // If there is an ally in range, the actor casts at the ally (handled by SpellCommand).
+                    // Skip the move regardless (charmed actors focus on attacking ally, not moving).
+                    continue;
+                }
+
+                // --- CONFUSED: override SpellCommand target ---
+                if (isConfused && isSpell)
+                {
+                    SpellCommand originalSpell = (SpellCommand)cmd;
+                    // Use stub range from SpellCommand (4 tiles) for confused targeting.
+                    const int ConfusedSpellRange = 4;
+                    string confusedTarget = StatusEffectResolver.ResolveConfusedTarget(
+                        actor.Id, ConfusedSpellRange, _state);
+                    if (confusedTarget == null)
+                        continue; // no valid target — skip spell
+                    UnitState confusedTargetUnit = _state.GetUnit(confusedTarget);
+                    if (confusedTargetUnit == null || !confusedTargetUnit.IsAlive)
+                        continue;
+                    var overrideSpell = new SpellCommand(
+                        actor.Id, cmd.ActivationCost, originalSpell.SpellId, confusedTargetUnit.Position);
+                    SimulationEvent[] cmdEvents = overrideSpell.Execute(_state);
+                    if (cmdEvents != null) events.AddRange(cmdEvents);
+                    actionsResolved++;
+                    continue;
+                }
+
+                // --- PANICKED: override MoveCommand (flee) and SpellCommand (attack nearest) ---
+                if (isPanicked && isMove)
+                {
+                    Grid.GridPosition panickedDest = StatusEffectResolver.ResolvePanickedMove(
+                        actor.Id, actor.MoveRange, _state);
+                    var overrideMove = new MoveCommand(actor.Id, cmd.ActivationCost, panickedDest);
+                    SimulationEvent[] cmdEvents = overrideMove.Execute(_state);
+                    if (cmdEvents != null) events.AddRange(cmdEvents);
+                    actionsResolved++;
+                    continue;
+                }
+
+                if (isPanicked && isSpell)
+                {
+                    SpellCommand originalSpell = (SpellCommand)cmd;
+                    string panickedTarget = StatusEffectResolver.ResolvePanickedAttackTarget(actor.Id, _state);
+                    if (panickedTarget == null)
+                        continue; // no unit in range — skip attack
+                    UnitState panickedTargetUnit = _state.GetUnit(panickedTarget);
+                    if (panickedTargetUnit == null || !panickedTargetUnit.IsAlive)
+                        continue;
+                    var overrideSpell = new SpellCommand(
+                        actor.Id, cmd.ActivationCost, originalSpell.SpellId, panickedTargetUnit.Position);
+                    SimulationEvent[] cmdEvents = overrideSpell.Execute(_state);
+                    if (cmdEvents != null) events.AddRange(cmdEvents);
+                    actionsResolved++;
+                    continue;
+                }
+
+                // --- Normal execution (no override applicable) ---
+                SimulationEvent[] normalEvents = cmd.Execute(_state);
+                if (normalEvents != null) events.AddRange(normalEvents);
+                actionsResolved++;
+            }
+
+            return events;
         }
 
         // ---------------------------------------------------------------------------
@@ -298,10 +516,9 @@ namespace Battlemancers.Core.Simulation
         {
             winnerId = null;
 
-            // Turn limit: use the turn number about to be completed (TurnNumber has not incremented yet).
+            // Turn limit: use the turn number about to be completed.
             if (_state.TurnNumber >= TurnLimit)
             {
-                // Turn limit reached — draw regardless of Mancer count.
                 winnerId = null;
                 return true;
             }
@@ -347,7 +564,6 @@ namespace Battlemancers.Core.Simulation
                 return true;
             }
 
-            // Fallback: should not be reached in a 2-player match.
             return false;
         }
 
@@ -369,6 +585,34 @@ namespace Battlemancers.Core.Simulation
                 UnitType.Chaff  => 2,
                 _               => 99
             };
+        }
+
+        /// <summary>
+        /// Returns the HASTE/TIME_SLOW sub-priority for a unit within its type window.
+        /// HASTE = −1 (resolves first), normal = 0, TIME_SLOW = +1 (resolves last).
+        /// Within the HASTE group and within the TIME_SLOW group, board position still applies.
+        /// </summary>
+        private static int GetHasteSubPriority(UnitState unit)
+        {
+            if (HasStatus(unit, StatusType.Haste))
+                return HasteSubPriority;
+            if (HasStatus(unit, StatusType.TimeSlow))
+                return TimeSlowSubPriority;
+            return NormalSubPriority;
+        }
+
+        /// <summary>
+        /// Returns true if the given unit currently has an active status of the specified type.
+        /// Checks <see cref="UnitState.ActiveStatusTypes"/> for the string representation of the type.
+        /// </summary>
+        /// <param name="unit">The unit to query.</param>
+        /// <param name="type">The status type to check for.</param>
+        /// <returns>True if the status is active on this unit; otherwise false.</returns>
+        public static bool HasStatus(UnitState unit, StatusType type)
+        {
+            if (unit == null) return false;
+            string key = type.ToString();
+            return unit.ActiveStatusTypes.Contains(key);
         }
     }
 }

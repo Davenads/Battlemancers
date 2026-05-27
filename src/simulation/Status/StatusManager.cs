@@ -105,6 +105,8 @@ namespace Battlemancers.Simulation.Status
                 case StatusType.Cursed:
                 case StatusType.Silenced:
                 case StatusType.Slowed:
+                case StatusType.Rooted:
+                case StatusType.TimeSlow:
                     if (existing != null)
                     {
                         existing.Duration += effect.Duration;
@@ -173,6 +175,8 @@ namespace Battlemancers.Simulation.Status
                 // --- Cannot stack; silently ignore while active ---
                 case StatusType.Panicked:
                 case StatusType.Charmed:
+                case StatusType.Confused:
+                case StatusType.Haste:
                     if (existing != null)
                     {
                         // Already active — ignore incoming application entirely.
