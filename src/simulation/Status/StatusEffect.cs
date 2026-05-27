@@ -92,7 +92,37 @@ namespace Battlemancers.Simulation.Status
         /// Unit movement is reduced by 1. Duration stacks on re-apply.
         /// Applied by mud terrain or Hydromancer abilities. No per-tick damage.
         /// </summary>
-        Slowed
+        Slowed,
+
+        /// <summary>
+        /// Unit cannot move but may still cast spells. Duration stacks on re-apply.
+        /// Applied by Floramancer vines or Osteomancer bone spikes.
+        /// No per-tick damage.
+        /// </summary>
+        Rooted,
+
+        /// <summary>
+        /// Unit targets the nearest visible unit (friend or foe) within spell range
+        /// instead of its planned target. Fully deterministic from board state.
+        /// Cannot stack; must expire before re-application. No per-tick damage.
+        /// </summary>
+        Confused,
+
+        /// <summary>
+        /// Applied by Chronomancer. This unit resolves first within its type's resolution
+        /// window (before position-ordered units of the same type) and gains +6 AP for
+        /// the turn. Duration: 1 turn. Cannot stack.
+        /// No per-tick damage.
+        /// </summary>
+        Haste,
+
+        /// <summary>
+        /// Applied by Chronomancer. This unit resolves last within its type's resolution
+        /// window (after all non-TIME_SLOW units of the same type) and suffers –2 AP and
+        /// a cooldown-pause effect. Duration: 1 turn. Duration stacks on re-apply.
+        /// No per-tick damage.
+        /// </summary>
+        TimeSlow
     }
 
     /// <summary>
