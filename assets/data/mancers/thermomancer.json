@@ -1,359 +1,196 @@
 {
-  "MancerId": "thermomancer",
-  "DisplayName": "Thermomancer",
-  "MaxHP": 90,
-  "MoveRange": 3,
-  "BaseArmor": 2,
-  "BaseActionPoints": 6,
-  "BaseCost": 100,
-  "PrimaryElement": "Thermal",
-  "SecondaryElement": "Fire",
-  "HasSecondaryResource": false,
-  "SecondaryResourceName": "",
-  "MaxSecondaryResource": 0,
-  "SecondaryResourceGenerationRuleId": "",
-  "TacticalIdentity": "Temperature spectrum specialist — the only Mancer with both a strong heating spell and a strong cooling spell in the same base kit. Wins by engineering THERMAL SHOCK: forcing a unit from SUPERCOOLED to OVERHEATED (or reverse) in a single activation for bonus burst damage and a 1-turn STUN. Thermal Gradient Zone creates a persistent hot/cold split zone that deals THERMAL SHOCK to any unit crossing the midline. Amplifies Pyromancer output via OVERHEATED vulnerability and accelerates Cryomancer freeze escalation via OVERCOOLED.",
-  "StrongSynergyMancerIds": ["pyromancer", "cryomancer", "gravimancer", "osteomancer"],
-  "RecommendedFactionId": "",
-  "Spells": [
+  "mancerId": "thermomancer",
+  "displayName": "Thermomancer",
+  "tacticalIdentity": "Temperature spectrum master. Applies OVERHEATED (+35 temp) and OVERCOOLED (-35 temp) in the same kit. Triggers THERMAL SHOCK (bonus damage + STUN) when a unit transitions between extremes in one turn. Amplifies Pyromancer and Cryomancer output simultaneously. The only Mancer that can invert an enemy's temperature state in a single spell.",
+  "primaryElement": "Thermal",
+  "secondaryElement": "Fire",
+  "maxHP": 90,
+  "moveRange": 4,
+  "baseArmor": 1,
+  "baseActionPoints": 6,
+  "baseCost": 100,
+  "hasSecondaryResource": false,
+  "secondaryResourceName": "",
+  "maxSecondaryResource": 0,
+  "secondaryResourceGenerationRuleId": "",
+  "strongSynergyMancerIds": ["pyromancer", "cryomancer", "gravimancer"],
+  "recommendedFactionId": "",
+  "vfxTag": "vfx_thermomancer",
+  "voiceTag": "voice_thermomancer",
+  "ambientIdleSfxTag": "sfx_thermomancer_idle",
+  "designNotes": "THERMAL SHOCK triggers when OVERCOOLED unit receives OVERHEATED (or vice versa) in the same activation. Bonus damage = |ΔTemp| / 2. STUN for 1 turn. Thermomancer immune to temperature DoT from its own Thermal Gradient Zone.",
+  "baseSpells": [
     {
-      "SpellId": "heat_lance",
-      "DisplayName": "Heat Lance",
-      "Description": "A heat projectile that deals 14 damage and applies OVERHEATED to the target (fire DoT + fire damage vulnerability). Applying OVERHEATED on a SUPERCOOLED target immediately triggers THERMAL SHOCK. Leaves HEAT_RESIDUE terrain at the impact tile for 1 turn.",
-      "ApCost": 2,
-      "CooldownTurns": 0,
-      "Tier": "Quick",
-      "TargetType": "Projectile",
-      "Range": 5,
-      "AoeRadius": 0,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": false,
-      "Element": "Fire",
-      "BaseDamage": 14,
-      "ConditionalBonuses": [
+      "spellId": "heat_lance",
+      "displayName": "Heat Lance",
+      "description": "A focused heat projectile dealing 14 damage. Applies OVERHEATED (+35 temperature, 4 HP/turn fire DoT, fire damage received +50%, 3-turn duration). On a SUPERCOOLED target: THERMAL SHOCK triggers. Melts ICE_TILE to WET terrain.",
+      "apCost": 2,
+      "cooldownTurns": 0,
+      "tier": "Quick",
+      "targetType": "Projectile",
+      "range": 5,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Fire",
+      "baseDamage": 14,
+      "temperatureDelta": 35,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "Condition": "TargetAlreadyOverheated",
-          "BonusType": "FlatDamageBonus",
-          "Value": 8,
-          "Description": "Refreshes OVERHEATED duration and deals 8 bonus compression damage"
-        },
-        {
-          "Condition": "TargetSupercooled",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "Applying OVERHEATED on a SUPERCOOLED target triggers THERMAL SHOCK immediately"
+          "statusType": "Overheated",
+          "duration": 3,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "EffectId": "overheated",
-          "Description": "OVERHEATED: 4 HP/turn fire DoT; fire damage received +50%; 3-turn duration; no stacking — refreshes on reapply"
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "Condition": "Always",
-          "NewTileState": "HeatResidue",
-          "AoeRadius": 0,
-          "Description": "Impact tile becomes HEAT_RESIDUE (1-turn DoT tile dealing 4 HP to units who stand on it)"
-        },
-        {
-          "Condition": "ImpactTileIsIceTile",
-          "NewTileState": "Wet",
-          "AoeRadius": 0,
-          "Description": "Heat melts ICE_TILE to WET"
-        },
-        {
-          "Condition": "ImpactTileIsPermafrost",
-          "NewTileState": "Mud",
-          "AoeRadius": 0,
-          "Description": "Heat thaws PERMAFROST to MUD"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 35,
-      "VfxTag": "thermal_projectile",
-      "SfxCastTag": "spell/thermal/cast",
-      "SfxImpactTag": "spell/thermal/impact",
-      "CameraShakeIntensity": 0.0
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "thermal_heat",
+      "sfxCastTag": "spell/thermal/cast",
+      "sfxImpactTag": "spell/thermal/impact",
+      "cameraShakeIntensity": 0.2,
+      "designNotes": "Primary OVERHEAT applicator. +35 temp reaches HOT from neutral in one hit. THERMAL SHOCK setup half when followed by Cold Lance."
     },
     {
-      "SpellId": "cold_lance",
-      "DisplayName": "Cold Lance",
-      "Description": "A cold projectile that deals 14 damage and applies OVERCOOLED to the target (cold DoT + cold damage vulnerability + move -2). Applying OVERCOOLED on an OVERHEATED target immediately triggers THERMAL SHOCK. Flash-freezes WET targets directly to FROZEN. Leaves COLD_RESIDUE terrain at the impact tile for 1 turn.",
-      "ApCost": 2,
-      "CooldownTurns": 0,
-      "Tier": "Quick",
-      "TargetType": "Projectile",
-      "Range": 5,
-      "AoeRadius": 0,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": false,
-      "Element": "Ice",
-      "BaseDamage": 14,
-      "ConditionalBonuses": [
+      "spellId": "cold_lance",
+      "displayName": "Cold Lance",
+      "description": "A mirror of Heat Lance dealing 14 cold damage. Applies OVERCOOLED (-35 temperature, 3 HP/turn cold DoT, cold damage received +50%, movement -2, 3-turn duration). On an OVERHEATED target: THERMAL SHOCK triggers. Flash-freezes WET units to FROZEN.",
+      "apCost": 2,
+      "cooldownTurns": 0,
+      "tier": "Quick",
+      "targetType": "Projectile",
+      "range": 5,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Ice",
+      "baseDamage": 14,
+      "temperatureDelta": -35,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "Condition": "TargetAlreadyOvercooled",
-          "BonusType": "FlatDamageBonus",
-          "Value": 8,
-          "Description": "Refreshes OVERCOOLED duration and deals 8 bonus compression damage"
-        },
-        {
-          "Condition": "TargetOverheated",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "Applying OVERCOOLED on an OVERHEATED target triggers THERMAL SHOCK immediately"
-        },
-        {
-          "Condition": "TargetChilled",
-          "BonusType": "StatusUpgrade",
-          "Value": 0,
-          "Description": "Cold Lance hitting a CHILLED target upgrades directly to OVERCOOLED (bypasses multi-cast escalation)"
+          "statusType": "Overcooled",
+          "duration": 3,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "EffectId": "overcooled",
-          "Description": "OVERCOOLED: 3 HP/turn cold DoT; cold damage received +50%; move range -2; 3-turn duration; no stacking — refreshes on reapply"
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "Condition": "Always",
-          "NewTileState": "ColdResidue",
-          "AoeRadius": 0,
-          "Description": "Impact tile becomes COLD_RESIDUE (1-turn chill tile; 3 HP cold damage and CHILLED -1 move for 1 turn)"
-        },
-        {
-          "Condition": "TargetIsWet",
-          "NewTileState": "IceTile",
-          "AoeRadius": 0,
-          "Description": "Cold Lance flash-freezes WET target to FROZEN"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": -35,
-      "VfxTag": "thermal_projectile",
-      "SfxCastTag": "spell/thermal/cast",
-      "SfxImpactTag": "spell/thermal/impact",
-      "CameraShakeIntensity": 0.0
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "thermal_cold",
+      "sfxCastTag": "spell/thermal/cast",
+      "sfxImpactTag": "spell/thermal/impact",
+      "cameraShakeIntensity": 0.2,
+      "designNotes": "Mirror of Heat Lance. Cold Lance + Heat Lance in same activation = THERMAL SHOCK (35 bonus damage + STUN, 4 AP total)."
     },
     {
-      "SpellId": "thermal_inversion",
-      "DisplayName": "Thermal Inversion",
-      "Description": "Deals 10 Thermal damage then flips the target's current temperature by multiplying it by -1.5 (clamped to ±100). OVERHEATED becomes SUPERCOOLED; OVERCOOLED becomes OVERHEATED. The flip almost always triggers THERMAL SHOCK if the target was in HOT or OVERHEATED range. The highest single-cast temperature swing in the roster.",
-      "ApCost": 3,
-      "CooldownTurns": 2,
-      "Tier": "Standard",
-      "TargetType": "SingleTarget",
-      "Range": 5,
-      "AoeRadius": 0,
-      "LineLength": 0,
-      "RequiresLineOfSight": true,
-      "CanTargetEmptyTile": false,
-      "Element": "Thermal",
-      "BaseDamage": 10,
-      "ConditionalBonuses": [
+      "spellId": "thermal_inversion",
+      "displayName": "Thermal Inversion",
+      "description": "Deals 10 Thermal damage and flips the target's current temperature to its opposite extreme (multiplies temperature by -1.5, clamped to ±100). OVERHEATED becomes OVERCOOLED; OVERCOOLED becomes OVERHEATED. This transition always triggers THERMAL SHOCK on pre-conditioned targets. Highest single-cast temperature swing in the roster.",
+      "apCost": 3,
+      "cooldownTurns": 2,
+      "tier": "Standard",
+      "targetType": "SingleTarget",
+      "range": 5,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Thermal",
+      "baseDamage": 10,
+      "temperatureDelta": 0,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "Condition": "TargetOverheatedOrHot",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "Inversion of HOT/OVERHEATED target crosses both ±31 thresholds — triggers THERMAL SHOCK"
-        },
-        {
-          "Condition": "TargetSupercooledOrFrozen",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "Inversion of SUPERCOOLED/FROZEN target crosses both ±31 thresholds — triggers THERMAL SHOCK"
-        },
-        {
-          "Condition": "TargetOverheated",
-          "BonusType": "StatusTransition",
-          "Value": 8,
-          "Description": "OVERHEATED -> OVERCOOLED: 8 bonus thermal shock damage from sudden reversal"
-        },
-        {
-          "Condition": "TargetOvercooled",
-          "BonusType": "StatusTransition",
-          "Value": 8,
-          "Description": "OVERCOOLED -> OVERHEATED: 8 bonus thermal shock damage from sudden reversal"
+          "statusType": "ThermalInversion",
+          "duration": 0,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "EffectId": "temperature_inversion",
-          "Description": "Current temperature × -1.5, clamped to [-100, +100]. OVERHEATED -> OVERCOOLED (with shock bonus). OVERCOOLED -> OVERHEATED (with shock bonus). CHILLED -> OVERHEATED. BURNING extinguished when inverting from heat to cold. FROZEN cancelled when inverting from cold to heat."
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "Condition": "TargetInSteamCloud_HeatToColdinversion",
-          "NewTileState": "IceTile",
-          "AoeRadius": 0,
-          "Description": "OVERHEATED->OVERCOOLED inversion in STEAM_CLOUD collapses steam to ICE_TILE"
-        },
-        {
-          "Condition": "TargetInSteamCloud_ColdToHeatInversion",
-          "NewTileState": "HeatResidue",
-          "AoeRadius": 0,
-          "Description": "OVERCOOLED->OVERHEATED inversion in STEAM_CLOUD collapses steam to HEAT_RESIDUE"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 0,
-      "VfxTag": "thermal_inversion",
-      "SfxCastTag": "spell/thermal/cast",
-      "SfxImpactTag": "spell/thermal/impact",
-      "CameraShakeIntensity": 0.2
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "thermal_inversion",
+      "sfxCastTag": "spell/thermal/cast",
+      "sfxImpactTag": "spell/thermal/impact",
+      "cameraShakeIntensity": 0.5,
+      "designNotes": "Highest-skill-expression spell. Two-turn setup (Heat Lance + Thermal Inversion) is the most AP-efficient THERMAL SHOCK path."
     },
     {
-      "SpellId": "thermal_gradient_zone",
-      "DisplayName": "Thermal Gradient Zone",
-      "Description": "Places a persistent 6-tile zone (3-tile hot half + 3-tile cold half) for 4 turns. Hot half is BURNING terrain: units take 5 HP/turn fire DoT and receive OVERHEATED on entry (+15 temperature/turn). Cold half is PERMAFROST terrain: 3 HP/turn cold DoT and OVERCOOLED on entry (-15 temperature/turn). Any unit crossing the midline triggers THERMAL SHOCK. Thermomancer is immune to the zone's DoT but not to midline crossing shock.",
-      "ApCost": 4,
-      "CooldownTurns": 3,
-      "Tier": "Heavy",
-      "TargetType": "Ground",
-      "Range": 4,
-      "AoeRadius": 6,
-      "LineLength": 0,
-      "RequiresLineOfSight": false,
-      "CanTargetEmptyTile": true,
-      "Element": "Thermal",
-      "BaseDamage": 0,
-      "ConditionalBonuses": [
-        {
-          "Condition": "UnitCrossesMidline",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "Any unit crossing from cold half to hot half (or reverse) in one movement action triggers THERMAL SHOCK at the midline tile"
-        },
-        {
-          "Condition": "FloodedTileInHotHalf",
-          "BonusType": "TerrainInteraction",
-          "Value": 0,
-          "Description": "FLOODED tiles in hot half become STEAM_CLOUD for the zone's remaining duration (instead of standard 2-turn expiry)"
-        },
-        {
-          "Condition": "CryomancerSpellInColdHalf",
-          "BonusType": "StatusAcceleration",
-          "Value": 0,
-          "Description": "Cryomancer ice spells in cold half apply OVERCOOLED in 1 application instead of 2"
-        }
-      ],
-      "AppliedEffects": [
-        {
-          "EffectId": "thermal_gradient_zone_field",
-          "Description": "6-tile zone with hot and cold halves. Hot half: BURNING terrain, OVERHEATED on entry. Cold half: PERMAFROST terrain, OVERCOOLED on entry. Thermomancer immune to own zone DoT. Zone expires after 4 turns leaving HEAT_RESIDUE (hot) and COLD_RESIDUE (cold) for 1 additional turn."
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "Condition": "HotHalf",
-          "NewTileState": "Burning",
-          "AoeRadius": 3,
-          "Description": "Hot half becomes BURNING terrain for zone duration"
-        },
-        {
-          "Condition": "ColdHalf",
-          "NewTileState": "Permafrost",
-          "AoeRadius": 3,
-          "Description": "Cold half becomes PERMAFROST terrain for zone duration"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 0,
-      "VfxTag": "thermal_zone",
-      "SfxCastTag": "spell/thermal/cast",
-      "SfxImpactTag": "spell/thermal/impact",
-      "CameraShakeIntensity": 0.4
+      "spellId": "thermal_gradient_zone",
+      "displayName": "Thermal Gradient Zone",
+      "description": "Creates a persistent 6-tile zone (3-tile hot half + 3-tile cold half) with a midline. Hot half: BURNING terrain (+5 HP/turn fire DoT, OVERHEATED on entry, +15 temp/turn). Cold half: PERMAFROST terrain (+3 HP/turn cold DoT, OVERCOOLED on entry, -15 temp/turn). Units crossing the midline in a single movement trigger THERMAL SHOCK. Duration: 4 turns.",
+      "apCost": 4,
+      "cooldownTurns": 3,
+      "tier": "Heavy",
+      "targetType": "Ground",
+      "range": 4,
+      "aoeRadius": 6,
+      "lineLength": 0,
+      "requiresLineOfSight": false,
+      "canTargetEmptyTile": true,
+      "element": "Thermal",
+      "baseDamage": 0,
+      "temperatureDelta": 15,
+      "conditionalBonuses": [],
+      "appliedEffects": [],
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "thermal_gradient",
+      "sfxCastTag": "spell/thermal/cast",
+      "sfxImpactTag": "spell/thermal/impact",
+      "cameraShakeIntensity": 0.4,
+      "designNotes": "Most complex placement. Neither option (stay on side / cross midline) is safe. Forces 3-way decision: stay hot, stay cold, or cross and THERMAL SHOCK."
     },
     {
-      "SpellId": "thermoclasm",
-      "DisplayName": "Thermoclasm",
-      "Description": "The Thermomancer's ultimate — a massive simultaneous release of both thermal extremes in a 3-tile AoE. Deals 30 Thermal damage to all targets in range. All targets immediately receive both OVERHEATED and OVERCOOLED simultaneously, triggering THERMAL SHOCK on every unit hit. Applies a +45 temperature swing followed by a -45 temperature swing in the same instant, crossing both ±31 thresholds. All affected units are STUNNED for 1 turn. Thermomancer cannot move this turn.",
-      "ApCost": 6,
-      "CooldownTurns": 5,
-      "Tier": "Ultimate",
-      "TargetType": "AoeCircle",
-      "Range": 4,
-      "AoeRadius": 3,
-      "LineLength": 0,
-      "RequiresLineOfSight": false,
-      "CanTargetEmptyTile": true,
-      "Element": "Thermal",
-      "BaseDamage": 30,
-      "ConditionalBonuses": [
+      "spellId": "heat_exchange",
+      "displayName": "Heat Exchange",
+      "description": "Opens a thermal conduit between the Thermomancer and an allied unit. The ally's temperature is set to the Thermomancer's current temperature level, then locked for 2 turns (temperature-altering effects cannot move it). Max heat bonus: +2 fire damage on attacks. Max cold bonus: +2 defense, apply SLOWED to attackers. Thermomancer may redirect incoming BURNING or FROZEN effects to the ally during the conduit.",
+      "apCost": 2,
+      "cooldownTurns": 3,
+      "tier": "Quick",
+      "targetType": "SingleTarget",
+      "range": 3,
+      "aoeRadius": 0,
+      "lineLength": 0,
+      "requiresLineOfSight": true,
+      "canTargetEmptyTile": false,
+      "element": "Thermal",
+      "baseDamage": 0,
+      "temperatureDelta": 0,
+      "conditionalBonuses": [],
+      "appliedEffects": [
         {
-          "Condition": "Always",
-          "BonusType": "TriggerThermalShock",
-          "Value": 0,
-          "Description": "All targets hit by Thermoclasm undergo forced THERMAL SHOCK regardless of prior temperature state"
-        },
-        {
-          "Condition": "TargetAlreadySupercooledOrOverheated",
-          "BonusType": "FlatDamageBonus",
-          "Value": 15,
-          "Description": "Targets already at a temperature extreme take 15 additional bonus thermal detonation damage"
+          "statusType": "HeatExchange",
+          "duration": 2,
+          "stacksApplied": 1,
+          "appliesToTile": false,
+          "applicationChance": 1.0
         }
       ],
-      "AppliedEffects": [
-        {
-          "EffectId": "thermoclasm_shock",
-          "Description": "Forces THERMAL SHOCK on all targets in AoE. 1-turn STUN applied to all affected units. Both OVERHEATED and OVERCOOLED applied simultaneously then consumed by the shock. Hot half terrain under the AoE becomes BURNING; cold half becomes ICE_TILE based on nearest zone orientation."
-        }
-      ],
-      "TerrainChanges": [
-        {
-          "Condition": "Always",
-          "NewTileState": "HeatResidue",
-          "AoeRadius": 3,
-          "Description": "AoE center becomes superheated HEAT_RESIDUE; outer ring becomes COLD_RESIDUE — a thermal shockwave pattern"
-        }
-      ],
-      "Displacement": {
-        "HasDisplacement": false,
-        "Tiles": 0,
-        "AffectsAllInArea": false,
-        "CollisionDamagePerTile": 0
-      },
-      "SummonUnitTag": "",
-      "MaxSummonCount": 0,
-      "TemperatureDelta": 50,
-      "VfxTag": "thermal_ultimate",
-      "SfxCastTag": "spell/thermal/cast",
-      "SfxImpactTag": "spell/thermal/impact",
-      "CameraShakeIntensity": 0.6
+      "terrainChanges": [],
+      "displacement": null,
+      "summonUnitTag": "",
+      "maxSummonCount": 0,
+      "vfxTag": "thermal_augment",
+      "sfxCastTag": "spell/thermal/cast",
+      "sfxImpactTag": "spell/thermal/impact",
+      "cameraShakeIntensity": 0.0,
+      "designNotes": "Augmentation spell. Temperature-state sharing and active redirect. Pyromancer pre-heats Thermomancer, then shares max HEAT to a melee unit for +2 fire damage."
     }
   ]
 }
