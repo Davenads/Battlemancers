@@ -225,7 +225,7 @@ The following upgrade *types* are established. Specific options per Mancer arche
 
 A single Mancer may take multiple upgrades; total cost is the sum of all upgrades added to the 100-pt base. No hard cap on upgrade spend per Mancer, but the 1,000-pt warband ceiling is the natural constraint.
 
-> Specific upgrade options for all 19 Mancers are TBD — requires a dedicated design pass per archetype.
+> Complete upgrade options for all 19 Mancers are defined in [`design/mancers/upgrades.md`](mancers/upgrades.md).
 
 ---
 
