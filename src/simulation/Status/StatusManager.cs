@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Battlemancers.Core.Simulation;
 using Battlemancers.Core.Simulation.Events;
+using Battlemancers.Core.Simulation.StatusEffects;
 
 namespace Battlemancers.Simulation.Status
 {
@@ -48,6 +49,17 @@ namespace Battlemancers.Simulation.Status
         /// </summary>
         private readonly Dictionary<string, List<StatusEffect>> _unitStatuses
             = new Dictionary<string, List<StatusEffect>>();
+
+        /// <summary>
+        /// Concrete <see cref="IStatusEffect"/> behavioural objects for the six typed status effects
+        /// (Burning, Wet, Poisoned, Charged, Silenced, Cursed), keyed by unit runtime ID.
+        /// Populated by <see cref="SyncConcreteEffect"/> after each <see cref="ApplyStatus"/> call;
+        /// consulted by <see cref="TickStatuses"/> to invoke per-tick side-effects such as DoT damage
+        /// and fire spreading. Entries are removed when the corresponding <see cref="StatusEffect"/>
+        /// expires or is cleansed.
+        /// </summary>
+        private readonly Dictionary<string, List<IStatusEffect>> _concreteEffects
+            = new Dictionary<string, List<IStatusEffect>>();
 
         // ---------------------------------------------------------------------------
         // Public API
@@ -206,6 +218,12 @@ namespace Battlemancers.Simulation.Status
                 applied.Type,
                 applied.Duration,
                 applied.StackCount));
+
+            // Keep the concrete IStatusEffect representation in sync with the data model.
+            SyncConcreteEffect(unitId, applied);
+
+            // Apply any cross-status side-effects triggered by this type (e.g. Wet → extinguish Burning).
+            HandleApplySideEffects(unitId, effect.Type, unitState, turnNumber);
         }
 
         /// <summary>
@@ -247,20 +265,46 @@ namespace Battlemancers.Simulation.Status
                 // Collect statuses to remove after iteration to avoid mutating the list mid-loop.
                 List<StatusType> toRemove = null;
 
+                // Pre-compute whether the unit is frozen so we can skip Poisoned ticking.
+                bool unitIsFrozen = HasStatus(unit.Id, StatusType.Frozen);
+
                 foreach (StatusEffect effect in statuses)
                 {
-                    // --- Compute damage ---
-                    int damage = ComputeTickDamage(effect);
+                    // Design rule: POISONED duration does not decay while the unit also carries
+                    // FROZEN ("no decay timer while frozen"). Skip the tick entirely for Poisoned
+                    // — this pauses both damage and duration while the freeze holds.
+                    if (unitIsFrozen && effect.Type == StatusType.Poisoned)
+                        continue;
 
-                    if (damage > 0)
+                    // --- Compute damage via concrete IStatusEffect if available, else legacy path ---
+                    int damage = 0;
+                    IStatusEffect concrete = FindConcreteEffect(unit.Id, effect.Type);
+                    if (concrete != null)
                     {
-                        int actualDamage = Math.Min(damage, unit.CurrentHP);
-                        unit.CurrentHP -= actualDamage;
-                        damage = actualDamage;
+                        // Concrete implementation handles damage internally via Tick().
+                        // Measure the HP delta so we can report it in StatusTickResult/events.
+                        int hpBefore = unit.CurrentHP;
+                        concrete.Tick(unit, state);
+                        damage = Math.Max(0, hpBefore - unit.CurrentHP);
+                    }
+                    else
+                    {
+                        // Legacy: StatusManager computes and applies damage directly.
+                        damage = ComputeTickDamage(effect);
+                        if (damage > 0)
+                        {
+                            int actualDamage = Math.Min(damage, unit.CurrentHP);
+                            unit.CurrentHP -= actualDamage;
+                            damage = actualDamage;
+                        }
                     }
 
                     // --- Decrement duration ---
                     effect.Duration--;
+                    // Keep the concrete RemainingDuration in sync with the StatusEffect Duration.
+                    if (concrete != null)
+                        concrete.RemainingDuration = effect.Duration;
+
                     bool expired = effect.Duration <= 0;
 
                     if (expired)
@@ -286,6 +330,7 @@ namespace Battlemancers.Simulation.Status
                     {
                         RemoveEffectFromList(statuses, expiredType);
                         RemoveActiveStatusType(unit, expiredType);
+                        RemoveConcreteEffect(unit.Id, expiredType);
 
                         SimulationEventBus.Publish(new StatusRemovedEvent(
                             turnNumber, unit.Id, expiredType, "expired"));
@@ -327,6 +372,7 @@ namespace Battlemancers.Simulation.Status
                 return;
 
             RemoveActiveStatusType(unitState, type);
+            RemoveConcreteEffect(unitId, type);
 
             if (list.Count == 0)
                 _unitStatuses.Remove(unitId);
@@ -371,6 +417,8 @@ namespace Battlemancers.Simulation.Status
 
         /// <summary>
         /// Computes the HP damage this status deals in a single tick.
+        /// Only used for status types that do NOT have a concrete <see cref="IStatusEffect"/>
+        /// implementation — for those types, <see cref="IStatusEffect.Tick"/> handles damage.
         /// </summary>
         private static int ComputeTickDamage(StatusEffect effect)
         {
@@ -383,6 +431,128 @@ namespace Battlemancers.Simulation.Status
                 default:
                     return 0;
             }
+        }
+
+        // ---------------------------------------------------------------------------
+        // Concrete IStatusEffect factory and helpers
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Factory that constructs the appropriate concrete <see cref="IStatusEffect"/> for the
+        /// given <paramref name="type"/>. This is the only switch on <see cref="StatusType"/>
+        /// outside of the six concrete class files — callers never need their own dispatch.
+        /// Returns <c>null</c> for types that do not have a concrete implementation.
+        /// </summary>
+        private static IStatusEffect CreateConcreteEffect(
+            StatusType type, int duration, int stackCount, string sourceId)
+        {
+            switch (type)
+            {
+                case StatusType.Burning:  return new BurningStatus(duration, sourceId);
+                case StatusType.Wet:      return new WetStatus(duration, sourceId);
+                case StatusType.Poisoned: return new PoisonedStatus(duration, stackCount, sourceId);
+                case StatusType.Charged:  return new ChargedStatus(duration, sourceId);
+                case StatusType.Silenced: return new SilencedStatus(duration, sourceId);
+                case StatusType.Cursed:   return new CursedStatus(duration, sourceId);
+                default:                  return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates or updates the concrete <see cref="IStatusEffect"/> in <see cref="_concreteEffects"/>
+        /// to mirror the state of <paramref name="updatedEffect"/> after an <see cref="ApplyStatus"/> call.
+        /// If the type has no concrete implementation, this is a no-op.
+        /// </summary>
+        private void SyncConcreteEffect(string unitId, StatusEffect updatedEffect)
+        {
+            IStatusEffect existing = FindConcreteEffect(unitId, updatedEffect.Type);
+
+            if (existing == null)
+            {
+                IStatusEffect newConcrete = CreateConcreteEffect(
+                    updatedEffect.Type,
+                    updatedEffect.Duration,
+                    updatedEffect.StackCount,
+                    updatedEffect.SourceId);
+
+                if (newConcrete == null)
+                    return; // No concrete for this type.
+
+                if (!_concreteEffects.TryGetValue(unitId, out List<IStatusEffect> concretes))
+                {
+                    concretes = new List<IStatusEffect>();
+                    _concreteEffects[unitId] = concretes;
+                }
+
+                concretes.Add(newConcrete);
+            }
+            else
+            {
+                // Sync duration and, for Poisoned, the stack count.
+                existing.RemainingDuration = updatedEffect.Duration;
+                if (existing is PoisonedStatus poisoned)
+                    poisoned.StackCount = updatedEffect.StackCount;
+            }
+        }
+
+        /// <summary>
+        /// Handles cross-status side-effects triggered when a status of the given
+        /// <paramref name="type"/> is applied. Currently:
+        /// <list type="bullet">
+        ///   <item><description><b>Wet</b> — extinguishes any active Burning on the same unit.</description></item>
+        /// </list>
+        /// All side-effect logic lives here so that no callers of <see cref="ApplyStatus"/>
+        /// need their own switch on <see cref="StatusType"/>.
+        /// </summary>
+        private void HandleApplySideEffects(
+            string unitId, StatusType type, UnitState unitState, int turnNumber)
+        {
+            if (type == StatusType.Wet && HasStatus(unitId, StatusType.Burning))
+                RemoveStatus(unitId, StatusType.Burning, unitState, turnNumber);
+        }
+
+        /// <summary>
+        /// Returns the concrete <see cref="IStatusEffect"/> for the given unit and status type,
+        /// or <c>null</c> if none exists.
+        /// Matches by <see cref="IStatusEffect.DisplayName"/> == <paramref name="type"/>.ToString().
+        /// </summary>
+        private IStatusEffect FindConcreteEffect(string unitId, StatusType type)
+        {
+            if (!_concreteEffects.TryGetValue(unitId, out List<IStatusEffect> concretes))
+                return null;
+
+            string displayName = type.ToString();
+            foreach (IStatusEffect c in concretes)
+            {
+                if (c.DisplayName == displayName)
+                    return c;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Removes the concrete <see cref="IStatusEffect"/> for the given unit and type from
+        /// <see cref="_concreteEffects"/>. No-op if no matching concrete exists.
+        /// Cleans up the outer dictionary entry when the unit's concrete list becomes empty.
+        /// </summary>
+        private void RemoveConcreteEffect(string unitId, StatusType type)
+        {
+            if (!_concreteEffects.TryGetValue(unitId, out List<IStatusEffect> concretes))
+                return;
+
+            string displayName = type.ToString();
+            for (int i = concretes.Count - 1; i >= 0; i--)
+            {
+                if (concretes[i].DisplayName == displayName)
+                {
+                    concretes.RemoveAt(i);
+                    break;
+                }
+            }
+
+            if (concretes.Count == 0)
+                _concreteEffects.Remove(unitId);
         }
 
         /// <summary>Finds the first effect of the given type in the list, or null.</summary>
