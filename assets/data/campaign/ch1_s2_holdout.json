@@ -1,0 +1,16 @@
+{
+  "ScenarioId": "ch1_s2_holdout",
+  "DisplayName": "Holdout at Ember Ridge",
+  "ChapterIndex": 1,
+  "MapId": "ember_ridge",
+  "EnemyFaction": "ashen_covenant",
+  "EnemyWarbandId": "ashen_assault_t1",
+  "WinCondition": "Survive",
+  "OptionalObjectives": [
+    "Prevent the enemy from reaching the northern gate",
+    "Destroy the bone-walker construct"
+  ],
+  "RewardMancerUnlockId": "geomancer",
+  "NarrativeIntroText": "Ember Ridge is the last defensible position before the capital's outer wall. Ashen Covenant infantry are already scaling the southern slope. Hold the ridge for eight turns.",
+  "NarrativeOutroText": "The Ashen tide breaks against the ridge. A Geomancer emerges from the rubble — trapped since the first assault. She owes you her life, and her stone-shaping skills are yours to command."
+}
