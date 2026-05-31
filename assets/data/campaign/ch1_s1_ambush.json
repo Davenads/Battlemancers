@@ -1,0 +1,16 @@
+{
+  "ScenarioId": "ch1_s1_ambush",
+  "DisplayName": "The Ambush at Ashford Crossing",
+  "ChapterIndex": 1,
+  "MapId": "crossroads",
+  "EnemyFaction": "ashen_covenant",
+  "EnemyWarbandId": "ashen_patrol_t1",
+  "WinCondition": "Eliminate",
+  "OptionalObjectives": [
+    "Defeat all enemies within 6 turns",
+    "Keep all allied Mancers alive"
+  ],
+  "RewardMancerUnlockId": "electromancer",
+  "NarrativeIntroText": "A courier reported Ashen Covenant scouts massing at Ashford Crossing. Before you could regroup, their vanguard closed the road. Fight through — or the supply lines will fall.",
+  "NarrativeOutroText": "The crossing is clear. Among the enemy dead you find a strange bound tome crackling with barely-contained lightning. Its former owner won't be needing it."
+}

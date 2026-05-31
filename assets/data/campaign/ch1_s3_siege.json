@@ -1,0 +1,16 @@
+{
+  "ScenarioId": "ch1_s3_siege",
+  "DisplayName": "The Siege of Frostgate",
+  "ChapterIndex": 1,
+  "MapId": "frozen_wastes",
+  "EnemyFaction": "ashen_covenant",
+  "EnemyWarbandId": "ashen_siege_t2",
+  "WinCondition": "Control",
+  "OptionalObjectives": [
+    "Hold the gate control point for 4 consecutive turns",
+    "Eliminate the enemy Necromancer before turn 10"
+  ],
+  "RewardMancerUnlockId": "cryomancer",
+  "NarrativeIntroText": "Frostgate has fallen to the Ashen Covenant's siege engines. Take back the gatehouse control crystal and the walls will seal behind you, cutting off their reinforcements for good.",
+  "NarrativeOutroText": "The gate seals with a thunderous boom. Ice spreads across the walls as a hooded figure steps from the shadows — a Cryomancer who has been sabotaging the enemy's siege engines from within. The first chapter of their advance ends here."
+}
