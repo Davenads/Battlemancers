@@ -55,6 +55,12 @@ namespace Battlemancers.Unity
         /// </summary>
         [SerializeField] private string _mancerDataSubPath = "data/mancers";
 
+        /// <summary>
+        /// Sub-path under Application.streamingAssetsPath where map JSON files live.
+        /// Default: "data/maps"
+        /// </summary>
+        [SerializeField] private string _mapDataSubPath = "data/maps";
+
         // ---------------------------------------------------------------------------
         // Public simulation surface
         // ---------------------------------------------------------------------------
@@ -118,6 +124,10 @@ namespace Battlemancers.Unity
             DataRegistry = gameObject.AddComponent<DataRegistry>();
             DataRegistry.Initialize(dataDirectory);
             Debug.Log($"[SimulationBootstrapper] DataRegistry initialized. Loaded {DataRegistry.AllMancers.Count} Mancer(s) from: {dataDirectory}");
+
+            string mapDirectory = Path.Combine(Application.streamingAssetsPath, _mapDataSubPath);
+            DataRegistry.InitializeMaps(mapDirectory);
+            Debug.Log($"[SimulationBootstrapper] DataRegistry maps initialized. Loaded {DataRegistry.AllMaps.Count} map(s) from: {mapDirectory}");
 
             // ------------------------------------------------------------------
             // Step 3: Create SimulationState with a 10×10 grid and two players.

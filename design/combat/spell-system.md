@@ -103,6 +103,14 @@ Each Mancer has an AP pool per turn. AP resets fully at the start of their turn.
 - This adds a secondary optimization layer for experienced players
 - Designed as an opt-in layer, not required to play the base game
 
+### Cooldown Reset Rules
+- Cooldowns decrement by 1 at the **start of the owning Mancer's turn** (not at end of turn)
+- A spell becomes castable again when its cooldown counter reaches 0
+- **Kill bonus:** Landing the killing blow on an enemy unit reduces all of the caster's current cooldowns by 1 (minimum 0)
+- **Terrain capture:** Capturing a marked objective tile reduces the capturing Mancer's longest active cooldown by 1
+- **Silenced status:** A SILENCED Mancer's cooldown timers do NOT decrement — the Mancer is frozen in time magically but time still passes for their body
+- Death resets all cooldowns (unit removed from play; cooldown state is discarded)
+
 ### Chronomancer Interaction
 - TIME_SLOW on an enemy pauses their cooldown timers
 - REWIND on a caster does NOT restore cooldowns (temporal body rewind, not magical energy rewind)
@@ -132,6 +140,24 @@ Combos occur when one spell interacts with a terrain state or unit status create
 - Example: Hydromancer FLOOD → Cryomancer mass FREEZE → Sonimancer SHATTER = entire flooded zone units shattered for massive burst
 - Requires turn sequencing and positioning investment
 - Highest damage possible; most telegraphed and interruptible
+
+### Combo Trigger Specification
+
+A combo triggers when **all** of the following conditions are true at the moment of spell resolution:
+
+1. **Target tile or target unit carries an active elemental state** (e.g., WET, BURNING, FROZEN, POISONED, CHARGED)
+2. **The incoming spell's element is listed in the interaction table** as a trigger for that state (see `design/combat/status-effects.md` interaction matrix)
+3. **The interaction table entry has a non-null combo effect** for that trigger+state pair
+
+Combo resolution order within a single spell cast:
+1. Primary spell damage/effect resolves first
+2. Combo effect (from interaction table) resolves second
+3. New terrain/unit states resulting from the combo are applied
+4. Secondary spread (e.g., fire spreading to adjacent tiles) resolves last
+
+Multiple combos from a single cast (e.g., hitting a tile that is both WET and POISONED with a Lightning spell) resolve sequentially in the order: WET → BURNING → FROZEN → POISONED → CHARGED (alphabetical fallback).
+
+A unit or tile can only trigger **one** combo per incoming spell (the highest-tier matching interaction wins). Multiple simultaneous combos on different targets in an AoE resolve independently.
 
 ### Combo Communication to Player
 - Terrain states are visually distinct (color coding, particle overlay)

@@ -6,13 +6,14 @@ using Battlemancers.Core.Data;
 namespace Battlemancers.Unity
 {
     /// <summary>
-    /// Unity-side adapter that wraps MancerDataLoader and provides a simple keyed lookup
-    /// for Mancer runtime data. This is the single Unity-layer access point for all
-    /// Mancer definitions — no other MonoBehaviour should call MancerDataLoader directly.
+    /// Unity-side adapter that wraps MancerDataLoader and MapLoader, providing keyed
+    /// lookups for Mancer and Map runtime data. This is the single Unity-layer access
+    /// point for all game definitions — no other MonoBehaviour should call these loaders
+    /// directly.
     ///
     /// Initialized by SimulationBootstrapper.Awake() before any other system reads from it.
     /// Not intended to be added to a GameObject manually; SimulationBootstrapper adds it
-    /// via AddComponent and calls Initialize() immediately.
+    /// via AddComponent and calls Initialize() / InitializeMaps() immediately.
     /// </summary>
     public class DataRegistry : MonoBehaviour
     {
@@ -21,9 +22,10 @@ namespace Battlemancers.Unity
         // ---------------------------------------------------------------------------
 
         private Dictionary<string, MancerRuntimeData> _mancers;
+        private Dictionary<string, MapData> _maps;
 
         // ---------------------------------------------------------------------------
-        // Public API
+        // Mancer API
         // ---------------------------------------------------------------------------
 
         /// <summary>
@@ -70,5 +72,54 @@ namespace Battlemancers.Unity
         public IReadOnlyDictionary<string, MancerRuntimeData> AllMancers =>
             (IReadOnlyDictionary<string, MancerRuntimeData>)_mancers
             ?? new Dictionary<string, MancerRuntimeData>();
+
+        // ---------------------------------------------------------------------------
+        // Map API
+        // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Loads all map JSON files from the specified directory via MapLoader.
+        /// Must be called exactly once before any GetMap() or AllMaps access.
+        /// </summary>
+        /// <param name="mapDirectory">
+        /// Absolute path to the directory containing map JSON files.
+        /// Typically Application.streamingAssetsPath + "/data/maps".
+        /// Must not be null or empty.
+        /// </param>
+        /// <exception cref="ArgumentException">Thrown if mapDirectory is null or empty.</exception>
+        public void InitializeMaps(string mapDirectory)
+        {
+            if (string.IsNullOrEmpty(mapDirectory))
+                throw new ArgumentException("mapDirectory must not be null or empty.", nameof(mapDirectory));
+
+            var loader = new MapLoader(mapDirectory, Debug.LogWarning);
+            _maps = loader.LoadAll();
+        }
+
+        /// <summary>
+        /// Returns the MapData for the given map ID (case-insensitive).
+        /// Returns null if no data was loaded for that ID or if InitializeMaps() has not been called.
+        /// </summary>
+        /// <param name="mapId">
+        /// The map identifier (e.g., "crossroads", "frozen_wastes").
+        /// Case-insensitive — matches the MapId field in the JSON file.
+        /// </param>
+        /// <returns>The MapData, or null if not found.</returns>
+        public MapData GetMap(string mapId)
+        {
+            if (_maps == null || mapId == null)
+                return null;
+
+            _maps.TryGetValue(mapId, out MapData data);
+            return data;
+        }
+
+        /// <summary>
+        /// Read-only view of all loaded map data, keyed by MapId.
+        /// Returns an empty dictionary if InitializeMaps() has not been called.
+        /// </summary>
+        public IReadOnlyDictionary<string, MapData> AllMaps =>
+            (IReadOnlyDictionary<string, MapData>)_maps
+            ?? new Dictionary<string, MapData>();
     }
 }
