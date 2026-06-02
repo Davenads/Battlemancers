@@ -438,7 +438,7 @@ namespace Battlemancers.Core.Simulation
                 if (isConfused && isSpell)
                 {
                     SpellCommand originalSpell = (SpellCommand)cmd;
-                    // Use stub range from SpellCommand (4 tiles) for confused targeting.
+                    // Use the fallback spell range (4 tiles) for confused targeting.
                     const int ConfusedSpellRange = 4;
                     string confusedTarget = StatusEffectResolver.ResolveConfusedTarget(
                         actor.Id, ConfusedSpellRange, _state);

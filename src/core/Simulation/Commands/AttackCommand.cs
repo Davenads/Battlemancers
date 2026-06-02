@@ -7,9 +7,10 @@ namespace Battlemancers.Core.Simulation.Commands
     /// <summary>
     /// Command that performs a basic melee attack from one unit against an adjacent enemy unit.
     ///
-    /// Stub damage is a flat 10 HP. Full damage calculation (attacker stats, defender armor,
-    /// status modifiers, element weaknesses) will be implemented in Wave 2 by the combat
-    /// damage resolver. The adjacency rule is strict: Manhattan distance must be exactly 1
+    /// Deals flat base damage. Full damage calculation (attacker stats, defender armor,
+    /// status modifiers, element weaknesses) is handled by the combat damage resolver
+    /// and can be layered on top via SpellResolver for spell-based attacks.
+    /// The adjacency rule is strict: Manhattan distance must be exactly 1
     /// (no diagonal attacks in the base system).
     ///
     /// If the attack kills the defender, a UnitDiedEvent is also emitted and the defender
@@ -17,8 +18,9 @@ namespace Battlemancers.Core.Simulation.Commands
     /// </summary>
     public sealed class AttackCommand : Command
     {
-        // Stub flat damage per attack. Wave 2 replaces this with a full damage formula.
-        private const int StubAttackDamage = 10;
+        // Base flat damage per melee attack. The combat resolver applies stat-based
+        // modifiers on top of this value for full damage calculation.
+        private const int BaseAttackDamage = 10;
 
         /// <summary>Runtime ID of the unit being attacked.</summary>
         public string DefenderId { get; }
@@ -70,7 +72,7 @@ namespace Battlemancers.Core.Simulation.Commands
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Deals flat stub damage to the defender. If the defender's HP drops to 0,
+        /// Deals flat base damage to the defender. If the defender's HP drops to 0,
         /// a UnitDiedEvent is also emitted and the unit is deregistered.
         /// Returns between 1 and 2 events (always UnitDamagedEvent; optionally UnitDiedEvent).
         /// </remarks>
@@ -79,9 +81,9 @@ namespace Battlemancers.Core.Simulation.Commands
             UnitState attacker = state.GetUnit(ActorId);
             UnitState defender = state.GetUnit(DefenderId);
 
-            // Apply flat damage, floor at 0.
+            // Apply base damage, floor at 0.
             int previousHP = defender.CurrentHP;
-            int newHP = previousHP - StubAttackDamage;
+            int newHP = previousHP - BaseAttackDamage;
             if (newHP < 0) newHP = 0;
             defender.CurrentHP = newHP;
 

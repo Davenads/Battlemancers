@@ -154,7 +154,7 @@ namespace Battlemancers.Simulation.Effects
         /// <summary>
         /// Returns the override attack target for a PANICKED actor.
         /// Picks the nearest living unit (any allegiance, excluding the actor) within the
-        /// actor's spell range (stub: 4 tiles). On ties, lowest (x+y) then lowest x wins.
+        /// actor's effective attack range (4 tiles). On ties, lowest (x+y) then lowest x wins.
         /// Returns <c>null</c> if no unit is in range — caller skips the attack.
         /// </summary>
         /// <param name="actorId">Runtime ID of the PANICKED unit.</param>
@@ -166,8 +166,8 @@ namespace Battlemancers.Simulation.Effects
             if (actor == null || !actor.IsAlive)
                 return null;
 
-            // PANICKED units use their lowest-AP-cost ability, so any unit in the stub range
-            // qualifies. The stub range is 4 tiles (matching SpellCommand.StubSpellRange).
+            // PANICKED units use their lowest-AP-cost ability; any unit within the
+            // effective attack range of 4 tiles is a valid target.
             const int PanickedAttackRange = 4;
 
             string bestId = null;
@@ -207,7 +207,7 @@ namespace Battlemancers.Simulation.Effects
         /// <summary>
         /// Returns the override spell target for a CHARMED actor.
         /// Picks the nearest ally (same OwnerId, excluding self) within the actor's spell range
-        /// (stub: 4 tiles) regardless of line of sight (CHARMED is a compulsion).
+        /// (4 tiles) regardless of line of sight (CHARMED is a compulsion).
         /// On ties, lowest (x+y) then lowest x wins.
         /// Returns <c>null</c> if no ally is in range — the caller applies move-toward-ally behavior instead.
         /// </summary>

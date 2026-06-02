@@ -1,6 +1,8 @@
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Battlemancers.Core.Data;
 
 namespace Battlemancers.UI
 {
@@ -14,6 +16,9 @@ namespace Battlemancers.UI
         [SerializeField] private Button _btnQuit;
         [SerializeField] private TMP_Text _savedWarbandCount; // "3 Warbands Saved"
         [SerializeField] private TMP_Text _versionLabel;
+
+        /// <summary>Sub-path under Application.persistentDataPath for warband saves.</summary>
+        [SerializeField] private string _warbandSaveSubPath = "saves/warbands";
 
         private void Awake()
         {
@@ -32,9 +37,19 @@ namespace Battlemancers.UI
 
         private void RefreshWarbandCount()
         {
-            // Load warband count from WarbandRepository if available
-            // For now, show a placeholder until WarbandRepository is accessible
-            _savedWarbandCount.text = ""; // will be populated once WarbandRepository is wired in
+            try
+            {
+                string saveDirectory = Path.Combine(Application.persistentDataPath, _warbandSaveSubPath);
+                var repo = new WarbandRepository(saveDirectory, Debug.LogWarning);
+                var warbands = repo.LoadAll();
+                int count = warbands.Count;
+                _savedWarbandCount.text = count == 1 ? "1 Warband Saved" : $"{count} Warbands Saved";
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[MainMenuController] Could not load warband count: {ex.Message}");
+                _savedWarbandCount.text = "";
+            }
         }
     }
 }

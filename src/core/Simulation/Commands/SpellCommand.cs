@@ -7,21 +7,22 @@ namespace Battlemancers.Core.Simulation.Commands
     /// Command that causes a Mancer to cast a spell at a target grid position.
     ///
     /// Full spell effect resolution (element interactions, AoE targeting, damage
-    /// calculation, tile state changes) is handled by the SpellResolver in Wave 2.
-    /// This command validates cast legality, emits a SpellCastEvent, and places
-    /// the spell on cooldown. The SpellResolver subscribes to SpellCastEvent and
-    /// processes the full effect chain.
+    /// calculation, tile state changes) is handled by SpellResolver, which subscribes
+    /// to SpellCastEvent and processes the full effect chain.
     ///
-    /// Stub range: 4 tiles Manhattan distance. Wave 2 will replace this with
-    /// per-spell range values sourced from SpellData definitions.
+    /// This command validates cast legality, emits a SpellCastEvent, and places the
+    /// spell on cooldown. Range validation uses a fallback of 4 tiles Manhattan distance;
+    /// per-spell range from SpellData will replace this once spell definitions are wired
+    /// into command construction.
     /// </summary>
     public sealed class SpellCommand : Command
     {
-        // Placeholder range used until SpellData is wired in Wave 2.
-        private const int StubSpellRange = 4;
+        // Fallback range used when per-spell range is not yet supplied from SpellData.
+        private const int FallbackSpellRange = 4;
 
-        // Default cooldown applied to all spells until SpellData defines per-spell values.
-        private const int StubSpellCooldownTurns = 1;
+        // Default cooldown applied to all spells; per-spell values from SpellData will
+        // take precedence once spell definitions are wired into command construction.
+        private const int DefaultSpellCooldownTurns = 1;
 
         /// <summary>Definition ID of the spell being cast (e.g., "pyromancer_fireball").</summary>
         public string SpellId { get; }
@@ -51,10 +52,11 @@ namespace Battlemancers.Core.Simulation.Commands
         ///   <item>Actor is a Mancer (only Mancers can cast spells).</item>
         ///   <item>The spell is not currently on cooldown for this unit.</item>
         ///   <item>Target is within grid bounds.</item>
-        ///   <item>Target is within the stub range of 4 Manhattan tiles.</item>
+        ///   <item>Target is within the fallback range of 4 Manhattan tiles.</item>
         /// </list>
-        /// Wave 2 will add: LOS validation, per-spell targeting type constraints,
-        /// AP cost checks, and spell-specific target restrictions.
+        /// Future: LOS validation, per-spell targeting type constraints, AP cost checks,
+        /// and spell-specific target restrictions will be enforced once SpellData is wired
+        /// into command construction.
         /// </remarks>
         public override bool Validate(SimulationState state)
         {
@@ -76,9 +78,9 @@ namespace Battlemancers.Core.Simulation.Commands
             if (!state.Grid.IsInBounds(Target))
                 return false;
 
-            // Target must be within stub range (Manhattan distance).
+            // Target must be within the fallback range (Manhattan distance).
             int distance = actor.Position.ManhattanDistance(Target);
-            if (distance > StubSpellRange)
+            if (distance > FallbackSpellRange)
                 return false;
 
             return true;
@@ -86,20 +88,19 @@ namespace Battlemancers.Core.Simulation.Commands
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Places the spell on cooldown and emits a SpellCastEvent. Full effect resolution
-        /// (damage, tile state changes, status applications) is deferred to the SpellResolver
-        /// in Wave 2, which will subscribe to SpellCastEvent and process the chain.
+        /// Places the spell on cooldown and emits a SpellCastEvent. SpellResolver subscribes
+        /// to SpellCastEvent and processes the full effect chain (damage, tile state changes,
+        /// status applications, element interactions).
         /// </remarks>
         public override SimulationEvent[] Execute(SimulationState state)
         {
             UnitState actor = state.GetUnit(ActorId);
 
-            // Apply cooldown so the spell cannot be cast again next turn.
-            actor.SpellCooldowns[SpellId] = StubSpellCooldownTurns;
+            // Apply cooldown so the spell cannot be cast again immediately.
+            actor.SpellCooldowns[SpellId] = DefaultSpellCooldownTurns;
 
             // Emit the cast event. The presentation layer uses this to trigger the cast
-            // wind-up animation and the start of the spell VFX. SpellResolver (Wave 2)
-            // will also respond to this event to apply the spell's effects.
+            // animation and spell VFX. SpellResolver responds to apply the spell's effects.
             return new SimulationEvent[]
             {
                 new SpellCastEvent(state.TurnNumber, ActorId, SpellId, Target)
