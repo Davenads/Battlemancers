@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using NUnit.Framework;
 using Battlemancers.Core.Data;
+using Battlemancers.Core.Maps;
+using Battlemancers.Core.Grid;
 
 namespace Battlemancers.Tests.Simulation
 {
@@ -144,8 +146,112 @@ namespace Battlemancers.Tests.Simulation
         }
 
         // =========================================================================
-        // LoadAll — all 3 preset maps load without exception
+        // Battlemancers.Core.Maps.MapLoader — LoadFromJson
         // =========================================================================
+
+        [Test]
+        public void LoadFromJson_ValidMapJson_ReturnsParsedMapData()
+        {
+            // Arrange — a minimal well-formed map JSON using the Maps-namespace DTO fields.
+            const string json = @"{
+  ""Id"": ""test_map"",
+  ""Name"": ""Test Map"",
+  ""Description"": ""A minimal map for unit testing."",
+  ""Width"": 5,
+  ""Height"": 8,
+  ""Tiles"": [],
+  ""SpawnPoints"": []
+}";
+
+            // Act
+            Battlemancers.Core.Maps.MapData result = Battlemancers.Core.Maps.MapLoader.LoadFromJson(json);
+
+            // Assert
+            Assert.That(result,            Is.Not.Null,           "LoadFromJson must not return null for valid JSON.");
+            Assert.That(result.Width,      Is.EqualTo(5),         "Width must match the JSON value.");
+            Assert.That(result.Height,     Is.EqualTo(8),         "Height must match the JSON value.");
+            Assert.That(result.Name,       Is.EqualTo("Test Map"), "Name must match the JSON value.");
+            Assert.That(result.Id,         Is.EqualTo("test_map"), "Id must match the JSON value.");
+        }
+
+        // =========================================================================
+        // Battlemancers.Core.Maps.MapLoader — ToGridData with tile overrides
+        // =========================================================================
+
+        [Test]
+        public void ToGridData_WithTileOverrides_SetsCorrectTileStates()
+        {
+            // Arrange — create a MapData with two explicit tile state overrides.
+            var mapData = new Battlemancers.Core.Maps.MapData
+            {
+                Id     = "override_test",
+                Name   = "Override Test",
+                Width  = 4,
+                Height = 4,
+                Tiles  = new List<Battlemancers.Core.Maps.TileEntry>
+                {
+                    new Battlemancers.Core.Maps.TileEntry { X = 1, Y = 1, TileState = "Wet" },
+                    new Battlemancers.Core.Maps.TileEntry { X = 3, Y = 2, TileState = "Burning" },
+                },
+                SpawnPoints = new List<Battlemancers.Core.Maps.SpawnPoint>(),
+            };
+
+            // Act
+            GridData grid = Battlemancers.Core.Maps.MapLoader.ToGridData(mapData);
+
+            // Assert — override positions carry the specified state.
+            Assert.That(grid.GetTile(new GridPosition(1, 1))?.State,
+                Is.EqualTo(TileState.Wet),
+                "Tile at (1,1) must be Wet as specified in the override.");
+
+            Assert.That(grid.GetTile(new GridPosition(3, 2))?.State,
+                Is.EqualTo(TileState.Burning),
+                "Tile at (3,2) must be Burning as specified in the override.");
+
+            // Non-overridden tile must remain Normal.
+            Assert.That(grid.GetTile(new GridPosition(0, 0))?.State,
+                Is.EqualTo(TileState.Normal),
+                "Tile at (0,0) must remain Normal when not listed in Tiles overrides.");
+        }
+
+        // =========================================================================
+        // Battlemancers.Core.Maps.MapLoader — LoadFromFile with crossroads.json
+        // =========================================================================
+
+        [Test]
+        public void LoadFromFile_CrossroadsMap_HasCorrectSpawnCount()
+        {
+            // Arrange — write a Maps-format crossroads JSON to the temp directory.
+            // The Maps.MapData DTO uses Id/Name/SpawnPoints (not MapId/DisplayName/SpawnZones),
+            // so we use a dedicated test fixture rather than the asset-pipeline file.
+            const string crossroadsJson = @"{
+  ""Id"": ""crossroads"",
+  ""Name"": ""The Crossroads"",
+  ""Description"": ""An open stone plaza where two trade roads intersect."",
+  ""Width"": 10,
+  ""Height"": 10,
+  ""Tiles"": [],
+  ""SpawnPoints"": [
+    { ""Team"": 0, ""X"": 1, ""Y"": 1 },
+    { ""Team"": 0, ""X"": 1, ""Y"": 2 },
+    { ""Team"": 0, ""X"": 2, ""Y"": 1 },
+    { ""Team"": 1, ""X"": 8, ""Y"": 8 },
+    { ""Team"": 1, ""X"": 8, ""Y"": 7 },
+    { ""Team"": 1, ""X"": 7, ""Y"": 8 }
+  ]
+}";
+            string tempFile = Path.Combine(_tempDir, "crossroads_maps_format.json");
+            File.WriteAllText(tempFile, crossroadsJson);
+
+            // Act
+            Battlemancers.Core.Maps.MapData mapData = Battlemancers.Core.Maps.MapLoader.LoadFromFile(tempFile);
+
+            // Assert — 6 spawn points total (3 per team).
+            Assert.That(mapData, Is.Not.Null, "LoadFromFile must return a non-null MapData.");
+            Assert.That(mapData.SpawnPoints, Is.Not.Null, "SpawnPoints must not be null.");
+            Assert.That(mapData.SpawnPoints.Count, Is.EqualTo(6),
+                "The crossroads fixture defines 6 SpawnPoints (3 per team).");
+        }
 
         [Test]
         public void LoadAll_AllPresetMaps_LoadWithoutException()
