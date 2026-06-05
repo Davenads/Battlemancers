@@ -6,6 +6,22 @@ using Battlemancers.Core.Simulation;
 namespace Battlemancers.Presentation
 {
     /// <summary>
+    /// Color intent used when highlighting tiles for player input feedback.
+    /// </summary>
+    public enum HighlightColor
+    {
+        /// <summary>Valid movement destination.</summary>
+        Move,
+        /// <summary>Valid spell target.</summary>
+        SpellTarget,
+        /// <summary>Currently selected unit's tile.</summary>
+        Selected,
+        /// <summary>Hostile unit or danger zone.</summary>
+        Danger
+    }
+
+
+    /// <summary>
     /// MonoBehaviour that renders the game grid by reading TileState from SimulationState.
     ///
     /// In Start(), reads SimulationState.Board dimensions and instantiates a tile GameObject
@@ -37,6 +53,12 @@ namespace Battlemancers.Presentation
         private static readonly Color ColorSteam    = new Color(0.75f, 0.75f, 0.75f); // light grey
         private static readonly Color ColorNatural  = new Color(0.2f, 0.5f, 0.15f);   // grass green
 
+        // Highlight overlay colors for player input feedback.
+        private static readonly Color ColorHighlightMove     = new Color(0.15f, 0.9f, 0.3f, 0.85f);  // bright green
+        private static readonly Color ColorHighlightSpell    = new Color(0.9f, 0.4f, 0.1f, 0.85f);   // orange-red
+        private static readonly Color ColorHighlightSelected = new Color(1.0f, 1.0f, 0.2f, 0.9f);    // bright yellow
+        private static readonly Color ColorHighlightDanger   = new Color(0.9f, 0.1f, 0.1f, 0.85f);   // red
+
         // World units per grid tile.
         private const float TileWorldSize = 1.0f;
 
@@ -63,6 +85,9 @@ namespace Battlemancers.Presentation
         // Maps grid position to the GameObject representing that tile.
         private readonly Dictionary<Vector2Int, GameObject> _tileObjects
             = new Dictionary<Vector2Int, GameObject>();
+
+        // Tracks tiles currently showing a highlight overlay so ClearHighlights can restore them.
+        private readonly HashSet<Vector2Int> _highlightedTiles = new HashSet<Vector2Int>();
 
         private int _gridWidth;
         private int _gridHeight;
@@ -185,6 +210,58 @@ namespace Battlemancers.Presentation
             }
         }
 
+        /// <summary>
+        /// Applies a highlight overlay color to a set of tiles, replacing their current visual.
+        /// Replaces any existing highlight set — call ClearHighlights() first if needed.
+        /// Used by MoveSelectionUI and SpellSelectionUI to show valid targets.
+        /// </summary>
+        /// <param name="tiles">Grid positions to highlight.</param>
+        /// <param name="color">The intent color to apply.</param>
+        public void HighlightTiles(IEnumerable<Vector2Int> tiles, HighlightColor color)
+        {
+            ClearHighlights();
+
+            Color highlightColor = HighlightColorToColor(color);
+
+            foreach (Vector2Int pos in tiles)
+            {
+                if (!_tileObjects.TryGetValue(pos, out GameObject tileGo) || tileGo == null)
+                    continue;
+
+                ApplyColorToTile(tileGo, highlightColor);
+                _highlightedTiles.Add(pos);
+            }
+        }
+
+        /// <summary>
+        /// Removes all highlight overlays, restoring tiles to their SimulationState-driven colors.
+        /// Safe to call when no highlights are active.
+        /// </summary>
+        public void ClearHighlights()
+        {
+            if (_highlightedTiles.Count == 0) return;
+
+            // Restore each highlighted tile to its correct TileState color.
+            GridData grid = _sim != null ? _sim.State?.Grid : null;
+
+            foreach (Vector2Int pos in _highlightedTiles)
+            {
+                if (!_tileObjects.TryGetValue(pos, out GameObject tileGo) || tileGo == null)
+                    continue;
+
+                TileState state = TileState.Normal;
+                if (grid != null)
+                {
+                    Tile tile = grid.GetTile(new GridPosition(pos.x, pos.y));
+                    if (tile != null) state = tile.State;
+                }
+
+                ApplyColorToTile(tileGo, TileStateToColor(state));
+            }
+
+            _highlightedTiles.Clear();
+        }
+
         // ---------------------------------------------------------------------------
         // Coordinate conversion (public for other Presentation classes)
         // ---------------------------------------------------------------------------
@@ -204,6 +281,21 @@ namespace Battlemancers.Presentation
         // ---------------------------------------------------------------------------
         // Helpers
         // ---------------------------------------------------------------------------
+
+        /// <summary>
+        /// Maps a HighlightColor intent to the actual Color used to tint the tile.
+        /// </summary>
+        private static Color HighlightColorToColor(HighlightColor color)
+        {
+            switch (color)
+            {
+                case HighlightColor.Move:        return ColorHighlightMove;
+                case HighlightColor.SpellTarget: return ColorHighlightSpell;
+                case HighlightColor.Selected:    return ColorHighlightSelected;
+                case HighlightColor.Danger:      return ColorHighlightDanger;
+                default:                         return ColorHighlightMove;
+            }
+        }
 
         /// <summary>
         /// Maps a TileState enum value to the baseline display color for that terrain type.
