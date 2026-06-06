@@ -52,6 +52,7 @@ namespace Battlemancers.Core.Simulation
 
         private readonly SimulationState _state;
         private readonly TemperatureManager _temperatureManager;
+        private readonly StatusManager _statusManager;
 
         // Maps playerId → the commands that player submitted this turn.
         // Cleared at the end of ResolveTurn so the next turn starts clean.
@@ -59,17 +60,22 @@ namespace Battlemancers.Core.Simulation
 
         /// <summary>
         /// Creates a new TurnManager bound to the given simulation state.
-        /// A default TemperatureManager (with a default StatusManager) is created internally.
+        /// A shared StatusManager is created and passed to a default TemperatureManager
+        /// so both systems operate on the same status state.
         /// </summary>
         /// <param name="state">The simulation state this manager will drive.</param>
         /// <exception cref="ArgumentNullException">Thrown if state is null.</exception>
         public TurnManager(SimulationState state)
-            : this(state, new TemperatureManager(new StatusManager()))
         {
+            _state = state ?? throw new ArgumentNullException(nameof(state));
+            _statusManager = new StatusManager();
+            _temperatureManager = new TemperatureManager(_statusManager);
+            _pendingPlans = new Dictionary<string, Command[]>();
         }
 
         /// <summary>
-        /// Creates a new TurnManager bound to the given simulation state.
+        /// Creates a new TurnManager bound to the given simulation state,
+        /// using the provided TemperatureManager and a new default StatusManager.
         /// </summary>
         /// <param name="state">The simulation state this manager will drive.</param>
         /// <param name="temperatureManager">
@@ -78,9 +84,31 @@ namespace Battlemancers.Core.Simulation
         /// </param>
         /// <exception cref="ArgumentNullException">Thrown if state or temperatureManager is null.</exception>
         public TurnManager(SimulationState state, TemperatureManager temperatureManager)
+            : this(state, temperatureManager, new StatusManager())
+        {
+        }
+
+        /// <summary>
+        /// Creates a new TurnManager bound to the given simulation state,
+        /// using the provided TemperatureManager and StatusManager.
+        /// Use this overload in tests that need to pre-seed status effects and verify
+        /// that ResolveTurn ticks them correctly.
+        /// </summary>
+        /// <param name="state">The simulation state this manager will drive.</param>
+        /// <param name="temperatureManager">
+        /// The temperature manager used for per-turn decay and terrain thermal effects.
+        /// Must not be null.
+        /// </param>
+        /// <param name="statusManager">
+        /// The status manager used for per-turn status duration ticking.
+        /// Must not be null.
+        /// </param>
+        /// <exception cref="ArgumentNullException">Thrown if any argument is null.</exception>
+        public TurnManager(SimulationState state, TemperatureManager temperatureManager, StatusManager statusManager)
         {
             _state = state ?? throw new ArgumentNullException(nameof(state));
             _temperatureManager = temperatureManager ?? throw new ArgumentNullException(nameof(temperatureManager));
+            _statusManager = statusManager ?? throw new ArgumentNullException(nameof(statusManager));
             _pendingPlans = new Dictionary<string, Command[]>();
         }
 
@@ -277,11 +305,14 @@ namespace Battlemancers.Core.Simulation
                 allEvents.AddRange(overrideEvents);
             }
 
-            // Step 5: End-of-turn processing — tick cooldowns on all living units.
+            // Step 5: End-of-turn processing — tick cooldowns and status durations on all living units.
             foreach (UnitState unit in _state.GetLivingUnits())
             {
                 unit.TickCooldowns();
             }
+
+            // Tick status effect durations — decrement and remove expired statuses.
+            _statusManager.TickStatuses(_state);
 
             // Apply terrain-based temperature passives and tick Heatstroke penalties.
             _temperatureManager.ApplyTerrainTemperatureEffects(_state);
