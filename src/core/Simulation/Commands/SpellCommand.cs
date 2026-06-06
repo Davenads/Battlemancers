@@ -1,19 +1,27 @@
+using System.Collections.Generic;
+using System.Linq;
 using Battlemancers.Core.Grid;
 using Battlemancers.Core.Simulation.Events;
+using Battlemancers.Data;
+using Battlemancers.Simulation.Effects;
 
 namespace Battlemancers.Core.Simulation.Commands
 {
     /// <summary>
     /// Command that causes a Mancer to cast a spell at a target grid position.
     ///
-    /// Full spell effect resolution (element interactions, AoE targeting, damage
-    /// calculation, tile state changes) is handled by SpellResolver, which subscribes
-    /// to SpellCastEvent and processes the full effect chain.
+    /// When constructed with a <see cref="SpellData"/> definition and a
+    /// <see cref="SpellEffectApplicator"/>, Execute() resolves full spell effects
+    /// (damage, status applications, temperature changes, tile mutations, element combos)
+    /// via the applicator and converts the structured result into SimulationEvents.
     ///
-    /// This command validates cast legality, emits a SpellCastEvent, and places the
-    /// spell on cooldown. Range validation uses a fallback of 4 tiles Manhattan distance;
-    /// per-spell range from SpellData will replace this once spell definitions are wired
-    /// into command construction.
+    /// When constructed without an applicator (legacy / event-driven path), Execute()
+    /// emits only a <see cref="SpellCastEvent"/> and places the spell on cooldown; the
+    /// presentation-layer SpellResolver is expected to subscribe to that event and apply
+    /// effects downstream.
+    ///
+    /// Range validation uses a fallback of 4 tiles Manhattan distance; per-spell range
+    /// from SpellData will replace this once spell definitions are fully wired.
     /// </summary>
     public sealed class SpellCommand : Command
     {
@@ -30,8 +38,14 @@ namespace Battlemancers.Core.Simulation.Commands
         /// <summary>Grid position the spell is targeted at.</summary>
         public GridPosition Target { get; }
 
+        // Optional wiring for full headless effect resolution.
+        private readonly SpellData _spellData;
+        private readonly SpellEffectApplicator _applicator;
+
         /// <summary>
         /// Creates a SpellCommand for the specified caster, spell, and target.
+        /// This overload emits only a <see cref="SpellCastEvent"/>; spell effects are
+        /// resolved by a downstream SpellResolver that subscribes to the event.
         /// </summary>
         /// <param name="actorId">Runtime ID of the Mancer casting the spell.</param>
         /// <param name="activationCost">Budget cost of this unit's activation (always 100 for Mancers).</param>
@@ -42,6 +56,26 @@ namespace Battlemancers.Core.Simulation.Commands
         {
             SpellId = spellId;
             Target = target;
+        }
+
+        /// <summary>
+        /// Creates a SpellCommand that fully resolves spell effects in Execute() using the
+        /// supplied <see cref="SpellEffectApplicator"/>. Use this overload in headless tests
+        /// and in any context where the event-driven SpellResolver is not present.
+        /// </summary>
+        /// <param name="actorId">Runtime ID of the Mancer casting the spell.</param>
+        /// <param name="activationCost">Budget cost of this unit's activation (always 100 for Mancers).</param>
+        /// <param name="spellData">Full spell definition used to compute effects.</param>
+        /// <param name="target">Grid position to target.</param>
+        /// <param name="applicator">Applicator that resolves damage, statuses, temperature, and terrain.</param>
+        public SpellCommand(string actorId, int activationCost, SpellData spellData,
+                            GridPosition target, SpellEffectApplicator applicator)
+            : base(actorId, activationCost)
+        {
+            SpellId    = spellData?.spellId ?? string.Empty;
+            Target     = target;
+            _spellData = spellData;
+            _applicator = applicator;
         }
 
         /// <inheritdoc/>
@@ -78,9 +112,11 @@ namespace Battlemancers.Core.Simulation.Commands
             if (!state.Grid.IsInBounds(Target))
                 return false;
 
-            // Target must be within the fallback range (Manhattan distance).
+            // Target must be within range. Use the spell definition's range when available;
+            // fall back to FallbackSpellRange when no SpellData is wired.
+            int effectiveRange = _spellData != null ? _spellData.range : FallbackSpellRange;
             int distance = actor.Position.ManhattanDistance(Target);
-            if (distance > FallbackSpellRange)
+            if (distance > effectiveRange)
                 return false;
 
             return true;
@@ -88,23 +124,63 @@ namespace Battlemancers.Core.Simulation.Commands
 
         /// <inheritdoc/>
         /// <remarks>
-        /// Places the spell on cooldown and emits a SpellCastEvent. SpellResolver subscribes
-        /// to SpellCastEvent and processes the full effect chain (damage, tile state changes,
-        /// status applications, element interactions).
+        /// Places the spell on cooldown and emits a <see cref="SpellCastEvent"/>.
+        ///
+        /// When this command was constructed with a <see cref="SpellEffectApplicator"/>,
+        /// Execute() also resolves the full effect chain immediately: damage is applied
+        /// to any unit occupying the target tile, status effects and temperature changes
+        /// are forwarded to the respective managers, and a <see cref="UnitDiedEvent"/>
+        /// is appended for each unit whose HP reaches zero.
+        ///
+        /// When no applicator is present, only the <see cref="SpellCastEvent"/> is
+        /// returned; the presentation-layer SpellResolver is expected to handle effects.
         /// </remarks>
         public override SimulationEvent[] Execute(SimulationState state)
         {
             UnitState actor = state.GetUnit(ActorId);
 
             // Apply cooldown so the spell cannot be cast again immediately.
-            actor.SpellCooldowns[SpellId] = DefaultSpellCooldownTurns;
+            if (!string.IsNullOrEmpty(SpellId))
+                actor.SpellCooldowns[SpellId] = DefaultSpellCooldownTurns;
 
-            // Emit the cast event. The presentation layer uses this to trigger the cast
-            // animation and spell VFX. SpellResolver responds to apply the spell's effects.
-            return new SimulationEvent[]
+            var events = new List<SimulationEvent>
             {
                 new SpellCastEvent(state.TurnNumber, ActorId, SpellId, Target)
             };
+
+            // Full effect resolution path — only active when SpellData and applicator are wired.
+            if (_applicator != null && _spellData != null)
+            {
+                // Collect all living units on or adjacent to the target tile that belong
+                // to opposing players. For SingleTarget spells this is at most one unit.
+                var targets = new List<UnitState>();
+                string occupantId = state.Grid.GetOccupantId(Target);
+                if (occupantId != null && occupantId != ActorId)
+                {
+                    UnitState occupant = state.GetUnit(occupantId);
+                    if (occupant != null && occupant.IsAlive)
+                        targets.Add(occupant);
+                }
+
+                Battlemancers.Simulation.SpellResolutionResult result =
+                    _applicator.Apply(_spellData, actor, targets, state);
+
+                // Emit UnitDiedEvent for any targets killed by this spell.
+                if (result.WasCast)
+                {
+                    foreach (Battlemancers.Simulation.DamageEvent dmg in result.DamageDealt)
+                    {
+                        UnitState killed = state.GetUnit(dmg.TargetId);
+                        if (killed != null && !killed.IsAlive)
+                        {
+                            events.Add(new UnitDiedEvent(
+                                state.TurnNumber, killed.Id, killed.Position, ActorId));
+                        }
+                    }
+                }
+            }
+
+            return events.ToArray();
         }
     }
 }
